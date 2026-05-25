@@ -418,3 +418,4 @@ MIT License - swobodne wykorzystanie komercyjne i niekomercyjne.
 **GRAŻYNA 5.0 Team** - 2026
 
 > "Autonomous fleet management, powered by intelligence."
+![CI](https://github.com/wiciomalta-spec/Grazyna_5.0/actions/workflows/ci.yml/badge.svg)
