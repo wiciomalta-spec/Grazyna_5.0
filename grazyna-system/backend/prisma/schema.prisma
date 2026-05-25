@@ -1,0 +1,234 @@
+// GRAŻYNA 5.0 - Schemat bazy danych
+// Prisma schema dla systemu zarządzania flotą
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ════════════════════════════════════════════════════════════════
+// UŻYTKOWNICY I AUTORYZACJA
+// ════════════════════════════════════════════════════════════════
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  username     String    @unique
+  password     String    // bcrypt hash
+  firstName    String?
+  lastName     String?
+  role         Role      @default(OPERATOR)
+  active       Boolean   @default(true)
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  missions     Mission[]
+  events       Event[]
+  sessions     Session[]
+  
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  token        String   @unique
+  refreshToken String?  @unique
+  expiresAt    DateTime
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  OPERATOR
+  VIEWER
+}
+
+// ════════════════════════════════════════════════════════════════
+// FLOTA POJAZDÓW
+// ════════════════════════════════════════════════════════════════
+
+model Vehicle {
+  id            String         @id @default(uuid())
+  name          String
+  vin           String?        @unique
+  type          VehicleType    @default(STANDARD)
+  status        VehicleStatus  @default(IDLE)
+  battery       Int            @default(100)
+  fuelLevel     Float?
+  speed         Float          @default(0)
+  heading       Float?
+  
+  // Lokalizacja
+  latitude      Float?
+  longitude     Float?
+  altitude      Float?
+  
+  // Statystyki
+  totalDistance Float          @default(0)
+  totalTime     Int            @default(0) // sekundy
+  lastUpdate    DateTime       @default(now())
+  
+  // Konfiguracja
+  maxSpeed      Float          @default(60)
+  maxRange      Float          @default(500)
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  missions      Mission[]
+  telemetry     Telemetry[]
+  events        Event[]
+  
+  @@map("vehicles")
+}
+
+enum VehicleType {
+  STANDARD
+  HEAVY
+  LIGHT
+  DRONE
+  SPECIAL
+}
+
+enum VehicleStatus {
+  IDLE
+  ACTIVE
+  CHARGING
+  MAINTENANCE
+  OFFLINE
+  ERROR
+}
+
+// ════════════════════════════════════════════════════════════════
+// MISJE I ZADANIA
+// ════════════════════════════════════════════════════════════════
+
+model Mission {
+  id            String         @id @default(uuid())
+  name          String
+  description   String?
+  status        MissionStatus  @default(PENDING)
+  priority      Priority       @default(NORMAL)
+  
+  // Czas
+  scheduledAt   DateTime?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  
+  // Trasa
+  waypoints     Json?          // [{lat, lng, type}]
+  startLat      Float?
+  startLng      Float?
+  endLat        Float?
+  endLng        Float?
+  distance      Float?
+  
+  // Relacje
+  vehicleId     String?
+  vehicle       Vehicle?       @relation(fields: [vehicleId], references: [id])
+  assignedToId  String?
+  assignedTo    User?          @relation(fields: [assignedToId], references: [id])
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  events        Event[]
+  
+  @@map("missions")
+}
+
+enum MissionStatus {
+  PENDING
+  SCHEDULED
+  IN_PROGRESS
+  PAUSED
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+// ════════════════════════════════════════════════════════════════
+// TELEMETRIA
+// ════════════════════════════════════════════════════════════════
+
+model Telemetry {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  
+  timestamp   DateTime @default(now())
+  latitude    Float
+  longitude   Float
+  speed       Float
+  heading     Float?
+  battery     Int
+  temperature Float?
+  
+  rawData     Json?
+  
+  @@index([vehicleId, timestamp])
+  @@map("telemetry")
+}
+
+// ════════════════════════════════════════════════════════════════
+// ZDARZENIA I LOGI
+// ════════════════════════════════════════════════════════════════
+
+model Event {
+  id          String      @id @default(uuid())
+  type        EventType
+  severity    Severity    @default(INFO)
+  title       String
+  message     String?
+  metadata    Json?
+  
+  vehicleId   String?
+  vehicle     Vehicle?    @relation(fields: [vehicleId], references: [id])
+  missionId   String?
+  mission     Mission?    @relation(fields: [missionId], references: [id])
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
+  
+  read        Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  
+  @@index([type, createdAt])
+  @@map("events")
+}
+
+enum EventType {
+  SYSTEM
+  VEHICLE
+  MISSION
+  USER
+  SECURITY
+  MAINTENANCE
+}
+
+enum Severity {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
