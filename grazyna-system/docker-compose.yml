@@ -1,0 +1,120 @@
+version: '3.9'
+
+services:
+  # ═══════════════════════════════════════════
+  # PostgreSQL Database
+  # ═══════════════════════════════════════════
+  postgres:
+    image: postgres:15-alpine
+    container_name: grazyna-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: grazyna_db
+      POSTGRES_USER: grazyna
+      POSTGRES_PASSWORD: grazyna123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grazyna"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - grazyna-network
+
+  # ═══════════════════════════════════════════
+  # Redis Cache
+  # ═══════════════════════════════════════════
+  redis:
+    image: redis:7-alpine
+    container_name: grazyna-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - grazyna-network
+
+  # ═══════════════════════════════════════════
+  # Backend API (opcjonalnie - dla produkcji)
+  # ═══════════════════════════════════════════
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: grazyna-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://grazyna:grazyna123@postgres:5432/grazyna_db
+      REDIS_URL: redis://redis:6379
+      CORS_ORIGIN: http://localhost:5173
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production-please}
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - grazyna-network
+    profiles:
+      - production
+
+  # ═══════════════════════════════════════════
+  # Frontend (opcjonalnie - dla produkcji)
+  # ═══════════════════════════════════════════
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: grazyna-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - grazyna-network
+    profiles:
+      - production
+
+  # ═══════════════════════════════════════════
+  # PgAdmin (opcjonalnie - GUI dla DB)
+  # ═══════════════════════════════════════════
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: grazyna-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@grazyna.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - grazyna-network
+    profiles:
+      - tools
+
+networks:
+  grazyna-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
