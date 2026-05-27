@@ -1,9 +1,4 @@
-version: '3.9'
-
 services:
-  # ═══════════════════════════════════════════
-  # PostgreSQL Database
-  # ═══════════════════════════════════════════
   postgres:
     image: postgres:15-alpine
     container_name: grazyna-postgres
@@ -13,7 +8,7 @@ services:
       POSTGRES_USER: grazyna
       POSTGRES_PASSWORD: grazyna123
     ports:
-      - "5432:5432"
+      - "5433:5432"   # ✅ FIX
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -24,15 +19,12 @@ services:
     networks:
       - grazyna-network
 
-  # ═══════════════════════════════════════════
-  # Redis Cache
-  # ═══════════════════════════════════════════
   redis:
     image: redis:7-alpine
     container_name: grazyna-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6380:6379"   # ✅ FIX — zmieniony port
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
@@ -44,13 +36,9 @@ services:
     networks:
       - grazyna-network
 
-  # ═══════════════════════════════════════════
-  # Backend API (opcjonalnie - dla produkcji)
-  # ═══════════════════════════════════════════
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: grazyna-backend
     restart: unless-stopped
     environment:
@@ -59,7 +47,7 @@ services:
       DATABASE_URL: postgresql://grazyna:grazyna123@postgres:5432/grazyna_db
       REDIS_URL: redis://redis:6379
       CORS_ORIGIN: http://localhost:5173
-      JWT_SECRET: ${JWT_SECRET:-change-this-in-production-please}
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
     ports:
       - "3001:3001"
     depends_on:
@@ -72,13 +60,9 @@ services:
     profiles:
       - production
 
-  # ═══════════════════════════════════════════
-  # Frontend (opcjonalnie - dla produkcji)
-  # ═══════════════════════════════════════════
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     container_name: grazyna-frontend
     restart: unless-stopped
     ports:
@@ -90,9 +74,6 @@ services:
     profiles:
       - production
 
-  # ═══════════════════════════════════════════
-  # PgAdmin (opcjonalnie - GUI dla DB)
-  # ═══════════════════════════════════════════
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: grazyna-pgadmin
@@ -115,6 +96,4 @@ networks:
 
 volumes:
   postgres_data:
-    driver: local
   redis_data:
-    driver: local

@@ -419,3 +419,4 @@ MIT License - swobodne wykorzystanie komercyjne i niekomercyjne.
 
 > "Autonomous fleet management, powered by intelligence."
 ![CI](https://github.com/wiciomalta-spec/Grazyna_5.0/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/wiciomalta-spec/Grazyna_5.0/actions/workflows/ci.yml/badge.svg)

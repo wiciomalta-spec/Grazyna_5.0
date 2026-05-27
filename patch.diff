@@ -1,0 +1,314 @@
+*** Begin Patch
+*** Update File: backend/Dockerfile
+@@
+-# Hybrid Dockerfile: builder (debian) -> runtime (alpine)
+-FROM node:20-slim AS builder
+-
+-ENV NODE_ENV=production
+-WORKDIR /app
+-
+-# Install build deps
+-RUN apt-get update && apt-get install -y --no-install-recommends \
+-    ca-certificates curl build-essential git \
+-  && rm -rf /var/lib/apt/lists/*
+-
+-# Copy package files and prisma schema early (cache)
+-COPY package*.json ./
+-COPY package-lock.json ./
+-COPY prisma ./prisma/
+-
+-# Ensure deterministic install and disable update notifier
+-ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+-RUN npm ci --no-audit --no-fund
+-
+-# Generate Prisma client (binaryTargets set in schema.prisma)
+-RUN npx prisma generate --schema=./prisma/schema.prisma
+-
+-# Copy source and build
+-COPY tsconfig.json ./
+-COPY src ./src
+-RUN npm run build
+-
+-# Production image: Alpine (small) with runtime libs for Prisma musl
+-FROM node:20-alpine AS runtime
+-
+-ENV NODE_ENV=production
+-WORKDIR /app
+-
+-# Install runtime libs required by Prisma on musl
+-RUN apk add --no-cache openssl libc6-compat ca-certificates
+-
+-# Copy package files and install production deps deterministically
+-COPY package*.json ./
+-COPY package-lock.json ./
+-ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+-RUN npm ci --omit=dev --no-audit --no-fund
+-
+-# Copy prisma client and built app from builder
+-COPY --from=builder /app/node_modules ./node_modules
+-COPY --from=builder /app/prisma ./prisma
+-COPY --from=builder /app/dist ./dist
+-
+-# Avoid accidental host volume overwrites of node_modules in compose
+-VOLUME [ "/app/data" ]
+-
+-# Healthcheck
+-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+-  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
+-
+-EXPOSE 3001
+-CMD ["node", "dist/index.js"]
++# Builder: node:20-slim (stabilne binarki, prisma generate)
++FROM node:20-slim AS builder
++
++ENV NODE_ENV=production
++WORKDIR /app
++
++# Install build deps
++RUN apt-get update && apt-get install -y --no-install-recommends \
++    ca-certificates curl build-essential git \
++  && rm -rf /var/lib/apt/lists/*
++
++# Copy package files and prisma schema early (cache)
++COPY package*.json package-lock.json ./
++COPY prisma ./prisma/
++
++# Deterministic install
++ENV NPM_CONFIG_UPDATE_NOTIFIER=false
++RUN npm ci --no-audit --no-fund
++
++# Generate Prisma client (binaryTargets set in schema.prisma)
++RUN npx prisma generate --schema=./prisma/schema.prisma
++
++# Copy source and build
++COPY tsconfig.json ./
++COPY src ./src
++RUN npm run build
++
++# Production runtime: Debian (najbardziej kompatybilne z libssl)
++FROM node:20-slim AS runtime
++
++ENV NODE_ENV=production
++WORKDIR /app
++
++# Install runtime libs (openssl)
++RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates \
++  && rm -rf /var/lib/apt/lists/*
++
++# Install production deps deterministically
++COPY package*.json package-lock.json ./
++ENV NPM_CONFIG_UPDATE_NOTIFIER=false
++RUN npm ci --omit=dev --no-audit --no-fund
++
++# Copy prisma client and built app from builder
++COPY --from=builder /app/node_modules ./node_modules
++COPY --from=builder /app/prisma ./prisma
++COPY --from=builder /app/dist ./dist
++
++VOLUME [ "/app/data" ]
++
++HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
++  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
++
++EXPOSE 3001
++CMD ["node", "dist/index.js"]
+*** End Patch
+*** Begin Patch
+*** Update File: backend/prisma/schema.prisma
+@@
+-generator client {
+-  provider = "prisma-client-js"
+-  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
+-}
++generator client {
++  provider = "prisma-client-js"
++  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
++}
+*** End Patch
+*** Begin Patch
+*** Update File: docker-compose.prod.yml
+@@
+-version: "3.8"
+-
+-services:
+-  postgres:
+-    image: postgres:15-alpine
+-    restart: unless-stopped
+-    environment:
+-      POSTGRES_DB: grazyna_db
+-      POSTGRES_USER: grazyna
+-      POSTGRES_PASSWORD: grazyna123
+-    volumes:
+-      - postgres_data:/var/lib/postgresql/data
+-    healthcheck:
+-      test: ["CMD-SHELL", "pg_isready -U grazyna"]
+-      interval: 10s
+-      retries: 5
+-
+-  redis:
+-    image: redis:7-alpine
+-    restart: unless-stopped
+-    command: redis-server --appendonly yes
+-    volumes:
+-      - redis_data:/data
+-    healthcheck:
+-      test: ["CMD", "redis-cli", "ping"]
+-      interval: 10s
+-      retries: 5
+-
+-  backend:
+-    build:
+-      context: ./backend
+-      dockerfile: Dockerfile
+-    image: grazyna-backend:latest
+-    restart: unless-stopped
+-    env_file:
+-      - ./backend/.env
+-    depends_on:
+-      postgres:
+-        condition: service_healthy
+-      redis:
+-        condition: service_healthy
+-    ports:
+-      - "3001:3001"
+-    volumes:
+-      - backend-data:/app/data
+-      # Nie montuj hostowego node_modules nad /app/node_modules w produkcji
+-    environment:
+-      - NODE_ENV=production
+-      - PRISMA_CLIENT_ENGINE_TYPE=library
+-    healthcheck:
+-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/health"]
+-      interval: 30s
+-      timeout: 10s
+-      retries: 3
+-
+-  nginx:
+-    image: nginx:alpine
+-    restart: unless-stopped
+-    ports:
+-      - "8080:80"
+-    volumes:
+-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+-    depends_on:
+-      - backend
+-
+-  prometheus:
+-    image: prom/prometheus
+-    restart: unless-stopped
+-    ports:
+-      - "9090:9090"
+-
+-  grafana:
+-    image: grafana/grafana
+-    restart: unless-stopped
+-    ports:
+-      - "3000:3000"
+-
+-volumes:
+-  postgres_data:
+-  redis_data:
+-  backend-data:
++version: "3.8"
++
++services:
++  postgres:
++    image: postgres:15-alpine
++    restart: unless-stopped
++    environment:
++      POSTGRES_DB: grazyna_db
++      POSTGRES_USER: grazyna
++      POSTGRES_PASSWORD: grazyna123
++    volumes:
++      - postgres_data:/var/lib/postgresql/data
++    healthcheck:
++      test: ["CMD-SHELL", "pg_isready -U grazyna"]
++      interval: 10s
++      retries: 5
++
++  redis:
++    image: redis:7-alpine
++    restart: unless-stopped
++    command: redis-server --appendonly yes
++    volumes:
++      - redis_data:/data
++    healthcheck:
++      test: ["CMD", "redis-cli", "ping"]
++      interval: 10s
++      retries: 5
++
++  backend:
++    build:
++      context: ./backend
++      dockerfile: Dockerfile
++    image: grazyna-backend:latest
++    restart: unless-stopped
++    env_file:
++      - ./backend/.env
++    depends_on:
++      postgres:
++        condition: service_healthy
++      redis:
++        condition: service_healthy
++    ports:
++      - "3001:3001"
++    volumes:
++      - backend-data:/app/data
++    environment:
++      - NODE_ENV=production
++      - PRISMA_CLIENT_ENGINE_TYPE=library
++    healthcheck:
++      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/health"]
++      interval: 30s
++      timeout: 10s
++      retries: 3
++
++  nginx:
++    image: nginx:alpine
++    restart: unless-stopped
++    ports:
++      - "8080:80"
++    volumes:
++      - ./nginx/conf.d:/etc/nginx/conf.d:ro
++    depends_on:
++      - backend
++
++  prometheus:
++    image: prom/prometheus
++    restart: unless-stopped
++    ports:
++      - "9090:9090"
++
++  grafana:
++    image: grafana/grafana
++    restart: unless-stopped
++    ports:
++      - "3000:3000"
++
++volumes:
++  postgres_data:
++  redis_data:
++  backend-data:
+*** End Patch
+*** Begin Patch
+*** Add File: nginx/conf.d/default.conf
++server {
++    listen 80;
++    server_name grazyna.app www.grazyna.app;
++
++    location / {
++        proxy_pass http://backend:3001;
++        proxy_set_header Host $host;
++        proxy_set_header X-Real-IP $remote_addr;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_set_header X-Forwarded-Proto $scheme;
++        proxy_connect_timeout 5s;
++        proxy_read_timeout 60s;
++    }
++
++    location /health {
++        proxy_pass http://backend:3001/health;
++        proxy_set_header Host $host;
++    }
++}
+*** End Patch

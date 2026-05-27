@@ -1,0 +1,58 @@
+# Hybrid Dockerfile: builder (debian) -> runtime (alpine)
+# Builder: node:20-slim (stabilne binarki, prisma generate)
+FROM node:20-slim AS builder
+
+ENV NODE_ENV=production
+WORKDIR /app
+
+# Install build deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl build-essential git \
+  && rm -rf /var/lib/apt/lists/*
+
+# Copy package files and prisma schema early (cache)
+COPY package*.json ./
+COPY package-lock.json ./
+COPY prisma ./prisma/
+
+# Ensure deterministic install and disable update notifier
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+RUN npm ci --no-audit --no-fund
+
+# Generate Prisma client (binaryTargets set in schema.prisma)
+RUN npx prisma generate --schema=./prisma/schema.prisma
+
+# Copy source and build
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
+
+# Production image: Alpine (small) with runtime libs for Prisma musl
+FROM node:20-alpine AS runtime
+
+ENV NODE_ENV=production
+WORKDIR /app
+
+# Install runtime libs required by Prisma on musl
+RUN apk add --no-cache openssl libc6-compat ca-certificates
+
+# Copy package files and install production deps deterministically
+COPY package*.json ./
+COPY package-lock.json ./
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+RUN npm ci --omit=dev --no-audit --no-fund
+
+# Copy prisma client and built app from builder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/dist ./dist
+
+# Avoid accidental host volume overwrites of node_modules in compose
+VOLUME [ "/app/data" ]
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
+
+EXPOSE 3001
+CMD ["node", "dist/index.js"]
