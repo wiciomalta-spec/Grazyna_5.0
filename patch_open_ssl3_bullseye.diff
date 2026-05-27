@@ -1,0 +1,41 @@
+*** Begin Patch
+*** Update File: backend/prisma/schema.prisma
+@@
+ generator client {
+   provider = "prisma-client-js"
+-  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
++  binaryTargets = ["native", "linux-musl", "debian-openssl-3.0.x"]
+ }
+*** End Patch
+*** Begin Patch
+*** Update File: backend/Dockerfile
+@@
+-FROM node:20-slim AS runtime
+-WORKDIR /app
+-RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates libssl3 && rm -rf /var/lib/apt/lists/*
+-COPY package*.json package-lock.json ./
+-ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+-RUN npm ci --omit=dev --no-audit --no-fund
+-COPY --from=builder /app/node_modules ./node_modules
+-COPY --from=builder /app/prisma ./prisma
+-COPY --from=builder /app/dist ./dist
+-EXPOSE 3001
+-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
+-CMD ["node","dist/index.js"]
++## Runtime: Debian Bullseye with OpenSSL 3 (libssl3)
++FROM node:20-bullseye AS runtime
++WORKDIR /app
++RUN apt-get update \
++  && apt-get install -y --no-install-recommends openssl ca-certificates libssl3 \
++  && rm -rf /var/lib/apt/lists/*
++COPY package*.json package-lock.json ./
++ENV NPM_CONFIG_UPDATE_NOTIFIER=false
++RUN npm ci --omit=dev --no-audit --no-fund
++COPY --from=builder /app/node_modules ./node_modules
++COPY --from=builder /app/prisma ./prisma
++COPY --from=builder /app/dist ./dist
++EXPOSE 3001
++HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
++  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
++CMD ["node","dist/index.js"]
+*** End Patch

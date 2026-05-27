@@ -1,0 +1,89 @@
+*** Begin Patch
+*** Update File: backend/Dockerfile
+@@
+-FROM node:20-slim AS builder
++FROM node:20-slim AS builder
+ WORKDIR /app
+ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl build-essential git && rm -rf /var/lib/apt/lists/*
+ COPY package*.json package-lock.json ./
+ COPY prisma ./prisma/
+ ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ RUN npm ci --no-audit --no-fund
+ RUN npx prisma generate --schema=./prisma/schema.prisma
+ COPY tsconfig.json ./
+ COPY src ./src
+ RUN npm run build
+-
+-FROM node:20-slim AS runtime
+-WORKDIR /app
+-RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates libssl3 && rm -rf /var/lib/apt/lists/*
+-COPY package*.json package-lock.json ./
+-ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+-RUN npm ci --omit=dev --no-audit --no-fund
+-COPY --from=builder /app/node_modules ./node_modules
+-COPY --from=builder /app/prisma ./prisma
+-COPY --from=builder /app/dist ./dist
+-EXPOSE 3001
+-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
+-CMD ["node","dist/index.js"]
++## Runtime: use Debian Bullseye base to ensure libssl3 availability
++FROM node:20-bullseye AS runtime
++WORKDIR /app
++RUN apt-get update \
++  && apt-get install -y --no-install-recommends openssl ca-certificates libssl3 wget \
++  && rm -rf /var/lib/apt/lists/*
++COPY package*.json package-lock.json ./
++ENV NPM_CONFIG_UPDATE_NOTIFIER=false
++RUN npm ci --omit=dev --no-audit --no-fund
++COPY --from=builder /app/node_modules ./node_modules
++COPY --from=builder /app/prisma ./prisma
++COPY --from=builder /app/dist ./dist
++EXPOSE 3001
++HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
++  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
++CMD ["node","dist/index.js"]
+*** End Patch
+*** Begin Patch
+*** Update File: backend/prisma/schema.prisma
+@@
+ generator client {
+   provider = "prisma-client-js"
+-  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
++  # Generate binaries for native, musl and Debian OpenSSL 3.0
++  binaryTargets = ["native", "linux-musl", "debian-openssl-3.0.x"]
+ }
+*** End Patch
+*** Begin Patch
+*** Update File: docker-compose.prod.yml
+@@
+ services:
+   backend:
+     build:
+       context: ./backend
+       dockerfile: Dockerfile
+     image: grazyna-backend:latest
+     restart: unless-stopped
+     env_file:
+       - ./backend/.env
+     depends_on:
+       postgres:
+         condition: service_healthy
+       redis:
+         condition: service_healthy
+     ports:
+       - "3001:3001"
+-    volumes:
+-      - backend-data:/app/data
+-      # Nie montuj hostowego node_modules nad /app/node_modules w produkcji
++    volumes:
++      - backend-data:/app/data
++      # Do not mount host node_modules in production; use image-provided node_modules
+     environment:
+       - NODE_ENV=production
+       - PRISMA_CLIENT_ENGINE_TYPE=library
+     healthcheck:
+       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/health"]
+       interval: 30s
+       timeout: 10s
+       retries: 3
+*** End Patch
