@@ -1,0 +1,66 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "grafana",
+  "signedByOrg": "grafana",
+  "signedByOrgName": "Grafana Labs",
+  "plugin": "grafana-exploretraces-app",
+  "version": "2.0.3",
+  "time": 1777562885954,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "CHANGELOG.md": "522e5eb07f9a91c71abd49b78bea050d0ca83d43e593273f0280cc611e152d49",
+    "components/states/EmptyState/img/grot-404-light.svg": "89ea40b6dcf2dc8dfe146f8acac42b604e4d3c3dad03e539551d58a21f80654d",
+    "components/states/EmptyState/img/grot-404-dark.svg": "a0c8acbcf5685a8950ce1c67722579dc745585fb0d668ce965327955e5e829ff",
+    "149.js": "f72d4b3b5ef420e8f919b45f04b448a5cc78accd37c38116549145d61983ed28",
+    "149.js.map": "5f46f2ddd20bfbe610f03b8c40a9199de17299da419fc3dbb3eb33d13de0265c",
+    "725.js": "b60cf79c853eff0d21227d1e31f1742865c4a0d4ffbfbd82ac05fc64fb54dcf9",
+    "731.js": "e66e5f45274a613853f8270a52167f236a503f71dc47a32c8080dd42f2f96ca5",
+    "725.js.map": "6727863d85e45a4a6a7e5d2154a7e7546b7c12743c0cfc1d29ca75a5d48a1b45",
+    "783.js.map": "0a93d5a34f23578a05a3b85376f8a6996d2f3c83bdbd0b84c678302973bc052c",
+    "966.js.map": "dd65fb22365e2de029a3252f84107bdc5d4d767c369108647c9707adffbf89ce",
+    "193.js": "bb7c6f79b6d442dedff86868d1f1f1780f295d3944a4b0010a354219e6f0e062",
+    "README.md": "48850d5d55ec4cf786dea095b681e712750a2bda8b33a09d8daa7c282c72dc9d",
+    "locales/en-US/grafana-exploretraces-app.json": "121b7cf4765364ff39eef4c99182aabe2f48bfa31d7dc4463ee0dd4bd3c64489",
+    "791.js.map": "f508ee637f3a018e838f584b105e4e308d7e062050758ca14ad9aa109f4852c6",
+    "961.js.map": "74021544dee1d63ecbabeb3e797258fe09d24925f10a77e247fef6371502a33a",
+    "127.js.map": "282abb10174b32f5fd994b2f54f0243a9e3b714d18e45e91e899de23feff4a92",
+    "plugin.json": "530bc62c8af280ea9951161e09e2cdff673742fd4280e09f9d26ee6d7cf64af1",
+    "LICENSE": "20b067f86de375aae6db0f283ab2e65de24d537733b89bd58432c101259d84cf",
+    "623.js.map": "0d1484cb555852d3a38232b4bdf7a3df4ec1a90094762ac800cda37b24e331bc",
+    "791.js": "86eb762e5d9c66597db8a7d6f07153cab4e79f7b6331af05f8f6915068057e49",
+    "module.js": "e502ca2570bb12f6d06f5447085d6e1427e5d1f068228d6ef77d1669123703c3",
+    "656.js.map": "a827da60b0babb1709390bf735d64043b0ccb8babfd8042f03070e2a49ca6963",
+    "656.js": "09f34727bbbb85b6d622b16c0cd61c3368939ac8901fcbccea6c46df1b02cf14",
+    "783.js": "c7da41cde1c7bb903db0c4f19e68835a049ffab02c5304d41b958c002d847509",
+    "img/logo.svg": "3a23f8cdad37100716aa8a17c065afd0ee1c557b9dbeb5991482373297fe60e2",
+    "img/errors-metric-flow.png": "c10680c301dc72597b2ace18811494f1a330952b77a2e1a7344f99fe2ffd4b41",
+    "img/errors-root-cause.png": "599bf867d3411fa05a08c26c63b421c351e2a6c7689fb254bdb949b869204ad0",
+    "img/histogram-breakdown.png": "469248a97a7f029b94479c3f89231c1e921957a3b2aad98a6135949540df66a3",
+    "656.js.LICENSE.txt": "45a1deb9b8ce3f9c25cc12ee4054e7faf133cee8572bef1b2361281b23f9633a",
+    "966.js": "d80fbc57f0d162f8c0f79c896a486f76a21eb272aa0a07bacf5bfa4177f70aa4",
+    "172.js.map": "632b7769032aa3ab666812cbd545e9655371c85a629f837aaf438a6b6434a50a",
+    "e79edcfbe2068fae2364.svg": "89ea40b6dcf2dc8dfe146f8acac42b604e4d3c3dad03e539551d58a21f80654d",
+    "utils/trace-merge/test-responses/service-struct.json": "e00d31b20fec475399a0c4b18bcbb26b9c36f72c7e92283a67b032651b05c870",
+    "127.js": "11144ce2d152252b5df9441b11db76f9763d804719304a84692bb1e2cc301507",
+    "731.js.map": "4d91965ddff00fc0aa232c6ea93d444a4fd175a9a0d095f60e8d503f87f30a7e",
+    "961.js": "ece8b32cb766390a2d1f7f83acbe10ee6d94a3b50894081d664e72b9c93eb405",
+    "module.js.map": "2898e1558c6dba1505d79da0d8d5cec84a3fcbb0a7a7ada396fdb89e38c7e303",
+    "172.js": "af9c41a02b45e4175a351b7ca99f8aeb35f6b623292a88e4b66da6b8ef283e58",
+    "623.js": "ace11d4dc45680412dd76b75b7fff3b0cdc1526b8f54775bea8009f38913a909",
+    "783.js.LICENSE.txt": "0e533473e548cca244f039a2c48deef9b580716fdd414629ca01cba15ace2f57",
+    "944c737f589d02ecf603.svg": "a0c8acbcf5685a8950ce1c67722579dc745585fb0d668ce965327955e5e829ff"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA9BAETCgBtBYJp83UGCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnpcYeUTDloLZx6E9PJG0EHWxK7FL9IZY9Hv3t
+g01vQmcWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAA4agCCNllahnrYoYzOS40
+O9XoY2py896oFVVa3HtYmdcH6dYq6zNZjBRbKSUf95/znQ4DRkVOgwRlNpzy
+wmcoHbOA0NJrAgUeie8gN1R2mmjTAJIi3zcWbI9QvFXBMWVa/QSCfrIFiiNg
+ebRuQp/1Xoob4pbT99s53Wrjh7n0ojjokTLwipJ2Tg==
+=CKnf
+-----END PGP SIGNATURE-----

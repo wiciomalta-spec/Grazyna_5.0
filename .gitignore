@@ -73,3 +73,7 @@ prisma/migrations/dev/
 uploads/
 temp/
 tmp/
+node_modules
+dist
+.env
+node_modules

@@ -1,0 +1,14 @@
+{
+  "name": "ahe",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "agent": "ts-node agent/src/index.ts",
+    "agent:build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "ts-node": "^10.9.1"
+  }
+}
