@@ -94,3 +94,27 @@ tools/__init__.py
 tools/__init__.py
 
 tools/__init__.py
+
+analiza_structury_*.csv
+
+struktura_*.csv
+
+drzewo_*.txt
+
+katalog.txt
+
+GRAZYNA_TREE.txt
+
+*.prof
+
+build-backend.log*
+
+Nowy dokument tekstowy.txt
+
+Nowy Python File.py
+
+monitor-reports/
+
+_cache/
+
+_reports_fixroot/
