@@ -1,4 +1,0 @@
-root: E:\Grazyna_5.0\tools\nvm
-path: E:\Grazyna_5.0\tools\nodejs
-arch: 64
-proxy: none
