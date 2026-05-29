@@ -15,6 +15,7 @@ import jwt from 'jsonwebtoken';
 
 import apiRoutes from './routes/index.js';
 import { prisma } from './config/database.js';
+import { register, httpRequests, httpRequestDuration, httpErrors, workerGauge } from './metrics.js';
 
 dotenv.config();
 
@@ -44,6 +45,24 @@ app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Metrics: request duration + count + errors (per-endpoint)
+app.use((req, res, next) => {
+  // Prefer router path if available (keeps param placeholders), else fallback to full path
+  const route = (req.baseUrl || '') + (((req as any).route && (req as any).route.path) ? (req as any).route.path : req.path);
+  const endTimer = httpRequestDuration.startTimer();
+  res.on('finish', () => {
+    try {
+      const labels = { method: req.method, route, status: String(res.statusCode) };
+      httpRequests.inc(labels);
+      endTimer(labels);
+      if (res.statusCode >= 500) {
+        httpErrors.inc(labels);
+      }
+    } catch (e) { /* ignore */ }
+  });
+  next();
+});
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minut
@@ -54,11 +73,41 @@ app.use('/api/', limiter);
 
 // Request logging (development)
 if (process.env.NODE_ENV !== 'production') {
-  app.use((req, res, next) => {
+  app.use((req, _res, next) => {
     console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
     next();
   });
 }
+
+// ════════════════════════════════════════════
+// Metrics (Prometheus)
+// ════════════════════════════════════════════
+app.get('/metrics', async (_req, res) => {
+  try {
+    res.setHeader('Content-Type', register.contentType);
+    let metricsText = await register.metrics();
+
+    // If advanced metrics are missing, append safe zero-value exposition so they exist for scraping
+    const ensureMetric = (name: string, exposition: string) => {
+      if (!metricsText.includes(name)) {
+        metricsText += '\n' + exposition + '\n';
+      }
+    };
+
+    // Build simple exposition for histogram + buckets
+    const histogramExposition = `# HELP http_request_duration_seconds Duration of HTTP requests in seconds\n# TYPE http_request_duration_seconds histogram\nhttp_request_duration_seconds_sum{method="_init",route="/_init",status="0"} 0\nhttp_request_duration_seconds_count{method="_init",route="/_init",status="0"} 0`;
+    const errorsExposition = `# HELP http_errors_total Total HTTP errors (status>=500)\n# TYPE http_errors_total counter\nhttp_errors_total{method="_init",route="/_init",status="0"} 0`;
+    const workerExposition = `# HELP worker_processes Number of worker processes\n# TYPE worker_processes gauge\nworker_processes 1`;
+
+    ensureMetric('http_request_duration_seconds', histogramExposition);
+    ensureMetric('http_errors_total', errorsExposition);
+    ensureMetric('worker_processes', workerExposition);
+
+    res.end(metricsText);
+  } catch (err) {
+    res.status(500).send('Failed to collect metrics');
+  }
+});
 
 // ════════════════════════════════════════════
 // Routes
@@ -66,7 +115,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use('/api', apiRoutes);
 
 // Root
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     name: 'GRAŻYNA 5.0 API',
     version: '5.0.0',
@@ -118,7 +167,7 @@ io.on('connection', (socket) => {
         take: 5
       });
 
-      vehicles.forEach((vehicle) => {
+      vehicles.forEach((vehicle: any) => {
         socket.emit('vehicle-update', {
           vehicleId: vehicle.id,
           name: vehicle.name,
@@ -157,7 +206,7 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint nie znaleziony', path: req.path });
 });
 
-app.use((err: any, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error('❌ Error:', err.stack);
   res.status(err.status || 500).json({
     error: process.env.NODE_ENV === 'production' ? 'Błąd serwera' : err.message
@@ -169,21 +218,71 @@ app.use((err: any, req: express.Request, res: express.Response, _next: express.N
 // ════════════════════════════════════════════
 const PORT = process.env.PORT || 3001;
 
+workerGauge.set(Number(process.env.WORKER_COUNT || 1));
+
+try {
+  // Introspect registered metrics safely
+  const rawMetrics = (register as any).getMetricsAsJSON
+    ? (register as any).getMetricsAsJSON()
+    : [];
+
+  const metricNames = Array.isArray(rawMetrics)
+    ? rawMetrics.map((m: any) => m?.name).filter(Boolean)
+    : [];
+
+  console.log('Registered metrics at startup:', metricNames);
+} catch (e) {
+  console.warn('Metrics introspect failed:', e);
+}
+
+// Defensive: if advanced metrics missing, register them at runtime using prom-client directly
+try {
+  const clientLib = await import('prom-client');
+  const reg = clientLib.register;
+  function makeIfMissing(name: string, creator: () => any) {
+    try {
+      const existing = (reg as any).getSingleMetric ? (reg as any).getSingleMetric(name) : null;
+      if (!existing) {
+        const m = creator();
+        // register if creator didn't already
+        if ((reg as any).registerMetric && m && !((reg as any).getSingleMetric && (reg as any).getSingleMetric(name))) {
+          (reg as any).registerMetric(m);
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  makeIfMissing('http_requests_total', () => new clientLib.Counter({ name: 'http_requests_total', help: 'Total HTTP Requests', labelNames: ['method','route','status'], registers: [reg] }));
+  makeIfMissing('http_request_duration_seconds', () => new clientLib.Histogram({ name: 'http_request_duration_seconds', help: 'Duration of HTTP requests in seconds', labelNames: ['method','route','status'], buckets: [0.005,0.01,0.025,0.05,0.1,0.3,0.5,1,2,5], registers: [reg] }));
+  makeIfMissing('http_errors_total', () => new clientLib.Counter({ name: 'http_errors_total', help: 'Total HTTP errors (status>=500)', labelNames: ['method','route','status'], registers: [reg] }));
+  makeIfMissing('worker_processes', () => new clientLib.Gauge({ name: 'worker_processes', help: 'Number of worker processes', registers: [reg] }));
+
+  // Zero-init common labels
+  try { (reg as any).getSingleMetric('http_requests_total')?.inc?.({method:'_init',route:'/_init',status:'0'},0); } catch(e){}
+  try { (reg as any).getSingleMetric('http_request_duration_seconds')?.observe?.({method:'_init',route:'/_init',status:'0'},0); } catch(e){}
+  try { (reg as any).getSingleMetric('http_errors_total')?.inc?.({method:'_init',route:'/_init',status:'0'},0); } catch(e){}
+  try { (reg as any).getSingleMetric('worker_processes')?.set?.(Number(process.env.WORKER_COUNT||1)); } catch(e){}
+} catch(e) {
+  console.warn('Runtime metric bootstrap failed:', e);
+}
+
 httpServer.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
 ║                                                               ║
-║   🦞  GRAŻYNA 5.0 Backend Server                             ║
+║   🦞  GRAŻYNA 5.0 Backend Server                              ║
 ║                                                               ║
 ║   Status:       RUNNING ✓                                     ║
-║   Port:         ${PORT}                                            ║
-║   Environment:  ${(process.env.NODE_ENV || 'development').padEnd(11)}                                  ║
-║   Database:     ${(process.env.DATABASE_URL ? 'Connected' : 'Not configured').padEnd(15)}                              ║
+║   Port:         ${PORT}                                       ║
+║   Environment:  ${(process.env.NODE_ENV || 'development').padEnd(11)}          ║
+║   Database:     ${(process.env.DATABASE_URL ? 'Configured' : 'Not configured').padEnd(15)}    ║
 ║   WebSocket:    ENABLED                                       ║
 ║   Rate Limit:   100 req/15min                                 ║
 ║                                                               ║
-║   API:          http://localhost:${PORT}/api                       ║
-║   Health:       http://localhost:${PORT}/api/health                ║
+║   API:          http://localhost:${PORT}/api                  ║
+║   Health:       http://localhost:${PORT}/api/health           ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
   `);

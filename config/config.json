@@ -1,0 +1,11 @@
+{
+  "TUNERPRO": {
+    "drivers": [
+      "KESS",
+      "K-TAG",
+      "FGTech"
+    ],
+    "version": "2.0.0",
+    "install_dir": "E:\\Grazyna_5.0"
+  }
+}

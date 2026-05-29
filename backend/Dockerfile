@@ -1,24 +1,48 @@
-FROM node:20-slim AS builder
+# ===== BUILDER =====
+FROM node:18-bullseye AS builder
+
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl build-essential git && rm -rf /var/lib/apt/lists/*
-COPY package*.json package-lock.json ./
-COPY prisma ./prisma/
-ENV NPM_CONFIG_UPDATE_NOTIFIER=false
-RUN npm ci --no-audit --no-fund
-RUN npx prisma generate --schema=./prisma/schema.prisma
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    build-essential \
+    git \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json ./
+RUN npm ci
+
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+COPY prisma ./prisma
+RUN npx prisma generate
+
 COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
 
-FROM node:20-slim AS runtime
+
+# ===== RUNTIME =====
+FROM node:18-bullseye
+
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates libssl3 && rm -rf /var/lib/apt/lists/*
-COPY package*.json package-lock.json ./
-ENV NPM_CONFIG_UPDATE_NOTIFIER=false
-RUN npm ci --omit=dev --no-audit --no-fund
+ENV NODE_ENV=production
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    openssl \
+    wget \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+# COPY --from=builder /app/prisma ./prisma
+
+RUN useradd --user-group --create-home --shell /bin/false appuser
+USER appuser
+
 EXPOSE 3001
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
-CMD ["node","dist/index.js"]
+
+CMD ["node", "dist/index.js"]

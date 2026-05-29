@@ -155,7 +155,7 @@ export const deleteVehicle = async (req: Request, res: Response): Promise<void> 
 // ════════════════════════════════════════════
 // GET /api/vehicles/stats/summary
 // ════════════════════════════════════════════
-export const getVehicleStats = async (req: Request, res: Response): Promise<void> => {
+export const getVehicleStats = async (_req: Request, res: Response): Promise<void> => {
   try {
     const [total, active, charging, maintenance] = await Promise.all([
       prisma.vehicle.count(),

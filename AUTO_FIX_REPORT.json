@@ -1,0 +1,22 @@
+{
+  "root": "E:\\Grazyna_5.0",
+  "timestamp": "2026-05-28 23:04:02",
+  "searched_paths": [
+    "E:\\Grazyna_5.0",
+    "C:\\Users\\User",
+    "C:\\Users\\User\\Desktop",
+    "C:\\Users\\User\\Documents",
+    "C:\\Users\\User\\OneDrive"
+  ],
+  "found": {},
+  "copied": {
+    "ai_chat.py": "C:\\Users\\User\\Desktop\\GRAZYNA_ENTERPRISE_FULL_SYSTEM\\ai_chat.py",
+    "commands_manifest.json": "C:\\Users\\User\\Desktop\\Grazyna_RESTORE\\manifests\\commands_manifest.json",
+    "aliases.json": "C:\\Users\\User\\.codex\\worktrees\\5eed\\User\\Desktop\\Grazyna_MPPS_V21_Full\\manifests\\aliases.json",
+    "mega_panel.py": "C:\\Users\\User\\Desktop\\GRAZYNA_ENTERPRISE_FULL_SYSTEM\\mega_panel.py",
+    "actions_state.json": "C:\\Users\\User\\.codex\\worktrees\\5eed\\User\\Desktop\\Grazyna_MPPS_V21_Full\\manifests\\actions_state.json",
+    "rings_manifest.json": "C:\\Users\\User\\.codex\\worktrees\\5eed\\User\\Desktop\\Grazyna_MPPS_V21_Full\\manifests\\rings_manifest.json"
+  },
+  "patched": {},
+  "missing": []
+}

@@ -1,0 +1,4 @@
+ROOT: E:\Grazyna_5.0
+PY: E:\Grazyna_5.0\tools\PythonPortable\python.exe
+MISSING: none
+CREATED: core\command_registry.py, core\intent_parser.py, core\autocomplete.py, main_cli.py, start_web.ps1

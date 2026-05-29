@@ -1,0 +1,13 @@
+# Frontend Dockerfile (Vite / React)
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY frontend/package.json frontend/package-lock.json* ./ || true
+RUN npm ci --silent
+COPY frontend/ ./
+RUN npm run build
+
+FROM nginx:stable-alpine AS runtime
+COPY --from=builder /app/dist /usr/share/nginx/html
+# Simple nginx config can be added if needed
+EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]

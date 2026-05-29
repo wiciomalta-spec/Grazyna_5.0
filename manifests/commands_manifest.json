@@ -1,0 +1,138 @@
+﻿{
+    "ai.status":  {
+                      "module":  "rings.ring_ai_chat.chat",
+                      "method":  "status"
+                  },
+    "ecu.read":  {
+                     "module":  "rings.ring_ecu.ecu",
+                     "method":  "read"
+                 },
+    "ecu.backup":  {
+                       "module":  "rings.ring_ecu.ecu",
+                       "method":  "backup"
+                   },
+    "diag.scan":  {
+                      "module":  "rings.ring_diag.diag",
+                      "method":  "scan"
+                  },
+    "diag.quick":  {
+                       "module":  "rings.ring_diag.diag",
+                       "method":  "quick"
+                   },
+    "tuning.ve_plus5":  {
+                            "module":  "rings.ring_tuning.tuning",
+                            "method":  "ve_plus5"
+                        },
+    "tuning.sim":  {
+                       "module":  "rings.ring_tuning.tuning",
+                       "method":  "simulate"
+                   },
+    "tuning.open":  {
+                        "module":  "rings.ring_tuning.tuning",
+                        "method":  "open"
+                    },
+    "tuning.ve_minus5":  {
+                             "module":  "rings.ring_tuning.tuning",
+                             "method":  "ve_minus5"
+                         },
+    "tuning.ve_smooth":  {
+                             "module":  "rings.ring_tuning.tuning",
+                             "method":  "ve_smooth"
+                         },
+    "tuning.preset.eco":  {
+                              "module":  "rings.ring_tuning.tuning",
+                              "method":  "preset_eco"
+                          },
+    "tuning.preset.sport":  {
+                                "module":  "rings.ring_tuning.tuning",
+                                "method":  "preset_sport"
+                            },
+    "tuning.preset.track":  {
+                                "module":  "rings.ring_tuning.tuning",
+                                "method":  "preset_track"
+                            },
+    "tuning.undo":  {
+                        "module":  "rings.ring_tuning.tuning",
+                        "method":  "undo"
+                    },
+    "tuning.redo":  {
+                        "module":  "rings.ring_tuning.tuning",
+                        "method":  "redo"
+                    },
+    "tuning.diag":  {
+                        "module":  "rings.ring_tuning.tuning",
+                        "method":  "diag"
+                    },
+    "tuning.audit":  {
+                         "module":  "rings.ring_tuning.tuning",
+                         "method":  "audit_tail"
+                     },
+    "tuning.apply_virtual":  {
+                                 "module":  "rings.ring_tuning.tuning",
+                                 "method":  "virtual_apply"
+                             },
+    "diag.tuning":  {
+                        "module":  "rings.ring_diag.diag",
+                        "method":  "tuning"
+                    },
+    "live.read":  {
+                      "module":  "rings.ring_live.live",
+                      "method":  "read"
+                  },
+    "live.status":  {
+                        "module":  "rings.ring_live.live",
+                        "method":  "status"
+                    },
+    "tuning.export_pdf":  {
+                              "module":  "rings.ring_tuning.tuning",
+                              "method":  "export_pdf"
+                          },
+    "tuning.profile.list":  {
+                                "module":  "rings.ring_tuning.tuning",
+                                "method":  "profile_list"
+                            },
+    "tuning.profile.get":  {
+                               "module":  "rings.ring_tuning.tuning",
+                               "method":  "profile_get"
+                           },
+    "tuning.profile.set":  {
+                               "module":  "rings.ring_tuning.tuning",
+                               "method":  "profile_set"
+                           },
+    "tuning.profile.create":  {
+                                  "module":  "rings.ring_tuning.tuning",
+                                  "method":  "profile_create"
+                              },
+    "tuning.export_pdf_anim":  {
+                                   "module":  "rings.ring_tuning.tuning",
+                                   "method":  "export_pdf_anim"
+                               },
+    "tuning.profile.diff.eco_track":  {
+                                          "module":  "rings.ring_tuning.tuning",
+                                          "method":  "profile_diff_eco_track"
+                                      },
+    "tuning.profile.diff.eco_sport":  {
+                                          "module":  "rings.ring_tuning.tuning",
+                                          "method":  "profile_diff_eco_sport"
+                                      },
+    "tuning.profile.diff.sport_track":  {
+                                            "module":  "rings.ring_tuning.tuning",
+                                            "method":  "profile_diff_sport_track"
+                                        },
+    "tuning.profile.diff.active_sport":  {
+                                             "module":  "rings.ring_tuning.tuning",
+                                             "method":  "profile_diff_active_vs_sport"
+                                         },
+    "tuning.export_pdf_profiles":  {
+                                       "module":  "rings.ring_tuning.tuning",
+                                       "method":  "export_pdf_profiles"
+                                   },
+    "tuning.dashboard.risk":  {
+                                  "module":  "rings.ring_tuning.tuning",
+                                  "method":  "dashboard_risk"
+                              },
+    "tuning.export.duckdb":  {
+                                 "module":  "rings.ring_tuning.tuning",
+                                 "method":  "export_duckdb"
+                             }
+}

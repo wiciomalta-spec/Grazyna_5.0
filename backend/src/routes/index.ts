@@ -16,7 +16,7 @@ const router = Router();
 // ════════════════════════════════════════════
 // Health & Status
 // ════════════════════════════════════════════
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -25,7 +25,7 @@ router.get('/health', (req, res) => {
   });
 });
 
-router.get('/status', (req, res) => {
+router.get('/status', (_req, res) => {
   res.json({
     system: 'GRAŻYNA 5.0',
     status: 'operational',
