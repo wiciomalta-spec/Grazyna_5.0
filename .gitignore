@@ -85,3 +85,6 @@ tools/nvm/settings.txt
 tools/PythonPortable/
 *.exe
 *.dll
+
+_OLD_*/
+_OLD_*
