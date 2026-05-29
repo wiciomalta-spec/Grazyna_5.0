@@ -1,0 +1,2533 @@
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\_backup_fixroot
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : _backup_fixroot
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : _backup_fixroot
+ResolvedTarget      : E:\Grazyna_5.0\_backup_fixroot
+Target              : 
+LinkType            : 
+Name                : _backup_fixroot
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\_backup_fixroot
+Extension           : 
+CreationTime        : 27.05.2026 17:50:35
+CreationTimeUtc     : 27.05.2026 15:50:35
+LastAccessTime      : 27.05.2026 17:50:35
+LastAccessTimeUtc   : 27.05.2026 15:50:35
+LastWriteTime       : 27.05.2026 17:50:35
+LastWriteTimeUtc    : 27.05.2026 15:50:35
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\_reports_fixroot
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : _reports_fixroot
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : _reports_fixroot
+ResolvedTarget      : E:\Grazyna_5.0\_reports_fixroot
+Target              : 
+LinkType            : 
+Name                : _reports_fixroot
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\_reports_fixroot
+Extension           : 
+CreationTime        : 27.05.2026 17:50:35
+CreationTimeUtc     : 27.05.2026 15:50:35
+LastAccessTime      : 27.05.2026 17:50:35
+LastAccessTimeUtc   : 27.05.2026 15:50:35
+LastWriteTime       : 27.05.2026 17:50:35
+LastWriteTimeUtc    : 27.05.2026 15:50:35
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\.git
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : .git
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d--h-
+ModeWithoutHardLink : d--h-
+BaseName            : .git
+ResolvedTarget      : E:\Grazyna_5.0\.git
+Target              : 
+LinkType            : 
+Name                : .git
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\.git
+Extension           : .git
+CreationTime        : 25.05.2026 17:25:02
+CreationTimeUtc     : 25.05.2026 15:25:02
+LastAccessTime      : 27.05.2026 17:08:59
+LastAccessTimeUtc   : 27.05.2026 15:08:59
+LastWriteTime       : 27.05.2026 11:06:34
+LastWriteTimeUtc    : 27.05.2026 09:06:34
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Hidden, Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\.github
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : .github
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : .github
+ResolvedTarget      : E:\Grazyna_5.0\.github
+Target              : 
+LinkType            : 
+Name                : .github
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\.github
+Extension           : .github
+CreationTime        : 25.05.2026 19:04:13
+CreationTimeUtc     : 25.05.2026 17:04:13
+LastAccessTime      : 27.05.2026 17:08:59
+LastAccessTimeUtc   : 27.05.2026 15:08:59
+LastWriteTime       : 25.05.2026 19:04:21
+LastWriteTimeUtc    : 25.05.2026 17:04:21
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\ahe
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : ahe
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : ahe
+ResolvedTarget      : E:\Grazyna_5.0\ahe
+Target              : 
+LinkType            : 
+Name                : ahe
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\ahe
+Extension           : 
+CreationTime        : 26.05.2026 09:56:59
+CreationTimeUtc     : 26.05.2026 07:56:59
+LastAccessTime      : 27.05.2026 17:08:59
+LastAccessTimeUtc   : 27.05.2026 15:08:59
+LastWriteTime       : 26.05.2026 10:09:00
+LastWriteTimeUtc    : 26.05.2026 08:09:00
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\backend
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : backend
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : backend
+ResolvedTarget      : E:\Grazyna_5.0\backend
+Target              : 
+LinkType            : 
+Name                : backend
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\backend
+Extension           : 
+CreationTime        : 21.05.2026 19:04:11
+CreationTimeUtc     : 21.05.2026 17:04:11
+LastAccessTime      : 27.05.2026 16:59:39
+LastAccessTimeUtc   : 27.05.2026 14:59:39
+LastWriteTime       : 27.05.2026 10:58:04
+LastWriteTimeUtc    : 27.05.2026 08:58:04
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\certbot
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : certbot
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : certbot
+ResolvedTarget      : E:\Grazyna_5.0\certbot
+Target              : 
+LinkType            : 
+Name                : certbot
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\certbot
+Extension           : 
+CreationTime        : 25.05.2026 22:50:10
+CreationTimeUtc     : 25.05.2026 20:50:10
+LastAccessTime      : 27.05.2026 17:08:55
+LastAccessTimeUtc   : 27.05.2026 15:08:55
+LastWriteTime       : 26.05.2026 00:36:00
+LastWriteTimeUtc    : 25.05.2026 22:36:00
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\core
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : core
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : core
+ResolvedTarget      : E:\Grazyna_5.0\core
+Target              : 
+LinkType            : 
+Name                : core
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\core
+Extension           : 
+CreationTime        : 25.05.2026 17:22:49
+CreationTimeUtc     : 25.05.2026 15:22:49
+LastAccessTime      : 27.05.2026 17:08:55
+LastAccessTimeUtc   : 27.05.2026 15:08:55
+LastWriteTime       : 25.05.2026 17:22:49
+LastWriteTimeUtc    : 25.05.2026 15:22:49
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\data
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : data
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : data
+ResolvedTarget      : E:\Grazyna_5.0\data
+Target              : 
+LinkType            : 
+Name                : data
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\data
+Extension           : 
+CreationTime        : 20.05.2026 10:01:19
+CreationTimeUtc     : 20.05.2026 08:01:19
+LastAccessTime      : 27.05.2026 17:08:55
+LastAccessTimeUtc   : 27.05.2026 15:08:55
+LastWriteTime       : 25.05.2026 12:32:33
+LastWriteTimeUtc    : 25.05.2026 10:32:33
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\docs
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : docs
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : docs
+ResolvedTarget      : E:\Grazyna_5.0\docs
+Target              : 
+LinkType            : 
+Name                : docs
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\docs
+Extension           : 
+CreationTime        : 25.05.2026 12:42:33
+CreationTimeUtc     : 25.05.2026 10:42:33
+LastAccessTime      : 27.05.2026 17:08:55
+LastAccessTimeUtc   : 27.05.2026 15:08:55
+LastWriteTime       : 25.05.2026 12:42:33
+LastWriteTimeUtc    : 25.05.2026 10:42:33
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\frontend
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : frontend
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : frontend
+ResolvedTarget      : E:\Grazyna_5.0\frontend
+Target              : 
+LinkType            : 
+Name                : frontend
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\frontend
+Extension           : 
+CreationTime        : 25.05.2026 12:42:33
+CreationTimeUtc     : 25.05.2026 10:42:33
+LastAccessTime      : 27.05.2026 17:07:28
+LastAccessTimeUtc   : 27.05.2026 15:07:28
+LastWriteTime       : 25.05.2026 14:27:51
+LastWriteTimeUtc    : 25.05.2026 12:27:51
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\Grazyna_5.0
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : Grazyna_5.0
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : Grazyna_5.0
+ResolvedTarget      : E:\Grazyna_5.0\Grazyna_5.0
+Target              : 
+LinkType            : 
+Name                : Grazyna_5.0
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\Grazyna_5.0
+Extension           : .0
+CreationTime        : 25.05.2026 22:51:02
+CreationTimeUtc     : 25.05.2026 20:51:02
+LastAccessTime      : 27.05.2026 17:19:06
+LastAccessTimeUtc   : 27.05.2026 15:19:06
+LastWriteTime       : 27.05.2026 15:18:23
+LastWriteTimeUtc    : 27.05.2026 13:18:23
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\grazyna-system
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : grazyna-system
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : grazyna-system
+ResolvedTarget      : E:\Grazyna_5.0\grazyna-system
+Target              : 
+LinkType            : 
+Name                : grazyna-system
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\grazyna-system
+Extension           : 
+CreationTime        : 21.05.2026 19:04:09
+CreationTimeUtc     : 21.05.2026 17:04:09
+LastAccessTime      : 27.05.2026 17:08:23
+LastAccessTimeUtc   : 27.05.2026 15:08:23
+LastWriteTime       : 25.05.2026 13:22:58
+LastWriteTimeUtc    : 25.05.2026 11:22:58
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\installer_v4
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : installer_v4
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : installer_v4
+ResolvedTarget      : E:\Grazyna_5.0\installer_v4
+Target              : 
+LinkType            : 
+Name                : installer_v4
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\installer_v4
+Extension           : 
+CreationTime        : 20.05.2026 13:20:06
+CreationTimeUtc     : 20.05.2026 11:20:06
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 25.05.2026 12:32:56
+LastWriteTimeUtc    : 25.05.2026 10:32:56
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\lib
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : lib
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : lib
+ResolvedTarget      : E:\Grazyna_5.0\lib
+Target              : 
+LinkType            : 
+Name                : lib
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\lib
+Extension           : 
+CreationTime        : 20.05.2026 11:11:41
+CreationTimeUtc     : 20.05.2026 09:11:41
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 25.05.2026 12:33:03
+LastWriteTimeUtc    : 25.05.2026 10:33:03
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\listen
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : listen
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : listen
+ResolvedTarget      : E:\Grazyna_5.0\listen
+Target              : 
+LinkType            : 
+Name                : listen
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\listen
+Extension           : 
+CreationTime        : 20.05.2026 10:01:19
+CreationTimeUtc     : 20.05.2026 08:01:19
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 25.05.2026 12:33:10
+LastWriteTimeUtc    : 25.05.2026 10:33:10
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\logs
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : logs
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : logs
+ResolvedTarget      : E:\Grazyna_5.0\logs
+Target              : 
+LinkType            : 
+Name                : logs
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\logs
+Extension           : 
+CreationTime        : 25.05.2026 14:50:51
+CreationTimeUtc     : 25.05.2026 12:50:51
+LastAccessTime      : 27.05.2026 17:26:08
+LastAccessTimeUtc   : 27.05.2026 15:26:08
+LastWriteTime       : 25.05.2026 14:50:51
+LastWriteTimeUtc    : 25.05.2026 12:50:51
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\modules
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : modules
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : modules
+ResolvedTarget      : E:\Grazyna_5.0\modules
+Target              : 
+LinkType            : 
+Name                : modules
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\modules
+Extension           : 
+CreationTime        : 20.05.2026 11:21:47
+CreationTimeUtc     : 20.05.2026 09:21:47
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 25.05.2026 14:48:17
+LastWriteTimeUtc    : 25.05.2026 12:48:17
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\monitor-reports
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : monitor-reports
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : monitor-reports
+ResolvedTarget      : E:\Grazyna_5.0\monitor-reports
+Target              : 
+LinkType            : 
+Name                : monitor-reports
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\monitor-reports
+Extension           : 
+CreationTime        : 27.05.2026 10:36:05
+CreationTimeUtc     : 27.05.2026 08:36:05
+LastAccessTime      : 27.05.2026 17:44:10
+LastAccessTimeUtc   : 27.05.2026 15:44:10
+LastWriteTime       : 27.05.2026 10:42:05
+LastWriteTimeUtc    : 27.05.2026 08:42:05
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\monitoring
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : monitoring
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : monitoring
+ResolvedTarget      : E:\Grazyna_5.0\monitoring
+Target              : 
+LinkType            : 
+Name                : monitoring
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\monitoring
+Extension           : 
+CreationTime        : 26.05.2026 21:27:47
+CreationTimeUtc     : 26.05.2026 19:27:47
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 26.05.2026 21:29:01
+LastWriteTimeUtc    : 26.05.2026 19:29:01
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\nginx
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : nginx
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : nginx
+ResolvedTarget      : E:\Grazyna_5.0\nginx
+Target              : 
+LinkType            : 
+Name                : nginx
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\nginx
+Extension           : 
+CreationTime        : 25.05.2026 22:50:09
+CreationTimeUtc     : 25.05.2026 20:50:09
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 26.05.2026 21:19:47
+LastWriteTimeUtc    : 26.05.2026 19:19:47
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\node_modules
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : node_modules
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : node_modules
+ResolvedTarget      : E:\Grazyna_5.0\node_modules
+Target              : 
+LinkType            : 
+Name                : node_modules
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\node_modules
+Extension           : 
+CreationTime        : 26.05.2026 21:29:34
+CreationTimeUtc     : 26.05.2026 19:29:34
+LastAccessTime      : 27.05.2026 17:26:04
+LastAccessTimeUtc   : 27.05.2026 15:26:04
+LastWriteTime       : 26.05.2026 21:29:37
+LastWriteTimeUtc    : 26.05.2026 19:29:37
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\prisma
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : prisma
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : prisma
+ResolvedTarget      : E:\Grazyna_5.0\prisma
+Target              : 
+LinkType            : 
+Name                : prisma
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\prisma
+Extension           : 
+CreationTime        : 26.05.2026 20:39:28
+CreationTimeUtc     : 26.05.2026 18:39:28
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 26.05.2026 20:39:28
+LastWriteTimeUtc    : 26.05.2026 18:39:28
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\scripts
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : scripts
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : scripts
+ResolvedTarget      : E:\Grazyna_5.0\scripts
+Target              : 
+LinkType            : 
+Name                : scripts
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\scripts
+Extension           : 
+CreationTime        : 20.05.2026 10:01:19
+CreationTimeUtc     : 20.05.2026 08:01:19
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 25.05.2026 12:42:32
+LastWriteTimeUtc    : 25.05.2026 10:42:32
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\tools
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : tools
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : tools
+ResolvedTarget      : E:\Grazyna_5.0\tools
+Target              : 
+LinkType            : 
+Name                : tools
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\tools
+Extension           : 
+CreationTime        : 20.05.2026 11:11:41
+CreationTimeUtc     : 20.05.2026 09:11:41
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 25.05.2026 12:33:32
+LastWriteTimeUtc    : 25.05.2026 10:33:32
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\update
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : update
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : True
+Mode                : d----
+ModeWithoutHardLink : d----
+BaseName            : update
+ResolvedTarget      : E:\Grazyna_5.0\update
+Target              : 
+LinkType            : 
+Name                : update
+Parent              : E:\Grazyna_5.0
+Root                : E:\
+Exists              : True
+FullName            : E:\Grazyna_5.0\update
+Extension           : 
+CreationTime        : 20.05.2026 14:29:43
+CreationTimeUtc     : 20.05.2026 12:29:43
+LastAccessTime      : 27.05.2026 17:09:03
+LastAccessTimeUtc   : 27.05.2026 15:09:03
+LastWriteTime       : 25.05.2026 12:33:48
+LastWriteTimeUtc    : 25.05.2026 10:33:48
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Directory
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\__init__.py
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : __init__.py
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\__init__.py
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : __init__
+ResolvedTarget      : E:\Grazyna_5.0\__init__.py
+Target              : 
+LinkType            : 
+Name                : __init__.py
+Length              : 0
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\__init__.py
+Extension           : .py
+CreationTime        : 25.05.2026 12:33:55
+CreationTimeUtc     : 25.05.2026 10:33:55
+LastAccessTime      : 25.05.2026 12:33:55
+LastAccessTimeUtc   : 25.05.2026 10:33:55
+LastWriteTime       : 25.05.2026 12:01:48
+LastWriteTimeUtc    : 25.05.2026 10:01:48
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\.dockerignore
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : .dockerignore
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\.dockerignore
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : 
+ResolvedTarget      : E:\Grazyna_5.0\.dockerignore
+Target              : 
+LinkType            : 
+Name                : .dockerignore
+Length              : 70
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\.dockerignore
+Extension           : .dockerignore
+CreationTime        : 25.05.2026 22:15:02
+CreationTimeUtc     : 25.05.2026 20:15:02
+LastAccessTime      : 27.05.2026 16:27:01
+LastAccessTimeUtc   : 27.05.2026 14:27:01
+LastWriteTime       : 25.05.2026 22:15:02
+LastWriteTimeUtc    : 25.05.2026 20:15:02
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\.gitignore
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : .gitignore
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\.gitignore
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : 
+ResolvedTarget      : E:\Grazyna_5.0\.gitignore
+Target              : 
+LinkType            : 
+Name                : .gitignore
+Length              : 713
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\.gitignore
+Extension           : .gitignore
+CreationTime        : 20.05.2026 22:55:36
+CreationTimeUtc     : 20.05.2026 20:55:36
+LastAccessTime      : 27.05.2026 17:31:36
+LastAccessTimeUtc   : 27.05.2026 15:31:36
+LastWriteTime       : 25.05.2026 19:06:06
+LastWriteTimeUtc    : 25.05.2026 17:06:06
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\1docker-compose.prod.yml
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : 1docker-compose.prod.yml
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\1docker-compose.prod.yml
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : 1docker-compose.prod
+ResolvedTarget      : E:\Grazyna_5.0\1docker-compose.prod.yml
+Target              : 
+LinkType            : 
+Name                : 1docker-compose.prod.yml
+Length              : 1197
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\1docker-compose.prod.yml
+Extension           : .yml
+CreationTime        : 25.05.2026 22:50:25
+CreationTimeUtc     : 25.05.2026 20:50:25
+LastAccessTime      : 27.05.2026 16:27:01
+LastAccessTimeUtc   : 27.05.2026 14:27:01
+LastWriteTime       : 26.05.2026 00:55:41
+LastWriteTimeUtc    : 25.05.2026 22:55:41
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\apply_patch.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : apply_patch.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\apply_patch.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : apply_patch
+ResolvedTarget      : E:\Grazyna_5.0\apply_patch.ps1
+Target              : 
+LinkType            : 
+Name                : apply_patch.ps1
+Length              : 2323
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\apply_patch.ps1
+Extension           : .ps1
+CreationTime        : 26.05.2026 01:56:33
+CreationTimeUtc     : 25.05.2026 23:56:33
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 26.05.2026 01:57:00
+LastWriteTimeUtc    : 25.05.2026 23:57:00
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\auto_fix_prisma_simple.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : auto_fix_prisma_simple.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\auto_fix_prisma_simple.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : auto_fix_prisma_simple
+ResolvedTarget      : E:\Grazyna_5.0\auto_fix_prisma_simple.ps1
+Target              : 
+LinkType            : 
+Name                : auto_fix_prisma_simple.ps1
+Length              : 5135
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\auto_fix_prisma_simple.ps1
+Extension           : .ps1
+CreationTime        : 27.05.2026 10:37:54
+CreationTimeUtc     : 27.05.2026 08:37:54
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 27.05.2026 10:38:21
+LastWriteTimeUtc    : 27.05.2026 08:38:21
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\auto_fix_prisma.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : auto_fix_prisma.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\auto_fix_prisma.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : auto_fix_prisma
+ResolvedTarget      : E:\Grazyna_5.0\auto_fix_prisma.ps1
+Target              : 
+LinkType            : 
+Name                : auto_fix_prisma.ps1
+Length              : 9826
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\auto_fix_prisma.ps1
+Extension           : .ps1
+CreationTime        : 27.05.2026 10:35:11
+CreationTimeUtc     : 27.05.2026 08:35:11
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 27.05.2026 11:14:56
+LastWriteTimeUtc    : 27.05.2026 09:14:56
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\build-backend.log
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : build-backend.log
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\build-backend.log
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : build-backend
+ResolvedTarget      : E:\Grazyna_5.0\build-backend.log
+Target              : 
+LinkType            : 
+Name                : build-backend.log
+Length              : 412
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\build-backend.log
+Extension           : .log
+CreationTime        : 27.05.2026 10:46:18
+CreationTimeUtc     : 27.05.2026 08:46:18
+LastAccessTime      : 27.05.2026 11:20:17
+LastAccessTimeUtc   : 27.05.2026 09:20:17
+LastWriteTime       : 27.05.2026 11:20:17
+LastWriteTimeUtc    : 27.05.2026 09:20:17
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\build-backend.log'
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : build-backend.log'
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\build-backend.log'
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : build-backend
+ResolvedTarget      : E:\Grazyna_5.0\build-backend.log'
+Target              : 
+LinkType            : 
+Name                : build-backend.log'
+Length              : 0
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\build-backend.log'
+Extension           : .log'
+CreationTime        : 27.05.2026 10:13:54
+CreationTimeUtc     : 27.05.2026 08:13:54
+LastAccessTime      : 27.05.2026 10:13:54
+LastAccessTimeUtc   : 27.05.2026 08:13:54
+LastWriteTime       : 27.05.2026 10:13:54
+LastWriteTimeUtc    : 27.05.2026 08:13:54
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\dashboard_pro.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : dashboard_pro.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\dashboard_pro.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : dashboard_pro
+ResolvedTarget      : E:\Grazyna_5.0\dashboard_pro.ps1
+Target              : 
+LinkType            : 
+Name                : dashboard_pro.ps1
+Length              : 3076
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\dashboard_pro.ps1
+Extension           : .ps1
+CreationTime        : 25.05.2026 11:36:14
+CreationTimeUtc     : 25.05.2026 09:36:14
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 25.05.2026 11:36:33
+LastWriteTimeUtc    : 25.05.2026 09:36:33
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\docker-compose.monitoring.yml
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : docker-compose.monitoring.yml
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\docker-compose.monitoring.yml
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : docker-compose.monitoring
+ResolvedTarget      : E:\Grazyna_5.0\docker-compose.monitoring.yml
+Target              : 
+LinkType            : 
+Name                : docker-compose.monitoring.yml
+Length              : 717
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\docker-compose.monitoring.yml
+Extension           : .yml
+CreationTime        : 26.05.2026 21:22:02
+CreationTimeUtc     : 26.05.2026 19:22:02
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 26.05.2026 21:27:26
+LastWriteTimeUtc    : 26.05.2026 19:27:26
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\docker-compose.prod.yml
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : docker-compose.prod.yml
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\docker-compose.prod.yml
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : docker-compose.prod
+ResolvedTarget      : E:\Grazyna_5.0\docker-compose.prod.yml
+Target              : 
+LinkType            : 
+Name                : docker-compose.prod.yml
+Length              : 1837
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\docker-compose.prod.yml
+Extension           : .yml
+CreationTime        : 26.05.2026 01:28:12
+CreationTimeUtc     : 25.05.2026 23:28:12
+LastAccessTime      : 27.05.2026 16:02:44
+LastAccessTimeUtc   : 27.05.2026 14:02:44
+LastWriteTime       : 26.05.2026 02:01:30
+LastWriteTimeUtc    : 26.05.2026 00:01:30
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\docker-compose.prod.yml.bak
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : docker-compose.prod.yml.bak
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\docker-compose.prod.yml.bak
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : docker-compose.prod.yml
+ResolvedTarget      : E:\Grazyna_5.0\docker-compose.prod.yml.bak
+Target              : 
+LinkType            : 
+Name                : docker-compose.prod.yml.bak
+Length              : 1837
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\docker-compose.prod.yml.bak
+Extension           : .bak
+CreationTime        : 27.05.2026 10:58:04
+CreationTimeUtc     : 27.05.2026 08:58:04
+LastAccessTime      : 27.05.2026 10:58:04
+LastAccessTimeUtc   : 27.05.2026 08:58:04
+LastWriteTime       : 26.05.2026 02:01:30
+LastWriteTimeUtc    : 26.05.2026 00:01:30
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\docker-compose.prod.yml.bak_20260526015724
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : docker-compose.prod.yml.bak_20260526015724
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\docker-compose.prod.yml.bak_20260526015724
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : docker-compose.prod.yml
+ResolvedTarget      : E:\Grazyna_5.0\docker-compose.prod.yml.bak_20260526015724
+Target              : 
+LinkType            : 
+Name                : docker-compose.prod.yml.bak_20260526015724
+Length              : 1837
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\docker-compose.prod.yml.bak_20260526015724
+Extension           : .bak_20260526015724
+CreationTime        : 26.05.2026 01:57:24
+CreationTimeUtc     : 25.05.2026 23:57:24
+LastAccessTime      : 27.05.2026 16:27:01
+LastAccessTimeUtc   : 27.05.2026 14:27:01
+LastWriteTime       : 26.05.2026 01:55:42
+LastWriteTimeUtc    : 25.05.2026 23:55:42
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\docker-compose.yml
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : docker-compose.yml
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\docker-compose.yml
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : docker-compose
+ResolvedTarget      : E:\Grazyna_5.0\docker-compose.yml
+Target              : 
+LinkType            : 
+Name                : docker-compose.yml
+Length              : 2165
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\docker-compose.yml
+Extension           : .yml
+CreationTime        : 25.05.2026 19:16:34
+CreationTimeUtc     : 25.05.2026 17:16:34
+LastAccessTime      : 27.05.2026 16:02:43
+LastAccessTimeUtc   : 27.05.2026 14:02:43
+LastWriteTime       : 25.05.2026 20:58:10
+LastWriteTimeUtc    : 25.05.2026 18:58:10
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\Dockerfile
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : Dockerfile
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\Dockerfile
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : Dockerfile
+ResolvedTarget      : E:\Grazyna_5.0\Dockerfile
+Target              : 
+LinkType            : 
+Name                : Dockerfile
+Length              : 1052
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\Dockerfile
+Extension           : 
+CreationTime        : 25.05.2026 19:32:18
+CreationTimeUtc     : 25.05.2026 17:32:18
+LastAccessTime      : 27.05.2026 17:29:42
+LastAccessTimeUtc   : 27.05.2026 15:29:42
+LastWriteTime       : 27.05.2026 17:29:42
+LastWriteTimeUtc    : 27.05.2026 15:29:42
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\fix.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : fix.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\fix.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : fix
+ResolvedTarget      : E:\Grazyna_5.0\fix.ps1
+Target              : 
+LinkType            : 
+Name                : fix.ps1
+Length              : 1013
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\fix.ps1
+Extension           : .ps1
+CreationTime        : 26.05.2026 00:49:06
+CreationTimeUtc     : 25.05.2026 22:49:06
+LastAccessTime      : 27.05.2026 10:38:38
+LastAccessTimeUtc   : 27.05.2026 08:38:38
+LastWriteTime       : 26.05.2026 00:49:32
+LastWriteTimeUtc    : 25.05.2026 22:49:32
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\GRAZYNA_FRONTEND_FIX.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : GRAZYNA_FRONTEND_FIX.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\GRAZYNA_FRONTEND_FIX.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : GRAZYNA_FRONTEND_FIX
+ResolvedTarget      : E:\Grazyna_5.0\GRAZYNA_FRONTEND_FIX.ps1
+Target              : 
+LinkType            : 
+Name                : GRAZYNA_FRONTEND_FIX.ps1
+Length              : 1147
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\GRAZYNA_FRONTEND_FIX.ps1
+Extension           : .ps1
+CreationTime        : 25.05.2026 14:21:15
+CreationTimeUtc     : 25.05.2026 12:21:15
+LastAccessTime      : 27.05.2026 16:27:03
+LastAccessTimeUtc   : 27.05.2026 14:27:03
+LastWriteTime       : 25.05.2026 14:21:52
+LastWriteTimeUtc    : 25.05.2026 12:21:52
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\GRAZYNA_LAUNCHER.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : GRAZYNA_LAUNCHER.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\GRAZYNA_LAUNCHER.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : GRAZYNA_LAUNCHER
+ResolvedTarget      : E:\Grazyna_5.0\GRAZYNA_LAUNCHER.ps1
+Target              : 
+LinkType            : 
+Name                : GRAZYNA_LAUNCHER.ps1
+Length              : 2693
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\GRAZYNA_LAUNCHER.ps1
+Extension           : .ps1
+CreationTime        : 25.05.2026 14:38:45
+CreationTimeUtc     : 25.05.2026 12:38:45
+LastAccessTime      : 27.05.2026 16:27:03
+LastAccessTimeUtc   : 27.05.2026 14:27:03
+LastWriteTime       : 25.05.2026 14:44:54
+LastWriteTimeUtc    : 25.05.2026 12:44:54
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\GRAZYNA_TREE.txt
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : GRAZYNA_TREE.txt
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\GRAZYNA_TREE.txt
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : GRAZYNA_TREE
+ResolvedTarget      : E:\Grazyna_5.0\GRAZYNA_TREE.txt
+Target              : 
+LinkType            : 
+Name                : GRAZYNA_TREE.txt
+Length              : 4229380
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\GRAZYNA_TREE.txt
+Extension           : .txt
+CreationTime        : 25.05.2026 13:33:14
+CreationTimeUtc     : 25.05.2026 11:33:14
+LastAccessTime      : 27.05.2026 16:27:03
+LastAccessTimeUtc   : 27.05.2026 14:27:03
+LastWriteTime       : 25.05.2026 13:33:18
+LastWriteTimeUtc    : 25.05.2026 11:33:18
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\grazyna-5.0-system.zip
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : grazyna-5.0-system.zip
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\grazyna-5.0-system.zip
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : grazyna-5.0-system
+ResolvedTarget      : E:\Grazyna_5.0\grazyna-5.0-system.zip
+Target              : 
+LinkType            : 
+Name                : grazyna-5.0-system.zip
+Length              : 60124
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\grazyna-5.0-system.zip
+Extension           : .zip
+CreationTime        : 25.05.2026 12:41:27
+CreationTimeUtc     : 25.05.2026 10:41:27
+LastAccessTime      : 26.05.2026 15:43:50
+LastAccessTimeUtc   : 26.05.2026 13:43:50
+LastWriteTime       : 25.05.2026 12:41:43
+LastWriteTimeUtc    : 25.05.2026 10:41:43
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\healthcheck.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : healthcheck.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\healthcheck.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : healthcheck
+ResolvedTarget      : E:\Grazyna_5.0\healthcheck.ps1
+Target              : 
+LinkType            : 
+Name                : healthcheck.ps1
+Length              : 1630
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\healthcheck.ps1
+Extension           : .ps1
+CreationTime        : 26.05.2026 01:07:34
+CreationTimeUtc     : 25.05.2026 23:07:34
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 26.05.2026 01:08:00
+LastWriteTimeUtc    : 25.05.2026 23:08:00
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\Install_Python_Full.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : Install_Python_Full.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\Install_Python_Full.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : Install_Python_Full
+ResolvedTarget      : E:\Grazyna_5.0\Install_Python_Full.ps1
+Target              : 
+LinkType            : 
+Name                : Install_Python_Full.ps1
+Length              : 1637
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\Install_Python_Full.ps1
+Extension           : .ps1
+CreationTime        : 20.05.2026 11:57:24
+CreationTimeUtc     : 20.05.2026 09:57:24
+LastAccessTime      : 27.05.2026 16:27:21
+LastAccessTimeUtc   : 27.05.2026 14:27:21
+LastWriteTime       : 20.05.2026 11:57:39
+LastWriteTimeUtc    : 20.05.2026 09:57:39
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\install.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : install.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\install.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : install
+ResolvedTarget      : E:\Grazyna_5.0\install.ps1
+Target              : 
+LinkType            : 
+Name                : install.ps1
+Length              : 8373
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\install.ps1
+Extension           : .ps1
+CreationTime        : 20.05.2026 23:02:14
+CreationTimeUtc     : 20.05.2026 21:02:14
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 25.05.2026 12:42:32
+LastWriteTimeUtc    : 25.05.2026 10:42:32
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\install.sh
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : install.sh
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\install.sh
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : install
+ResolvedTarget      : E:\Grazyna_5.0\install.sh
+Target              : 
+LinkType            : 
+Name                : install.sh
+Length              : 11418
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\install.sh
+Extension           : .sh
+CreationTime        : 23.05.2026 01:40:28
+CreationTimeUtc     : 22.05.2026 23:40:28
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 25.05.2026 12:42:32
+LastWriteTimeUtc    : 25.05.2026 10:42:32
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\launch.bat
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : launch.bat
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\launch.bat
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : launch
+ResolvedTarget      : E:\Grazyna_5.0\launch.bat
+Target              : 
+LinkType            : 
+Name                : launch.bat
+Length              : 70
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\launch.bat
+Extension           : .bat
+CreationTime        : 19.01.2026 19:44:23
+CreationTimeUtc     : 19.01.2026 18:44:23
+LastAccessTime      : 27.05.2026 16:27:21
+LastAccessTimeUtc   : 27.05.2026 14:27:21
+LastWriteTime       : 20.05.2026 11:51:59
+LastWriteTimeUtc    : 20.05.2026 09:51:59
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\main.py
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : main.py
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\main.py
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : main
+ResolvedTarget      : E:\Grazyna_5.0\main.py
+Target              : 
+LinkType            : 
+Name                : main.py
+Length              : 19199
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\main.py
+Extension           : .py
+CreationTime        : 19.01.2026 19:44:23
+CreationTimeUtc     : 19.01.2026 18:44:23
+LastAccessTime      : 27.05.2026 16:27:21
+LastAccessTimeUtc   : 27.05.2026 14:27:21
+LastWriteTime       : 25.05.2026 17:23:03
+LastWriteTimeUtc    : 25.05.2026 15:23:03
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\package-lock.json
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : package-lock.json
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\package-lock.json
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : package-lock
+ResolvedTarget      : E:\Grazyna_5.0\package-lock.json
+Target              : 
+LinkType            : 
+Name                : package-lock.json
+Length              : 1624
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\package-lock.json
+Extension           : .json
+CreationTime        : 25.05.2026 13:47:28
+CreationTimeUtc     : 25.05.2026 11:47:28
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 26.05.2026 21:29:37
+LastWriteTimeUtc    : 26.05.2026 19:29:37
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\package.json
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : package.json
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\package.json
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : package
+ResolvedTarget      : E:\Grazyna_5.0\package.json
+Target              : 
+LinkType            : 
+Name                : package.json
+Length              : 57
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\package.json
+Extension           : .json
+CreationTime        : 26.05.2026 21:29:36
+CreationTimeUtc     : 26.05.2026 19:29:36
+LastAccessTime      : 27.05.2026 16:26:10
+LastAccessTimeUtc   : 27.05.2026 14:26:10
+LastWriteTime       : 26.05.2026 21:29:36
+LastWriteTimeUtc    : 26.05.2026 19:29:36
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\patch_open_ssl3_bullseye.(1)diff
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : patch_open_ssl3_bullseye.(1)diff
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\patch_open_ssl3_bullseye.(1)diff
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : patch_open_ssl3_bullseye
+ResolvedTarget      : E:\Grazyna_5.0\patch_open_ssl3_bullseye.(1)diff
+Target              : 
+LinkType            : 
+Name                : patch_open_ssl3_bullseye.(1)diff
+Length              : 3257
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\patch_open_ssl3_bullseye.(1)diff
+Extension           : .(1)diff
+CreationTime        : 27.05.2026 10:56:48
+CreationTimeUtc     : 27.05.2026 08:56:48
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 27.05.2026 10:57:50
+LastWriteTimeUtc    : 27.05.2026 08:57:50
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\patch_open_ssl3_bullseye.diff
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : patch_open_ssl3_bullseye.diff
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\patch_open_ssl3_bullseye.diff
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : patch_open_ssl3_bullseye
+ResolvedTarget      : E:\Grazyna_5.0\patch_open_ssl3_bullseye.diff
+Target              : 
+LinkType            : 
+Name                : patch_open_ssl3_bullseye.diff
+Length              : 1712
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\patch_open_ssl3_bullseye.diff
+Extension           : .diff
+CreationTime        : 27.05.2026 10:59:23
+CreationTimeUtc     : 27.05.2026 08:59:23
+LastAccessTime      : 27.05.2026 10:59:49
+LastAccessTimeUtc   : 27.05.2026 08:59:49
+LastWriteTime       : 27.05.2026 10:59:49
+LastWriteTimeUtc    : 27.05.2026 08:59:49
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\patch.diff
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : patch.diff
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\patch.diff
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : patch
+ResolvedTarget      : E:\Grazyna_5.0\patch.diff
+Target              : 
+LinkType            : 
+Name                : patch.diff
+Length              : 8355
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\patch.diff
+Extension           : .diff
+CreationTime        : 26.05.2026 01:26:01
+CreationTimeUtc     : 25.05.2026 23:26:01
+LastAccessTime      : 27.05.2026 16:27:02
+LastAccessTimeUtc   : 27.05.2026 14:27:02
+LastWriteTime       : 27.05.2026 10:14:08
+LastWriteTimeUtc    : 27.05.2026 08:14:08
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\prometheus.yml
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : prometheus.yml
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\prometheus.yml
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : prometheus
+ResolvedTarget      : E:\Grazyna_5.0\prometheus.yml
+Target              : 
+LinkType            : 
+Name                : prometheus.yml
+Length              : 220
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\prometheus.yml
+Extension           : .yml
+CreationTime        : 26.05.2026 21:22:53
+CreationTimeUtc     : 26.05.2026 19:22:53
+LastAccessTime      : 27.05.2026 10:38:47
+LastAccessTimeUtc   : 27.05.2026 08:38:47
+LastWriteTime       : 26.05.2026 21:23:33
+LastWriteTimeUtc    : 26.05.2026 19:23:33
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\README.md
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : README.md
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\README.md
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : README
+ResolvedTarget      : E:\Grazyna_5.0\README.md
+Target              : 
+LinkType            : 
+Name                : README.md
+Length              : 9095
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\README.md
+Extension           : .md
+CreationTime        : 23.05.2026 01:39:02
+CreationTimeUtc     : 22.05.2026 23:39:02
+LastAccessTime      : 27.05.2026 10:38:37
+LastAccessTimeUtc   : 27.05.2026 08:38:37
+LastWriteTime       : 25.05.2026 19:00:07
+LastWriteTimeUtc    : 25.05.2026 17:00:07
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\requirements.txt
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : requirements.txt
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\requirements.txt
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : requirements
+ResolvedTarget      : E:\Grazyna_5.0\requirements.txt
+Target              : 
+LinkType            : 
+Name                : requirements.txt
+Length              : 128
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\requirements.txt
+Extension           : .txt
+CreationTime        : 19.01.2026 19:44:24
+CreationTimeUtc     : 19.01.2026 18:44:24
+LastAccessTime      : 26.05.2026 15:43:51
+LastAccessTimeUtc   : 26.05.2026 13:43:51
+LastWriteTime       : 20.05.2026 11:11:44
+LastWriteTimeUtc    : 20.05.2026 09:11:44
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\safe_mode_pro.py
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : safe_mode_pro.py
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\safe_mode_pro.py
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : safe_mode_pro
+ResolvedTarget      : E:\Grazyna_5.0\safe_mode_pro.py
+Target              : 
+LinkType            : 
+Name                : safe_mode_pro.py
+Length              : 4971
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\safe_mode_pro.py
+Extension           : .py
+CreationTime        : 20.05.2026 14:30:43
+CreationTimeUtc     : 20.05.2026 12:30:43
+LastAccessTime      : 25.05.2026 17:26:32
+LastAccessTimeUtc   : 25.05.2026 15:26:32
+LastWriteTime       : 20.05.2026 14:31:00
+LastWriteTimeUtc    : 20.05.2026 12:31:00
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\safe_mode.py
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : safe_mode.py
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\safe_mode.py
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : safe_mode
+ResolvedTarget      : E:\Grazyna_5.0\safe_mode.py
+Target              : 
+LinkType            : 
+Name                : safe_mode.py
+Length              : 6429
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\safe_mode.py
+Extension           : .py
+CreationTime        : 20.05.2026 14:25:34
+CreationTimeUtc     : 20.05.2026 12:25:34
+LastAccessTime      : 25.05.2026 17:26:32
+LastAccessTimeUtc   : 25.05.2026 15:26:32
+LastWriteTime       : 20.05.2026 14:24:19
+LastWriteTimeUtc    : 20.05.2026 12:24:19
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\stary docker-compose.yml
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : stary docker-compose.yml
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\stary docker-compose.yml
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : stary docker-compose
+ResolvedTarget      : E:\Grazyna_5.0\stary docker-compose.yml
+Target              : 
+LinkType            : 
+Name                : stary docker-compose.yml
+Length              : 3748
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\stary docker-compose.yml
+Extension           : .yml
+CreationTime        : 20.05.2026 22:59:26
+CreationTimeUtc     : 20.05.2026 20:59:26
+LastAccessTime      : 27.05.2026 10:38:47
+LastAccessTimeUtc   : 27.05.2026 08:38:47
+LastWriteTime       : 25.05.2026 12:42:32
+LastWriteTimeUtc    : 25.05.2026 10:42:32
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\system_log.py
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : system_log.py
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\system_log.py
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : system_log
+ResolvedTarget      : E:\Grazyna_5.0\system_log.py
+Target              : 
+LinkType            : 
+Name                : system_log.py
+Length              : 297
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\system_log.py
+Extension           : .py
+CreationTime        : 20.05.2026 11:22:13
+CreationTimeUtc     : 20.05.2026 09:22:13
+LastAccessTime      : 25.05.2026 17:26:32
+LastAccessTimeUtc   : 25.05.2026 15:26:32
+LastWriteTime       : 20.05.2026 11:22:29
+LastWriteTimeUtc    : 20.05.2026 09:22:29
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\web_panel_pro.py
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : web_panel_pro.py
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\web_panel_pro.py
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : web_panel_pro
+ResolvedTarget      : E:\Grazyna_5.0\web_panel_pro.py
+Target              : 
+LinkType            : 
+Name                : web_panel_pro.py
+Length              : 3935
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\web_panel_pro.py
+Extension           : .py
+CreationTime        : 25.05.2026 11:47:07
+CreationTimeUtc     : 25.05.2026 09:47:07
+LastAccessTime      : 27.05.2026 16:27:01
+LastAccessTimeUtc   : 27.05.2026 14:27:01
+LastWriteTime       : 25.05.2026 11:47:38
+LastWriteTimeUtc    : 25.05.2026 09:47:38
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+
+PSPath              : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0\web_panel_shortcut.ps1
+PSParentPath        : Microsoft.PowerShell.Core\FileSystem::E:\Grazyna_5.0
+PSChildName         : web_panel_shortcut.ps1
+PSDrive             : E
+PSProvider          : Microsoft.PowerShell.Core\FileSystem
+PSIsContainer       : False
+Mode                : -a---
+ModeWithoutHardLink : -a---
+VersionInfo         : File:             E:\Grazyna_5.0\web_panel_shortcut.ps1
+                      InternalName:     
+                      OriginalFilename: 
+                      FileVersion:      
+                      FileDescription:  
+                      Product:          
+                      ProductVersion:   
+                      Debug:            False
+                      Patched:          False
+                      PreRelease:       False
+                      PrivateBuild:     False
+                      SpecialBuild:     False
+                      Language:         
+                      
+BaseName            : web_panel_shortcut
+ResolvedTarget      : E:\Grazyna_5.0\web_panel_shortcut.ps1
+Target              : 
+LinkType            : 
+Name                : web_panel_shortcut.ps1
+Length              : 572
+DirectoryName       : E:\Grazyna_5.0
+Directory           : E:\Grazyna_5.0
+IsReadOnly          : False
+Exists              : True
+FullName            : E:\Grazyna_5.0\web_panel_shortcut.ps1
+Extension           : .ps1
+CreationTime        : 25.05.2026 11:47:50
+CreationTimeUtc     : 25.05.2026 09:47:50
+LastAccessTime      : 27.05.2026 16:27:01
+LastAccessTimeUtc   : 27.05.2026 14:27:01
+LastWriteTime       : 25.05.2026 11:48:11
+LastWriteTimeUtc    : 25.05.2026 09:48:11
+LinkTarget          : 
+UnixFileMode        : -1
+Attributes          : Archive
+

@@ -1,39 +1,33 @@
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+
 from difflib import get_close_matches
-from command_registry import SYSTEM_COMMANDS
+from typing import List
+
+from .command_registry import SYSTEM_COMMANDS
+
+
+def _norm(s: str) -> str:
+    return (s or "").strip().lower()
 
 
 class AutocompleteEngine:
-
     def __init__(self):
-        self.commands = list(SYSTEM_COMMANDS.keys())
+        self._commands = self._build_list()
 
-        self.alias_map = {}
+    def _build_list(self) -> List[str]:
+        return sorted([_norm(k) for k in SYSTEM_COMMANDS.keys()])
 
-        for cmd, data in SYSTEM_COMMANDS.items():
-            for alias in data.get("aliases", []):
-                self.alias_map[alias] = cmd
+    def refresh(self):
+        self._commands = self._build_list()
 
-    def suggest(self, text: str):
+    def suggest(self, user_input: str, limit: int = 6) -> List[str]:
+        t = _norm(user_input)
+        if not t:
+            return self._commands[:limit]
 
-        text = text.lower().strip()
+        pref = [c for c in self._commands if c.startswith(t)]
+        if pref:
+            return pref[:limit]
 
-        suggestions = []
-
-        for cmd in self.commands:
-            if cmd.startswith(text):
-                suggestions.append(cmd)
-
-        for alias, real_cmd in self.alias_map.items():
-            if alias.startswith(text):
-                suggestions.append(real_cmd)
-
-        fuzzy = get_close_matches(
-            text,
-            self.commands,
-            n=5,
-            cutoff=0.4
-        )
-
-        suggestions.extend(fuzzy)
-
-        return list(dict.fromkeys(suggestions))[:5]
+        return get_close_matches(t, self._commands, n=limit, cutoff=0.55)

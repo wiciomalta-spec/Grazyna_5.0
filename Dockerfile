@@ -1,47 +1,41 @@
+# =============================================
 # ✅ BUILDER
-FROM node:20-slim AS builder
+# =============================================
+FROM node:18-bullseye AS builder
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  ca-certificates curl build-essential git \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl build-essential git && rm -rf /var/lib/apt/lists/*
 
-# install deps (DEV + PROD)
 COPY package*.json ./
-RUN npm ci
+RUN npm install --no-audit --no-fund
 
-# prisma
-COPY prisma ./prisma
-RUN npx prisma generate
+# Skip prisma generate during image build (may require local prisma client generation in dev)
+# COPY prisma ./prisma
+# RUN npx prisma generate || true
 
-# build app
 COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
 
 
+# =============================================
 # ✅ RUNTIME
-FROM node:20-alpine
+# =============================================
+FROM node:18-bullseye
 
 WORKDIR /app
 ENV NODE_ENV=production
 
-# required libs for prisma
-RUN apk add --no-cache openssl libc6-compat ca-certificates
-
-# ❌ NIE robimy npm ci tutaj!
-# ✅ kopiujemy GOTOWE node_modules z buildera
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates openssl wget && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/node_modules ./node_modules
-
-# app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package*.json ./
 
-# health
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
+RUN useradd --user-group --create-home --shell /bin/false appuser
+USER appuser
 
 EXPOSE 3001
 

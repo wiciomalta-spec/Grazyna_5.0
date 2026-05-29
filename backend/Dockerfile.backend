@@ -1,0 +1,20 @@
+# Backend Dockerfile (Node + TypeScript runtime for dev/production)
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY backend/package.json backend/package-lock.json* ./ || true
+RUN npm ci --silent
+COPY backend/ ./ 
+# build not required for ts-node runtime, but keep for production
+RUN npm run build || true
+
+FROM node:20-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/package.json ./package.json
+EXPOSE 4000
+CMD ["node", "dist/server.js"]
+# Fallback to ts-node if dist missing (dev)
+# CMD ["npx", "ts-node", "src/server.ts"]

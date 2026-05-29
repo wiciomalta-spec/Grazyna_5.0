@@ -1,0 +1,27 @@
+{
+  "diag.status": {
+    "status": "OK",
+    "fail_count": 0,
+    "last_error": null
+  },
+  "ecu.read": {
+    "status": "OK",
+    "fail_count": 0,
+    "last_error": null
+  },
+  "ai.analyze": {
+    "status": "OK",
+    "fail_count": 0,
+    "last_error": null
+  },
+  "ai.status": {
+    "status": "OK",
+    "fail_count": 0,
+    "last_error": null
+  },
+  "live.read": {
+    "status": "OK",
+    "fail_count": 0,
+    "last_error": null
+  }
+}

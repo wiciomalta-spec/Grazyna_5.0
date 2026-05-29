@@ -1,0 +1,12 @@
+{
+  "ring_diag": {
+    "module": "rings.ring_diag.diag",
+    "description": "Auto ring diag",
+    "auto": true
+  },
+  "ring_tuning": {
+    "module": "rings.ring_tuning.tuning",
+    "description": "Tuning Studio – wirtualne modyfikacje map ECU (VE, zapłon, boost, limity) z symulacją i presetami.",
+    "auto": true
+  }
+}
