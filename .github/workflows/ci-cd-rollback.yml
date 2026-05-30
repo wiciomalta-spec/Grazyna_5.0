@@ -1,0 +1,707 @@
+name: GRAŻYNA 5.0 — CI/CD z Auto-Rollback
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_env:
+        description: 'Środowisko deploymentu'
+        required: true
+        default: 'staging'
+        type: choice
+        options: [staging, production]
+      force_rollback:
+        description: 'Wymuś rollback do poprzedniej wersji'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  NODE_VERSION: '20.11.0'
+  REGISTRY: ghcr.io
+  IMAGE_BACKEND: ghcr.io/${{ github.repository }}/grazyna-backend
+  IMAGE_FRONTEND: ghcr.io/${{ github.repository }}/grazyna-frontend
+  HEALTH_URL_STAGING: http://staging.grazyna.local:3001/health
+  HEALTH_URL_PROD: http://localhost:3001/health
+  ROLLBACK_WINDOW_SECONDS: 120
+  MAX_HEALTH_RETRIES: 10
+  HEALTH_RETRY_INTERVAL: 15
+
+# ─────────────────────────────────────────────────────────────
+# JOB 1: MANUAL ROLLBACK (jeśli wymuszone)
+# ─────────────────────────────────────────────────────────────
+jobs:
+  manual-rollback:
+    name: 🔙 Manual Rollback
+    runs-on: ubuntu-latest
+    if: github.event.inputs.force_rollback == 'true'
+    environment:
+      name: ${{ github.event.inputs.deploy_env }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Execute rollback
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ github.event.inputs.deploy_env == 'production' && secrets.PROD_HOST || secrets.STAGING_HOST }}
+          username: ${{ github.event.inputs.deploy_env == 'production' && secrets.PROD_USER || secrets.STAGING_USER }}
+          key: ${{ github.event.inputs.deploy_env == 'production' && secrets.PROD_SSH_KEY || secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/grazyna
+            echo "🔙 MANUAL ROLLBACK INITIATED"
+            echo "Środowisko: ${{ github.event.inputs.deploy_env }}"
+            echo "Czas: $(date)"
+
+            # Sprawdź dostępne backupy
+            ls -la /opt/grazyna/backups/ | tail -5
+
+            # Rollback do poprzedniej wersji
+            PREV_VERSION=$(cat /opt/grazyna/backups/last_stable_version.txt 2>/dev/null || echo "")
+            if [ -z "$PREV_VERSION" ]; then
+              echo "❌ Brak zapisanej poprzedniej wersji!"
+              exit 1
+            fi
+
+            echo "Rollback do wersji: $PREV_VERSION"
+            docker-compose -f docker-compose.prod.yml stop backend frontend
+            docker tag ${IMAGE_BACKEND}:${PREV_VERSION} ${IMAGE_BACKEND}:current
+            docker tag ${IMAGE_FRONTEND}:${PREV_VERSION} ${IMAGE_FRONTEND}:current
+            docker-compose -f docker-compose.prod.yml up -d backend frontend
+
+            echo "✅ Rollback zakończony do: $PREV_VERSION"
+
+      - name: Verify rollback health
+        run: |
+          sleep 20
+          for i in $(seq 1 5); do
+            if curl -sf ${{ github.event.inputs.deploy_env == 'production' && env.HEALTH_URL_PROD || env.HEALTH_URL_STAGING }}; then
+              echo "✅ Rollback health check passed"
+              exit 0
+            fi
+            echo "Próba $i/5 nieudana, czekam 10s..."
+            sleep 10
+          done
+          echo "❌ Rollback health check FAILED"
+          exit 1
+
+# ─────────────────────────────────────────────────────────────
+# JOB 2: LINT & TYPE CHECK
+# ─────────────────────────────────────────────────────────────
+  lint:
+    name: 🔍 Lint & Type Check
+    runs-on: ubuntu-latest
+    if: github.event.inputs.force_rollback != 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Install deps
+        run: |
+          cd backend && npm ci --prefer-offline
+          cd ../frontend && npm ci --prefer-offline
+
+      - name: TypeScript check
+        run: |
+          cd backend && npx tsc --noEmit
+          cd ../frontend && npx tsc --noEmit
+
+      - name: ESLint
+        run: |
+          cd backend && npm run lint -- --format=json --output-file=lint-backend.json || true
+          cd ../frontend && npm run lint -- --format=json --output-file=lint-frontend.json || true
+
+      - name: Upload lint results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-results
+          path: |
+            backend/lint-backend.json
+            frontend/lint-frontend.json
+
+# ─────────────────────────────────────────────────────────────
+# JOB 3: TEST
+# ─────────────────────────────────────────────────────────────
+  test:
+    name: 🧪 Tests
+    runs-on: ubuntu-latest
+    needs: lint
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: grazyna
+          POSTGRES_PASSWORD: grazyna123
+          POSTGRES_DB: grazyna_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install & migrate
+        run: |
+          cd backend && npm ci
+          npx prisma generate
+          npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://grazyna:grazyna123@localhost:5432/grazyna_test
+
+      - name: Run tests with coverage
+        run: cd backend && npm test -- --coverage --reporter=verbose
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://grazyna:grazyna123@localhost:5432/grazyna_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test_secret_ci
+          PORT: 3001
+
+      - name: Check coverage thresholds
+        run: |
+          cd backend
+          COVERAGE=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+          echo "Coverage: ${COVERAGE}%"
+          if (( $(echo "$COVERAGE < 60" | bc -l) )); then
+            echo "❌ Coverage ${COVERAGE}% < 60% threshold"
+            exit 1
+          fi
+          echo "✅ Coverage OK: ${COVERAGE}%"
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          directory: backend/coverage
+          flags: backend
+
+# ─────────────────────────────────────────────────────────────
+# JOB 4: BUILD & PUSH
+# ─────────────────────────────────────────────────────────────
+  build:
+    name: 🔨 Build & Push
+    runs-on: ubuntu-latest
+    needs: test
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      short-sha: ${{ steps.version.outputs.short-sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version info
+        id: version
+        run: |
+          VERSION=$(node -p "require('./backend/package.json').version")
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "version=${VERSION}-${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "short-sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "Version: ${VERSION}-${SHORT_SHA}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Build backend
+        run: cd backend && npm ci && npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Build frontend
+        run: cd frontend && npm ci && npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'http://localhost:3001/api' }}
+          VITE_WS_URL: ${{ secrets.VITE_WS_URL || 'ws://localhost:3001' }}
+          VITE_APP_VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Registry
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push backend
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.IMAGE_BACKEND }}:latest
+            ${{ env.IMAGE_BACKEND }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE_BACKEND }}:sha-${{ steps.version.outputs.short-sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build & push frontend
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ env.IMAGE_FRONTEND }}:latest
+            ${{ env.IMAGE_FRONTEND }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE_FRONTEND }}:sha-${{ steps.version.outputs.short-sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+# ─────────────────────────────────────────────────────────────
+# JOB 5: DEPLOY STAGING + AUTO-ROLLBACK
+# ─────────────────────────────────────────────────────────────
+  deploy-staging:
+    name: 🚀 Deploy Staging + Auto-Rollback
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: staging
+      url: http://staging.grazyna.local
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Save current version before deploy
+        id: pre-deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/grazyna
+            mkdir -p backups
+
+            # Zapisz aktualną wersję jako "last stable"
+            CURRENT=$(docker inspect ${IMAGE_BACKEND}:latest --format='{{index .RepoDigests 0}}' 2>/dev/null || echo "none")
+            echo "$CURRENT" > backups/last_stable_version.txt
+            echo "Poprzednia wersja: $CURRENT"
+
+            # Backup bazy danych przed deployem
+            BACKUP_FILE="backups/db-pre-deploy-$(date +%Y%m%d-%H%M%S).sql"
+            docker-compose -f docker-compose.prod.yml exec -T postgres \
+              pg_dump -U grazyna grazyna_db > $BACKUP_FILE 2>/dev/null || echo "DB backup pominięty"
+            echo "DB backup: $BACKUP_FILE"
+
+      - name: Deploy to staging
+        id: deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/grazyna
+            echo "🚀 Deploying version: ${{ needs.build.outputs.version }}"
+
+            git pull origin main
+
+            # Pull nowych obrazów
+            docker-compose -f docker-compose.prod.yml pull backend frontend
+
+            # Rolling update — najpierw backend
+            docker-compose -f docker-compose.prod.yml up -d --no-deps backend
+            sleep 10
+
+            # Sprawdź backend przed frontendem
+            if ! curl -sf http://localhost:3001/health; then
+              echo "❌ Backend health check failed po deploy!"
+              exit 1
+            fi
+
+            # Deploy frontend
+            docker-compose -f docker-compose.prod.yml up -d --no-deps frontend
+
+            # Migracje DB
+            docker-compose -f docker-compose.prod.yml exec -T backend \
+              npx prisma migrate deploy || echo "Migracje pominięte"
+
+            echo "✅ Deploy zakończony: $(date)"
+            echo "VERSION=${{ needs.build.outputs.version }}" > /opt/grazyna/current_version.txt
+
+      - name: Health check with auto-rollback
+        id: health-check
+        run: |
+          echo "🔍 Sprawdzam health przez ${{ env.ROLLBACK_WINDOW_SECONDS }}s..."
+          RETRIES=${{ env.MAX_HEALTH_RETRIES }}
+          INTERVAL=${{ env.HEALTH_RETRY_INTERVAL }}
+          SUCCESS=0
+
+          for i in $(seq 1 $RETRIES); do
+            echo "Próba $i/$RETRIES..."
+
+            # Sprawdź /health
+            HEALTH_STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+              ${{ env.HEALTH_URL_STAGING }} 2>/dev/null || echo "000")
+
+            # Sprawdź /metrics (EL lag)
+            METRICS=$(curl -sf ${{ env.HEALTH_URL_STAGING }}/metrics 2>/dev/null || echo "")
+            EL_LAG=$(echo "$METRICS" | grep "nodejs_eventloop_lag_seconds " | awk '{print $2}' || echo "0")
+            EL_LAG_MS=$(echo "$EL_LAG * 1000" | bc 2>/dev/null || echo "0")
+
+            echo "  HTTP: $HEALTH_STATUS | EL Lag: ${EL_LAG_MS}ms"
+
+            if [ "$HEALTH_STATUS" = "200" ]; then
+              # Sprawdź czy EL lag nie jest krytyczny (>100ms)
+              if (( $(echo "$EL_LAG_MS > 100" | bc -l 2>/dev/null || echo 0) )); then
+                echo "  ⚠️  EL Lag ${EL_LAG_MS}ms > 100ms — monitoruję..."
+              else
+                echo "  ✅ Health OK (HTTP 200, EL ${EL_LAG_MS}ms)"
+                SUCCESS=1
+                break
+              fi
+            fi
+
+            if [ $i -lt $RETRIES ]; then
+              echo "  Czekam ${INTERVAL}s..."
+              sleep $INTERVAL
+            fi
+          done
+
+          if [ $SUCCESS -eq 0 ]; then
+            echo "❌ Health check FAILED po $RETRIES próbach!"
+            echo "health_failed=true" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          echo "health_failed=false" >> $GITHUB_OUTPUT
+          echo "✅ Staging deployment zdrowy!"
+
+      - name: AUTO-ROLLBACK on failure
+        if: failure() && steps.deploy.outcome == 'success'
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/grazyna
+            echo "🔙 AUTO-ROLLBACK INITIATED!"
+            echo "Czas: $(date)"
+            echo "Powód: Health check failed"
+
+            # Przywróć poprzednią wersję
+            PREV_VERSION=$(cat backups/last_stable_version.txt 2>/dev/null || echo "")
+
+            if [ -n "$PREV_VERSION" ]; then
+              echo "Rollback do: $PREV_VERSION"
+              docker-compose -f docker-compose.prod.yml stop backend frontend
+
+              # Przywróć poprzedni obraz
+              docker pull $PREV_VERSION 2>/dev/null || true
+              docker tag $PREV_VERSION ${IMAGE_BACKEND}:latest 2>/dev/null || true
+
+              docker-compose -f docker-compose.prod.yml up -d backend frontend
+              sleep 15
+
+              # Weryfikacja rollback
+              if curl -sf http://localhost:3001/health; then
+                echo "✅ AUTO-ROLLBACK UDANY!"
+                echo "ROLLBACK_VERSION=$PREV_VERSION" > /opt/grazyna/current_version.txt
+              else
+                echo "❌ ROLLBACK FAILED — wymagana interwencja manualna!"
+                # Wyślij alert (można dodać webhook Slack/Teams)
+              fi
+            else
+              echo "❌ Brak poprzedniej wersji do rollback!"
+              echo "Próba restartu aktualnej wersji..."
+              docker-compose -f docker-compose.prod.yml restart backend frontend
+            fi
+
+      - name: Notify rollback
+        if: failure() && steps.deploy.outcome == 'success'
+        run: |
+          echo "🔔 ALERT: Auto-rollback wykonany na staging!"
+          echo "Wersja: ${{ needs.build.outputs.version }}"
+          echo "Commit: ${{ github.sha }}"
+          # Tutaj można dodać webhook do Slack/Teams/Discord
+
+# ─────────────────────────────────────────────────────────────
+# JOB 6: PERFORMANCE CHECK po deploy
+# ─────────────────────────────────────────────────────────────
+  performance-check:
+    name: 📊 Performance Check
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Check EL Lag metrics
+        run: |
+          echo "📊 Sprawdzam metryki wydajności..."
+          METRICS=$(curl -sf ${{ env.HEALTH_URL_STAGING }}/metrics 2>/dev/null || echo "")
+
+          if [ -z "$METRICS" ]; then
+            echo "⚠️  Nie można pobrać metryk"
+            exit 0
+          fi
+
+          # Parse kluczowych metryk
+          EL_LAG=$(echo "$METRICS" | grep "^nodejs_eventloop_lag_seconds " | awk '{print $2}')
+          EL_MAX=$(echo "$METRICS" | grep "^nodejs_eventloop_lag_max_seconds " | awk '{print $2}')
+          EL_P99=$(echo "$METRICS" | grep "^nodejs_eventloop_lag_p99_seconds " | awk '{print $2}')
+          HEAP_USED=$(echo "$METRICS" | grep "^nodejs_heap_size_used_bytes " | awk '{print $2}')
+          HEAP_TOTAL=$(echo "$METRICS" | grep "^nodejs_heap_size_total_bytes " | awk '{print $2}')
+          RSS=$(echo "$METRICS" | grep "^process_resident_memory_bytes " | awk '{print $2}')
+
+          EL_LAG_MS=$(echo "$EL_LAG * 1000" | bc 2>/dev/null || echo "?")
+          EL_MAX_MS=$(echo "$EL_MAX * 1000" | bc 2>/dev/null || echo "?")
+          EL_P99_MS=$(echo "$EL_P99 * 1000" | bc 2>/dev/null || echo "?")
+          RSS_MB=$(echo "scale=1; $RSS / 1048576" | bc 2>/dev/null || echo "?")
+
+          echo "📈 METRYKI PO DEPLOY:"
+          echo "  EL Lag:     ${EL_LAG_MS}ms (poprzednio: 1.58ms)"
+          echo "  EL Lag max: ${EL_MAX_MS}ms (poprzednio: 35ms)"
+          echo "  EL Lag p99: ${EL_P99_MS}ms (poprzednio: 29.9ms)"
+          echo "  RSS:        ${RSS_MB}MB (poprzednio: 63.6MB)"
+
+          # Sprawdź progi
+          FAILED=0
+          if (( $(echo "${EL_LAG_MS:-0} > 50" | bc -l 2>/dev/null || echo 0) )); then
+            echo "❌ EL Lag ${EL_LAG_MS}ms > 50ms threshold!"
+            FAILED=1
+          fi
+          if (( $(echo "${EL_MAX_MS:-0} > 200" | bc -l 2>/dev/null || echo 0) )); then
+            echo "❌ EL Lag max ${EL_MAX_MS}ms > 200ms threshold!"
+            FAILED=1
+          fi
+
+          if [ $FAILED -eq 1 ]; then
+            echo "⚠️  Performance degradation detected — rozważ rollback"
+            exit 1
+          fi
+
+          echo "✅ Performance OK!"
+
+# ─────────────────────────────────────────────────────────────
+# JOB 7: DEPLOY PRODUCTION + AUTO-ROLLBACK
+# ─────────────────────────────────────────────────────────────
+  deploy-production:
+    name: 🏭 Deploy Production + Auto-Rollback
+    runs-on: ubuntu-latest
+    needs: [build, deploy-staging, performance-check]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_env == 'production'
+    environment:
+      name: production
+      url: https://grazyna.example.com
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pre-deploy backup
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /opt/grazyna
+            mkdir -p backups
+
+            # Zapisz aktualną wersję
+            CURRENT_VERSION=$(cat current_version.txt 2>/dev/null || echo "unknown")
+            echo "$CURRENT_VERSION" > backups/last_stable_version.txt
+            echo "Poprzednia stabilna wersja: $CURRENT_VERSION"
+
+            # Full DB backup
+            BACKUP_FILE="backups/db-prod-$(date +%Y%m%d-%H%M%S).sql"
+            docker-compose -f docker-compose.prod.yml exec -T postgres \
+              pg_dump -U grazyna grazyna_db > $BACKUP_FILE
+            gzip $BACKUP_FILE
+            echo "✅ DB backup: ${BACKUP_FILE}.gz"
+
+            # Zachowaj ostatnie 10 backupów
+            ls -t backups/db-prod-*.sql.gz | tail -n +11 | xargs rm -f 2>/dev/null || true
+
+      - name: Blue-Green Deploy
+        id: prod-deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /opt/grazyna
+            echo "🏭 PRODUCTION DEPLOY: ${{ needs.build.outputs.version }}"
+
+            git pull origin main
+
+            # Pull nowych obrazów
+            docker-compose -f docker-compose.prod.yml pull
+
+            # Blue-Green: uruchom nową wersję na innym porcie
+            export NEW_BACKEND_PORT=3011
+            docker-compose -f docker-compose.prod.yml \
+              -p grazyna-green \
+              up -d backend
+
+            sleep 20
+
+            # Sprawdź nową wersję
+            if curl -sf http://localhost:${NEW_BACKEND_PORT}/health; then
+              echo "✅ Green deployment zdrowy"
+
+              # Przełącz Nginx na nową wersję
+              docker-compose -f docker-compose.prod.yml up -d --no-deps nginx
+
+              # Zatrzymaj starą wersję (blue)
+              docker-compose -f docker-compose.prod.yml -p grazyna-blue down 2>/dev/null || true
+
+              # Migracje
+              docker-compose -f docker-compose.prod.yml exec -T backend \
+                npx prisma migrate deploy
+
+              echo "VERSION=${{ needs.build.outputs.version }}" > current_version.txt
+              echo "✅ Production deploy zakończony!"
+            else
+              echo "❌ Green deployment FAILED — zatrzymuję"
+              docker-compose -f docker-compose.prod.yml -p grazyna-green down
+              exit 1
+            fi
+
+      - name: Production health check (extended)
+        run: |
+          echo "🔍 Extended health check (5 minut)..."
+          CHECKS=20
+          PASSED=0
+
+          for i in $(seq 1 $CHECKS); do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+              https://grazyna.example.com/health 2>/dev/null || echo "000")
+
+            if [ "$STATUS" = "200" ]; then
+              PASSED=$((PASSED + 1))
+              echo "✅ Check $i/$CHECKS: HTTP $STATUS"
+            else
+              echo "❌ Check $i/$CHECKS: HTTP $STATUS"
+            fi
+            sleep 15
+          done
+
+          SUCCESS_RATE=$((PASSED * 100 / CHECKS))
+          echo "Success rate: ${SUCCESS_RATE}% ($PASSED/$CHECKS)"
+
+          if [ $SUCCESS_RATE -lt 90 ]; then
+            echo "❌ Success rate ${SUCCESS_RATE}% < 90% — triggering rollback!"
+            exit 1
+          fi
+          echo "✅ Production stable!"
+
+      - name: AUTO-ROLLBACK production on failure
+        if: failure() && steps.prod-deploy.outcome == 'success'
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /opt/grazyna
+            echo "🚨 PRODUCTION AUTO-ROLLBACK!"
+            echo "Czas: $(date)"
+
+            PREV=$(cat backups/last_stable_version.txt 2>/dev/null || echo "")
+            echo "Rollback do: $PREV"
+
+            # Przywróć poprzednią wersję
+            docker-compose -f docker-compose.prod.yml -p grazyna-green down 2>/dev/null || true
+            docker-compose -f docker-compose.prod.yml -p grazyna-blue up -d 2>/dev/null || \
+              docker-compose -f docker-compose.prod.yml up -d
+
+            sleep 20
+
+            if curl -sf https://grazyna.example.com/health; then
+              echo "✅ PRODUCTION ROLLBACK UDANY!"
+            else
+              echo "🚨 PRODUCTION ROLLBACK FAILED — WYMAGANA NATYCHMIASTOWA INTERWENCJA!"
+              # PagerDuty / OpsGenie alert tutaj
+            fi
+
+      - name: Create release on success
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.build.outputs.version }}
+          name: GRAŻYNA 5.0 — v${{ needs.build.outputs.version }}
+          body: |
+            ## 🚀 Production Deployment
+
+            **Wersja:** ${{ needs.build.outputs.version }}
+            **Commit:** ${{ github.sha }}
+            **Data:** ${{ github.event.head_commit.timestamp }}
+
+            ### Metryki przed deployem
+            - EL Lag: 1.58ms (max 35ms, p99 29.9ms)
+            - Heap: 91.1% (17.4/19.1 MB)
+            - RSS: 63.6 MB
+            - /health: 2.28ms avg
+            - /api: 2.5ms avg
+
+            ### Zmiany
+            ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+
+# ─────────────────────────────────────────────────────────────
+# JOB 8: NOTIFY
+# ─────────────────────────────────────────────────────────────
+  notify:
+    name: 📢 Notify
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, performance-check]
+    if: always() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deployment summary
+        run: |
+          echo "## 📊 Deployment Summary"
+          echo "Version: ${{ needs.build.outputs.version || 'unknown' }}"
+          echo "Staging: ${{ needs.deploy-staging.result }}"
+          echo "Performance: ${{ needs.performance-check.result }}"
+          echo ""
+          if [ "${{ needs.deploy-staging.result }}" = "success" ]; then
+            echo "✅ Staging deployment UDANY"
+          else
+            echo "❌ Staging deployment NIEUDANY — auto-rollback wykonany"
+          fi

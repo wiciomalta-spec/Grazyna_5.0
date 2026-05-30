@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRAŻYNA 5.0 — Panel Sterowania</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1525;
+    --bg3: #151d35;
+    --card: #1a2340;
+    --card2: #1e2a4a;
+    --border: #2a3a6a;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+    --glow2: 0 0 20px rgba(124,58,237,0.3);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0f1525 0%, #1a1040 50%, #0f1525 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .header-left { display:flex; align-items:center; gap:16px; }
+  .logo {
+    font-size: 22px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #00d4ff, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+  }
+  .version-badge {
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+  .header-right { display:flex; align-items:center; gap:12px; }
+  .status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent3);
+    box-shadow: 0 0 8px var(--accent3);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.6; transform:scale(1.2); }
+  }
+  .status-text { font-size:13px; color:var(--accent3); font-weight:600; }
+  .clock { font-size:13px; color:var(--text2); font-family:monospace; }
+
+  /* LAYOUT */
+  .container { max-width: 1600px; margin: 0 auto; padding: 24px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
+  .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:20px; }
+  .grid-1 { display:grid; grid-template-columns:1fr; gap:16px; margin-bottom:20px; }
+  @media(max-width:1200px) { .grid-4{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:900px) { .grid-4,.grid-3,.grid-2{grid-template-columns:1fr;} }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { border-color: var(--accent); box-shadow: var(--glow); }
+  .card-header {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:16px;
+  }
+  .card-title {
+    font-size:13px; font-weight:700; text-transform:uppercase;
+    letter-spacing:1px; color:var(--text2);
+    display:flex; align-items:center; gap:8px;
+  }
+  .card-title .icon { font-size:16px; }
+
+  /* STAT CARDS */
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .stat-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:3px;
+  }
+  .stat-card.green::before { background: linear-gradient(90deg, #10b981, #34d399); }
+  .stat-card.blue::before  { background: linear-gradient(90deg, #00d4ff, #3b82f6); }
+  .stat-card.purple::before{ background: linear-gradient(90deg, #7c3aed, #a855f7); }
+  .stat-card.orange::before{ background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .stat-card.red::before   { background: linear-gradient(90deg, #ef4444, #f87171); }
+  .stat-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+  .stat-label { font-size:12px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .stat-value { font-size:28px; font-weight:800; line-height:1; margin-bottom:4px; }
+  .stat-value.green  { color:#10b981; }
+  .stat-value.blue   { color:#00d4ff; }
+  .stat-value.purple { color:#a855f7; }
+  .stat-value.orange { color:#f59e0b; }
+  .stat-value.red    { color:#ef4444; }
+  .stat-sub { font-size:12px; color:var(--text3); }
+  .stat-icon {
+    position:absolute; right:16px; top:50%; transform:translateY(-50%);
+    font-size:36px; opacity:0.15;
+  }
+
+  /* STATUS BADGES */
+  .badge {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:3px 10px; border-radius:20px;
+    font-size:11px; font-weight:700; letter-spacing:0.5px;
+  }
+  .badge.ok     { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+  .badge.warn   { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); }
+  .badge.error  { background:rgba(239,68,68,0.15);  color:#ef4444; border:1px solid rgba(239,68,68,0.3); }
+  .badge.info   { background:rgba(0,212,255,0.15);  color:#00d4ff; border:1px solid rgba(0,212,255,0.3); }
+  .badge.purple { background:rgba(124,58,237,0.15); color:#a855f7; border:1px solid rgba(124,58,237,0.3); }
+  .badge::before { content:'●'; font-size:8px; }
+
+  /* TABLES */
+  .table { width:100%; border-collapse:collapse; font-size:13px; }
+  .table th {
+    text-align:left; padding:8px 12px;
+    color:var(--text3); font-size:11px; text-transform:uppercase; letter-spacing:1px;
+    border-bottom:1px solid var(--border);
+  }
+  .table td { padding:10px 12px; border-bottom:1px solid rgba(42,58,106,0.4); }
+  .table tr:last-child td { border-bottom:none; }
+  .table tr:hover td { background:rgba(255,255,255,0.02); }
+  .mono { font-family:monospace; font-size:12px; color:var(--accent); }
+
+  /* PROGRESS BARS */
+  .progress-wrap { margin-bottom:12px; }
+  .progress-label { display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px; }
+  .progress-bar { height:6px; background:var(--bg3); border-radius:3px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:3px; transition:width 1s ease; }
+  .progress-fill.green  { background:linear-gradient(90deg,#10b981,#34d399); }
+  .progress-fill.blue   { background:linear-gradient(90deg,#00d4ff,#3b82f6); }
+  .progress-fill.purple { background:linear-gradient(90deg,#7c3aed,#a855f7); }
+  .progress-fill.orange { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+
+  /* TERMINAL */
+  .terminal {
+    background:#050810; border:1px solid var(--border);
+    border-radius:8px; padding:16px;
+    font-family:'Cascadia Code','Fira Code',monospace; font-size:12px;
+    line-height:1.6; max-height:280px; overflow-y:auto;
+  }
+  .terminal::-webkit-scrollbar { width:4px; }
+  .terminal::-webkit-scrollbar-track { background:transparent; }
+  .terminal::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .t-green  { color:#10b981; }
+  .t-blue   { color:#00d4ff; }
+  .t-yellow { color:#f59e0b; }
+  .t-red    { color:#ef4444; }
+  .t-purple { color:#a855f7; }
+  .t-gray   { color:#64748b; }
+  .t-white  { color:#e2e8f0; }
+  .t-prompt { color:#7c3aed; }
+
+  /* BUTTONS */
+  .btn {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:8px 16px; border-radius:8px; border:none;
+    font-size:13px; font-weight:600; cursor:pointer;
+    transition:all 0.2s; text-decoration:none;
+  }
+  .btn-primary { background:linear-gradient(135deg,#00d4ff,#3b82f6); color:#000; }
+  .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,212,255,0.4); }
+  .btn-success { background:linear-gradient(135deg,#10b981,#34d399); color:#000; }
+  .btn-success:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(16,185,129,0.4); }
+  .btn-warn { background:linear-gradient(135deg,#f59e0b,#fbbf24); color:#000; }
+  .btn-warn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(245,158,11,0.4); }
+  .btn-danger { background:linear-gradient(135deg,#ef4444,#f87171); color:#fff; }
+  .btn-danger:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(239,68,68,0.4); }
+  .btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border); }
+  .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+  .btn-group { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:2px; color:var(--text3);
+    margin-bottom:16px; padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-title::before { content:''; width:3px; height:14px; background:var(--accent); border-radius:2px; }
+
+  /* TABS */
+  .tabs { display:flex; gap:4px; margin-bottom:16px; border-bottom:1px solid var(--border); }
+  .tab {
+    padding:8px 16px; font-size:13px; font-weight:600;
+    color:var(--text3); cursor:pointer; border-bottom:2px solid transparent;
+    transition:all 0.2s; margin-bottom:-1px;
+  }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab:hover:not(.active) { color:var(--text); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+
+  /* TIMELINE */
+  .timeline { position:relative; padding-left:20px; }
+  .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:1px; background:var(--border); }
+  .timeline-item { position:relative; margin-bottom:16px; }
+  .timeline-item::before {
+    content:''; position:absolute; left:-17px; top:4px;
+    width:8px; height:8px; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 6px var(--accent);
+  }
+  .timeline-item.warn::before { background:var(--warn); box-shadow:0 0 6px var(--warn); }
+  .timeline-item.ok::before   { background:var(--accent3); box-shadow:0 0 6px var(--accent3); }
+  .timeline-hash { font-family:monospace; font-size:11px; color:var(--accent); }
+  .timeline-msg  { font-size:13px; color:var(--text); margin:2px 0; }
+  .timeline-date { font-size:11px; color:var(--text3); }
+
+  /* PORTS */
+  .port-item {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 0; border-bottom:1px solid rgba(42,58,106,0.4);
+  }
+  .port-item:last-child { border-bottom:none; }
+  .port-num { font-family:monospace; font-size:16px; font-weight:700; color:var(--accent); }
+  .port-info { flex:1; margin:0 12px; }
+  .port-name { font-size:13px; font-weight:600; }
+  .port-pid  { font-size:11px; color:var(--text3); font-family:monospace; }
+
+  /* ENV VARS */
+  .env-item {
+    display:flex; gap:8px; padding:6px 0;
+    border-bottom:1px solid rgba(42,58,106,0.3);
+    font-family:monospace; font-size:12px;
+  }
+  .env-key   { color:#a855f7; min-width:180px; }
+  .env-val   { color:#10b981; word-break:break-all; }
+  .env-item:last-child { border-bottom:none; }
+
+  /* COPY BUTTON */
+  .copy-btn {
+    background:rgba(0,212,255,0.1); border:1px solid rgba(0,212,255,0.2);
+    color:var(--accent); padding:4px 10px; border-radius:6px;
+    font-size:11px; cursor:pointer; transition:all 0.2s;
+  }
+  .copy-btn:hover { background:rgba(0,212,255,0.2); }
+
+  /* ALERTS */
+  .alert {
+    padding:12px 16px; border-radius:8px; margin-bottom:12px;
+    display:flex; align-items:flex-start; gap:10px; font-size:13px;
+  }
+  .alert.warn  { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#fbbf24; }
+  .alert.error { background:rgba(239,68,68,0.1);  border:1px solid rgba(239,68,68,0.3);  color:#f87171; }
+  .alert.ok    { background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#34d399; }
+  .alert.info  { background:rgba(0,212,255,0.1);  border:1px solid rgba(0,212,255,0.3);  color:#67e8f9; }
+  .alert-icon  { font-size:16px; flex-shrink:0; margin-top:1px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+  /* GLOW EFFECTS */
+  .glow-green  { text-shadow:0 0 10px rgba(16,185,129,0.8); }
+  .glow-blue   { text-shadow:0 0 10px rgba(0,212,255,0.8); }
+  .glow-purple { text-shadow:0 0 10px rgba(168,85,247,0.8); }
+
+  /* SEPARATOR */
+  .sep { height:1px; background:var(--border); margin:20px 0; }
+
+  /* CMD BLOCK */
+  .cmd-block {
+    background:#050810; border:1px solid var(--border); border-radius:8px;
+    padding:12px 16px; font-family:monospace; font-size:12px;
+    color:#10b981; position:relative; margin-bottom:8px;
+  }
+  .cmd-block .copy-btn { position:absolute; right:8px; top:8px; }
+
+  /* CHIP */
+  .chip {
+    display:inline-block; padding:2px 8px; border-radius:4px;
+    font-size:11px; font-weight:600; margin:2px;
+  }
+  .chip.ts     { background:rgba(59,130,246,0.2); color:#60a5fa; }
+  .chip.py     { background:rgba(234,179,8,0.2);  color:#fbbf24; }
+  .chip.node   { background:rgba(16,185,129,0.2); color:#34d399; }
+  .chip.react  { background:rgba(0,212,255,0.2);  color:#67e8f9; }
+  .chip.docker { background:rgba(59,130,246,0.2); color:#93c5fd; }
+  .chip.prisma { background:rgba(124,58,237,0.2); color:#c4b5fd; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">⚡ GRAŻYNA</div>
+    <div class="version-badge">v5.0.0</div>
+    <div class="badge info">main ≡</div>
+  </div>
+  <div class="header-right">
+    <div class="status-dot"></div>
+    <div class="status-text">SYSTEM ONLINE</div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- STAT CARDS ROW -->
+  <div class="grid-4">
+    <div class="stat-card green">
+      <div class="stat-label">Backend API</div>
+      <div class="stat-value green glow-green">:3001</div>
+      <div class="stat-sub">Express + TypeScript • DZIAŁA</div>
+      <div class="stat-icon">🔧</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Frontend Vite</div>
+      <div class="stat-value blue glow-blue">:5174</div>
+      <div class="stat-sub">React 18 + Vite 5 • DZIAŁA</div>
+      <div class="stat-icon">🌐</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-label">Node.js</div>
+      <div class="stat-value purple">v20.11</div>
+      <div class="stat-sub">npm 10.9.8 • tools/nodejs/</div>
+      <div class="stat-icon">⬡</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">Git Status</div>
+      <div class="stat-value orange">CLEAN</div>
+      <div class="stat-sub">3bea9b2 • main ≡ origin</div>
+      <div class="stat-icon">📦</div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="alert warn">
+    <div class="alert-icon">⚠️</div>
+    <div><strong>node.exe hardlink:</strong> E:\Grazyna_5.0\tools\nodejs\node.exe jest hardlinkiem (nie symlinklem). Wymaga zatrzymania wszystkich procesów Node.js i uruchomienia jako Administrator z <code>takeown /f</code>. Skrypt naprawczy poniżej.</div>
+  </div>
+  <div class="alert ok">
+    <div class="alert-icon">✅</div>
+    <div><strong>Commit 3bea9b2 wypchnięty:</strong> 20 plików zmienionych — usunięto __init__.py, database.js duplikat, metrics.ts duplikat, zaktualizowano .gitignore.</div>
+  </div>
+
+  <!-- MAIN TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('overview')">📊 Przegląd</div>
+    <div class="tab" onclick="switchTab('services')">⚙️ Serwisy</div>
+    <div class="tab" onclick="switchTab('environment')">🔬 Środowisko</div>
+    <div class="tab" onclick="switchTab('files')">📁 Struktura</div>
+    <div class="tab" onclick="switchTab('git')">📦 Git</div>
+    <div class="tab" onclick="switchTab('commands')">💻 Komendy</div>
+    <div class="tab" onclick="switchTab('install')">🚀 Instalacja</div>
+  </div>
+
+  <!-- TAB: OVERVIEW -->
+  <div class="tab-content active" id="tab-overview">
+    <div class="grid-3">
+
+      <!-- PORTY -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🔌</span> Aktywne Porty</div>
+          <div class="badge ok">LIVE</div>
+        </div>
+        <div class="port-item">
+          <div class="port-num">3001</div>
+          <div class="port-info">
+            <div class="port-name">Backend API (Express)</div>
+            <div class="port-pid">PID: 21656 • Node.js v20.11.0</div>
+          </div>
+          <div class="badge ok">DZIAŁA</div>
+        </div>
+        <div class="port-item">
+          <div class="port-num">5174</div>
+          <div class="port-info">
+            <div class="port-name">Frontend (Vite Dev)</div>
+            <div class="port-pid">PID: 21124 • React 18</div>
+          </div>
+          <div class="badge ok">DZIAŁA</div>
+        </div>
+        <div class="port-item">
+          <div class="port-num">1883</div>
+          <div class="port-info">
+            <div class="port-name">MQTT Broker</div>
+            <div class="port-pid">PID: 5360 • localhost only</div>
+          </div>
+          <div class="badge info">LOKALNY</div>
+        </div>
+        <div class="port-item">
+          <div class="port-num">80</div>
+          <div class="port-info">
+            <div class="port-name">HTTP (System Windows)</div>
+            <div class="port-pid">PID: 4 • System</div>
+          </div>
+          <div class="badge warn">SYSTEM</div>
+        </div>
+        <div class="port-item">
+          <div class="port-num">8443</div>
+          <div class="port-info">
+            <div class="port-name">HTTPS (System)</div>
+            <div class="port-pid">PID: 4 • System</div>
+          </div>
+          <div class="badge warn">SYSTEM</div>
+        </div>
+      </div>
+
+      <!-- STACK TECHNOLOGICZNY -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🛠️</span> Stack Technologiczny</div>
+        </div>
+        <div class="section-title">Backend</div>
+        <div style="margin-bottom:12px;">
+          <span class="chip ts">TypeScript 5.3</span>
+          <span class="chip node">Node.js 20.11</span>
+          <span class="chip node">Express 4.18</span>
+          <span class="chip prisma">Prisma 5.9</span>
+          <span class="chip node">Socket.io 4.6</span>
+          <span class="chip node">Bull 4.12</span>
+          <span class="chip node">Winston 3.11</span>
+          <span class="chip node">JWT</span>
+          <span class="chip node">Zod 3.22</span>
+        </div>
+        <div class="section-title">Frontend</div>
+        <div style="margin-bottom:12px;">
+          <span class="chip react">React 18.2</span>
+          <span class="chip ts">TypeScript 5.3</span>
+          <span class="chip react">Vite 5.1</span>
+          <span class="chip react">Zustand 4.5</span>
+          <span class="chip react">styled-components 6</span>
+          <span class="chip react">react-query 3.39</span>
+          <span class="chip react">Leaflet 1.9</span>
+          <span class="chip react">Recharts 2.12</span>
+        </div>
+        <div class="section-title">Infrastruktura</div>
+        <div>
+          <span class="chip docker">Docker</span>
+          <span class="chip docker">Nginx</span>
+          <span class="chip docker">PostgreSQL</span>
+          <span class="chip docker">Redis</span>
+          <span class="chip docker">Grafana</span>
+          <span class="chip docker">Prometheus</span>
+          <span class="chip py">Python 3.10</span>
+        </div>
+      </div>
+
+      <!-- SZYBKIE AKCJE -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">⚡</span> Szybkie Akcje</div>
+        </div>
+        <div class="section-title">Uruchamianie</div>
+        <div class="btn-group" style="flex-direction:column;">
+          <button class="btn btn-success" onclick="copyCmd('& \"E:\\\\Grazyna_5.0\\\\GRAZYNA_START.ps1\"')">▶ Start Backend + Frontend</button>
+          <button class="btn btn-primary" onclick="copyCmd('cd E:\\\\Grazyna_5.0\\\\backend; ..\\\\tools\\\\nodejs\\\\npm.cmd run dev')">▶ Start Backend (dev)</button>
+          <button class="btn btn-primary" onclick="copyCmd('cd E:\\\\Grazyna_5.0\\\\frontend; ..\\\\tools\\\\nodejs\\\\npm.cmd run dev')">▶ Start Frontend (dev)</button>
+        </div>
+        <div class="section-title" style="margin-top:16px;">Linki</div>
+        <div class="btn-group" style="flex-direction:column;">
+          <a class="btn btn-ghost" href="http://localhost:5174" target="_blank">🌐 Frontend :5174</a>
+          <a class="btn btn-ghost" href="http://localhost:3001/api" target="_blank">🔧 Backend API :3001</a>
+          <a class="btn btn-ghost" href="http://localhost:3001/health" target="_blank">❤️ Health Check</a>
+          <a class="btn btn-ghost" href="http://localhost:3001/metrics" target="_blank">📊 Metrics</a>
+        </div>
+        <div id="copy-feedback" style="font-size:12px;color:#10b981;margin-top:8px;display:none;">✅ Skopiowano do schowka!</div>
+      </div>
+    </div>
+
+    <!-- HEALTH CHECKS -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">❤️</span> Health Checks</div>
+          <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="runHealthCheck()">🔄 Odśwież</button>
+        </div>
+        <table class="table">
+          <thead><tr><th>Serwis</th><th>URL</th><th>Status</th></tr></thead>
+          <tbody id="health-table">
+            <tr><td>Backend API</td><td class="mono">localhost:3001/api</td><td><span class="badge ok">ONLINE</span></td></tr>
+            <tr><td>Health Endpoint</td><td class="mono">localhost:3001/health</td><td><span class="badge ok">ONLINE</span></td></tr>
+            <tr><td>Metrics</td><td class="mono">localhost:3001/metrics</td><td><span class="badge ok">ONLINE</span></td></tr>
+            <tr><td>Frontend</td><td class="mono">localhost:5174</td><td><span class="badge ok">ONLINE</span></td></tr>
+            <tr><td>PostgreSQL</td><td class="mono">postgres:5432</td><td><span class="badge warn">DOCKER</span></td></tr>
+            <tr><td>Redis</td><td class="mono">localhost:6379</td><td><span class="badge warn">DOCKER</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📈</span> Metryki Projektu</div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Backend (TypeScript)</span><span style="color:#00d4ff">~85%</span></div>
+          <div class="progress-bar"><div class="progress-fill blue" style="width:85%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Frontend (React)</span><span style="color:#a855f7">~75%</span></div>
+          <div class="progress-bar"><div class="progress-fill purple" style="width:75%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Infrastruktura (Docker)</span><span style="color:#10b981">~60%</span></div>
+          <div class="progress-bar"><div class="progress-fill green" style="width:60%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Python CLI</span><span style="color:#f59e0b">~40%</span></div>
+          <div class="progress-bar"><div class="progress-fill orange" style="width:40%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Testy</span><span style="color:#ef4444">~15%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:15%;background:linear-gradient(90deg,#ef4444,#f87171)"></div></div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text3);">
+          Szacunkowy postęp na podstawie analizy kodu źródłowego
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SERVICES -->
+  <div class="tab-content" id="tab-services">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🔧</span> Backend — grazyna-backend v5.0.0</div>
+          <div class="badge ok">DZIAŁA :3001</div>
+        </div>
+        <table class="table">
+          <tr><td style="color:var(--text3)">Entry point</td><td class="mono">backend/src/index.ts</td></tr>
+          <tr><td style="color:var(--text3)">Build output</td><td class="mono">backend/dist/index.js</td></tr>
+          <tr><td style="color:var(--text3)">Dev command</td><td class="mono">npm run dev (tsx watch)</td></tr>
+          <tr><td style="color:var(--text3)">Start command</td><td class="mono">node dist/index.js</td></tr>
+          <tr><td style="color:var(--text3)">Database</td><td class="mono">PostgreSQL via Prisma 5.9</td></tr>
+          <tr><td style="color:var(--text3)">Cache</td><td class="mono">Redis (ioredis 5.3)</td></tr>
+          <tr><td style="color:var(--text3)">Auth</td><td class="mono">JWT (jsonwebtoken 9.0)</td></tr>
+          <tr><td style="color:var(--text3)">WebSocket</td><td class="mono">Socket.io 4.6</td></tr>
+          <tr><td style="color:var(--text3)">Metrics</td><td class="mono">prom-client 14.2 → :3001/metrics</td></tr>
+        </table>
+        <div class="section-title" style="margin-top:16px;">Endpointy API</div>
+        <table class="table">
+          <thead><tr><th>Metoda</th><th>Ścieżka</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge info">GET</span></td><td class="mono">/health</td><td>Health check</td></tr>
+            <tr><td><span class="badge info">GET</span></td><td class="mono">/metrics</td><td>Prometheus metrics</td></tr>
+            <tr><td><span class="badge ok">POST</span></td><td class="mono">/api/auth/login</td><td>Logowanie JWT</td></tr>
+            <tr><td><span class="badge ok">POST</span></td><td class="mono">/api/auth/register</td><td>Rejestracja</td></tr>
+            <tr><td><span class="badge info">GET</span></td><td class="mono">/api/vehicles</td><td>Lista pojazdów</td></tr>
+            <tr><td><span class="badge ok">POST</span></td><td class="mono">/api/vehicles</td><td>Dodaj pojazd</td></tr>
+            <tr><td><span class="badge info">GET</span></td><td class="mono">/api/kernel</td><td>Status kernela</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🌐</span> Frontend — grazyna-frontend v5.0.0</div>
+          <div class="badge ok">DZIAŁA :5174</div>
+        </div>
+        <table class="table">
+          <tr><td style="color:var(--text3)">Entry point</td><td class="mono">frontend/src/main.tsx</td></tr>
+          <tr><td style="color:var(--text3)">Root komponent</td><td class="mono">frontend/src/App.tsx</td></tr>
+          <tr><td style="color:var(--text3)">Dev command</td><td class="mono">npm run dev (vite)</td></tr>
+          <tr><td style="color:var(--text3)">Build command</td><td class="mono">tsc && vite build</td></tr>
+          <tr><td style="color:var(--text3)">API URL</td><td class="mono">http://localhost:3001/api</td></tr>
+          <tr><td style="color:var(--text3)">WS URL</td><td class="mono">ws://localhost:3001</td></tr>
+          <tr><td style="color:var(--text3)">State</td><td class="mono">Zustand 4.5</td></tr>
+          <tr><td style="color:var(--text3)">Routing</td><td class="mono">react-router-dom 6.21</td></tr>
+          <tr><td style="color:var(--text3)">Mapy</td><td class="mono">react-leaflet + mapbox-gl</td></tr>
+        </table>
+        <div class="section-title" style="margin-top:16px;">Strony (Pages)</div>
+        <table class="table">
+          <thead><tr><th>Ścieżka</th><th>Plik</th><th>Opis</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">/login</td><td class="mono">Login.tsx</td><td>Logowanie</td></tr>
+            <tr><td class="mono">/dashboard</td><td class="mono">Dashboard.tsx</td><td>Główny panel (5667B)</td></tr>
+            <tr><td class="mono">/kernel</td><td class="mono">Kernel.tsx</td><td>Panel kernela</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🗄️</span> Baza Danych — Prisma + PostgreSQL</div>
+        </div>
+        <div class="alert info" style="margin-bottom:12px;">
+          <div class="alert-icon">ℹ️</div>
+          <div>Schema: <code>backend/prisma/schema.prisma</code> (5993B). PostgreSQL przez Docker Compose.</div>
+        </div>
+        <table class="table">
+          <tr><td style="color:var(--text3)">DATABASE_URL</td><td class="mono" style="font-size:11px;">postgresql://grazyna:***@postgres:5432/grazyna_db</td></tr>
+          <tr><td style="color:var(--text3)">ORM</td><td class="mono">Prisma 5.9.1</td></tr>
+          <tr><td style="color:var(--text3)">Migrate</td><td class="mono">npm run db:migrate</td></tr>
+          <tr><td style="color:var(--text3)">Studio</td><td class="mono">npm run db:studio</td></tr>
+          <tr><td style="color:var(--text3)">Seed</td><td class="mono">npm run db:seed</td></tr>
+        </table>
+        <div class="btn-group">
+          <button class="btn btn-ghost" onclick="copyCmd('cd E:\\\\Grazyna_5.0\\\\backend && ..\\\\tools\\\\nodejs\\\\npm.cmd run db:studio')">🗄️ Prisma Studio</button>
+          <button class="btn btn-ghost" onclick="copyCmd('cd E:\\\\Grazyna_5.0\\\\backend && ..\\\\tools\\\\nodejs\\\\npm.cmd run db:migrate')">🔄 Migrate</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🐳</span> Docker Compose</div>
+        </div>
+        <table class="table">
+          <thead><tr><th>Plik</th><th>Cel</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">docker-compose.yml</td><td>Dev (PostgreSQL + Redis)</td></tr>
+            <tr><td class="mono">docker-compose.prod.yml</td><td>Produkcja (full stack)</td></tr>
+            <tr><td class="mono">docker-compose.monitoring.yml</td><td>Grafana + Prometheus</td></tr>
+          </tbody>
+        </table>
+        <div class="btn-group">
+          <button class="btn btn-ghost" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && docker-compose up -d')">🐳 Start Dev DB</button>
+          <button class="btn btn-ghost" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && docker-compose -f docker-compose.monitoring.yml up -d')">📊 Start Monitoring</button>
+          <button class="btn btn-danger" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && docker-compose down')">⏹ Stop Docker</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: ENVIRONMENT -->
+  <div class="tab-content" id="tab-environment">
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">⬡</span> Node.js Environment</div>
+        </div>
+        <table class="table">
+          <tr><td style="color:var(--text3)">Wersja</td><td class="mono">v20.11.0 ✅</td></tr>
+          <tr><td style="color:var(--text3)">npm</td><td class="mono">10.9.8 ✅</td></tr>
+          <tr><td style="color:var(--text3)">Lokalizacja</td><td class="mono" style="font-size:11px;">E:\Grazyna_5.0\tools\nodejs\</td></tr>
+          <tr><td style="color:var(--text3)">node.exe typ</td><td><span class="badge warn">HARDLINK</span></td></tr>
+          <tr><td style="color:var(--text3)">Wymóg backend</td><td class="mono">>=18.0.0 ✅</td></tr>
+          <tr><td style="color:var(--text3)">Wymóg frontend</td><td class="mono">>=18.0.0 ✅</td></tr>
+          <tr><td style="color:var(--text3)">NVM</td><td class="mono">tools/nvm/</td></tr>
+        </table>
+        <div class="alert warn" style="margin-top:12px;">
+          <div class="alert-icon">⚠️</div>
+          <div><strong>Hardlink zamiast symlinka.</strong> Napraw po zatrzymaniu Node.js — skrypt w zakładce Komendy.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🐍</span> Python Environment</div>
+        </div>
+        <table class="table">
+          <tr><td style="color:var(--text3)">Portable Python</td><td class="mono">3.10 (tools/PythonPortable/)</td></tr>
+          <tr><td style="color:var(--text3)">System Python</td><td class="mono">3.12.2 (GPM-MULTI)</td></tr>
+          <tr><td style="color:var(--text3)">requirements.txt</td><td class="mono">backend/requirements.txt</td></tr>
+          <tr><td style="color:var(--text3)">Główne skrypty</td><td class="mono">main.py, main_cli.py</td></tr>
+          <tr><td style="color:var(--text3)">CLI modules</td><td class="mono">core/ (autocomplete, registry)</td></tr>
+        </table>
+        <div class="section-title" style="margin-top:12px;">Pliki Python w projekcie</div>
+        <table class="table">
+          <tr><td class="mono">main.py</td><td style="color:var(--text3)">2250B — CLI entry</td></tr>
+          <tr><td class="mono">main_cli.py</td><td style="color:var(--text3)">4074B — rozszerzony CLI</td></tr>
+          <tr><td class="mono">ai_chat.py</td><td style="color:var(--text3)">4885B — AI chat</td></tr>
+          <tr><td class="mono">safe_mode.py</td><td style="color:var(--text3)">6429B — tryb bezpieczny</td></tr>
+          <tr><td class="mono">mega_panel.py</td><td style="color:var(--text3)">6263B — panel</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🔑</span> Zmienne Środowiskowe</div>
+        </div>
+        <div class="section-title">Backend (.env)</div>
+        <div class="env-item"><span class="env-key">PORT</span><span class="env-val">3001</span></div>
+        <div class="env-item"><span class="env-key">NODE_ENV</span><span class="env-val">development</span></div>
+        <div class="env-item"><span class="env-key">DATABASE_URL</span><span class="env-val">postgresql://grazyna:***@postgres:5432/grazyna_db</span></div>
+        <div class="env-item"><span class="env-key">REDIS_URL</span><span class="env-val">redis://localhost:6379</span></div>
+        <div class="env-item"><span class="env-key">JWT_SECRET</span><span class="env-val">grazyna_secret_2026</span></div>
+        <div class="env-item"><span class="env-key">CORS_ORIGIN</span><span class="env-val">http://localhost:5173</span></div>
+        <div class="env-item"><span class="env-key">LOG_LEVEL</span><span class="env-val">debug</span></div>
+        <div class="section-title" style="margin-top:12px;">Frontend (.env)</div>
+        <div class="env-item"><span class="env-key">VITE_API_URL</span><span class="env-val">http://localhost:3001/api</span></div>
+        <div class="env-item"><span class="env-key">VITE_WS_URL</span><span class="env-val">ws://localhost:3001</span></div>
+        <div class="env-item"><span class="env-key">VITE_APP_NAME</span><span class="env-val">GRAŻYNA 5.0</span></div>
+        <div class="env-item"><span class="env-key">VITE_ENV</span><span class="env-val">development ✅ (dodano)</span></div>
+        <div class="env-item"><span class="env-key">VITE_DEBUG</span><span class="env-val">false ✅ (dodano)</span></div>
+        <div class="alert warn" style="margin-top:12px;">
+          <div class="alert-icon">⚠️</div>
+          <div>CORS_ORIGIN=:5173 ale Vite działa na :5174. Zaktualizuj jeśli potrzebne.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: FILES -->
+  <div class="tab-content" id="tab-files">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📁</span> Mapa Struktury Projektu</div>
+        </div>
+        <div class="terminal">
+<span class="t-blue">E:\Grazyna_5.0\</span>
+├── <span class="t-green">backend/</span>                 <span class="t-gray">← GŁÓWNY BACKEND</span>
+│   ├── <span class="t-blue">src/</span>
+│   │   ├── <span class="t-yellow">index.ts</span>         <span class="t-gray">12287B — entry point</span>
+│   │   ├── <span class="t-yellow">metrics.ts</span>       <span class="t-gray">2220B — Prometheus</span>
+│   │   ├── <span class="t-blue">config/</span>
+│   │   │   └── <span class="t-yellow">database.ts</span>  <span class="t-gray">1035B — Prisma config</span>
+│   │   ├── <span class="t-blue">controllers/</span>
+│   │   │   ├── <span class="t-yellow">auth.controller.ts</span>    <span class="t-gray">5055B</span>
+│   │   │   ├── <span class="t-yellow">kernel.controller.ts</span>  <span class="t-gray">1114B</span>
+│   │   │   └── <span class="t-yellow">vehicle.controller.ts</span> <span class="t-gray">6822B</span>
+│   │   ├── <span class="t-blue">middleware/</span>
+│   │   │   └── <span class="t-yellow">auth.ts</span>          <span class="t-gray">1766B — JWT middleware</span>
+│   │   ├── <span class="t-blue">routes/</span>
+│   │   │   └── <span class="t-yellow">index.ts</span>         <span class="t-gray">2916B — routing</span>
+│   │   └── <span class="t-blue">services/</span>
+│   │       ├── <span class="t-yellow">kernel.service.ts</span>     <span class="t-gray">4278B</span>
+│   │       └── <span class="t-yellow">driver-fabric.service.ts</span> <span class="t-gray">1208B</span>
+│   ├── <span class="t-blue">prisma/</span>
+│   │   └── <span class="t-yellow">schema.prisma</span>    <span class="t-gray">5993B — DB schema</span>
+│   ├── <span class="t-blue">dist/</span>                <span class="t-gray">← skompilowany JS</span>
+│   ├── <span class="t-yellow">package.json</span>         <span class="t-gray">2163B</span>
+│   └── <span class="t-yellow">tsconfig.json</span>        <span class="t-gray">1082B</span>
+│
+├── <span class="t-green">frontend/</span>                <span class="t-gray">← GŁÓWNY FRONTEND</span>
+│   ├── <span class="t-blue">src/</span>
+│   │   ├── <span class="t-yellow">App.tsx</span>          <span class="t-gray">1928B</span>
+│   │   ├── <span class="t-yellow">main.tsx</span>         <span class="t-gray">236B — entry</span>
+│   │   ├── <span class="t-blue">pages/</span>
+│   │   │   ├── <span class="t-yellow">Dashboard.tsx</span>    <span class="t-gray">5667B</span>
+│   │   │   ├── <span class="t-yellow">Kernel.tsx</span>       <span class="t-gray">3586B</span>
+│   │   │   └── <span class="t-yellow">Login.tsx</span>        <span class="t-gray">2708B</span>
+│   │   ├── <span class="t-blue">core/</span>
+│   │   │   ├── <span class="t-yellow">RuntimeKernel.ts</span>     <span class="t-gray">1535B</span>
+│   │   │   ├── <span class="t-yellow">CapabilityRegistry.ts</span> <span class="t-gray">1063B</span>
+│   │   │   └── <span class="t-yellow">SelfHealingState.ts</span>  <span class="t-gray">671B</span>
+│   │   ├── <span class="t-blue">services/</span>
+│   │   │   └── <span class="t-yellow">api.ts</span>           <span class="t-gray">4258B — Axios client</span>
+│   │   ├── <span class="t-blue">store/</span>
+│   │   │   ├── <span class="t-yellow">authStore.ts</span>     <span class="t-gray">1924B — Zustand</span>
+│   │   │   └── <span class="t-yellow">runtimeStore.ts</span>  <span class="t-gray">582B</span>
+│   │   └── <span class="t-blue">styles/</span>
+│   │       ├── <span class="t-yellow">GlobalStyles.tsx</span> <span class="t-gray">1905B</span>
+│   │       └── <span class="t-yellow">theme.ts</span>         <span class="t-gray">2600B</span>
+│   ├── <span class="t-yellow">vite.config.ts</span>       <span class="t-gray">2484B</span>
+│   └── <span class="t-yellow">package.json</span>         <span class="t-gray">2230B</span>
+│
+├── <span class="t-green">tools/</span>                   <span class="t-gray">← Narzędzia portable</span>
+│   ├── <span class="t-blue">nodejs/</span>              <span class="t-gray">Node.js v20.11.0</span>
+│   │   └── <span class="t-yellow">node.exe</span>         <span class="t-gray">66.8MB ⚠️ HARDLINK</span>
+│   ├── <span class="t-blue">nvm/nodejs/</span>          <span class="t-gray">NVM Node (źródło)</span>
+│   └── <span class="t-blue">PythonPortable/</span>      <span class="t-gray">Python 3.10</span>
+│
+├── <span class="t-green">scripts/</span>                 <span class="t-gray">← PowerShell scripts</span>
+├── <span class="t-green">monitoring/</span>              <span class="t-gray">← Grafana + Prometheus</span>
+├── <span class="t-green">nginx/</span>                   <span class="t-gray">← Nginx config</span>
+├── <span class="t-green">manifests/</span>               <span class="t-gray">← JSON manifesty</span>
+├── <span class="t-green">core/</span>                    <span class="t-gray">← Python CLI core</span>
+├── <span class="t-green">ahe/</span>                     <span class="t-gray">← Agent Host Env</span>
+├── <span class="t-yellow">GRAZYNA_FIX_ALL.ps1</span>  <span class="t-gray">← Skrypt naprawczy ✅</span>
+├── <span class="t-yellow">GRAZYNA_START.ps1</span>    <span class="t-gray">← Launcher ✅</span>
+├── <span class="t-yellow">docker-compose.yml</span>   <span class="t-gray">Dev stack</span>
+├── <span class="t-yellow">docker-compose.prod.yml</span> <span class="t-gray">Prod stack</span>
+└── <span class="t-yellow">.env</span>                 <span class="t-gray">Root config</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">⚠️</span> Problemy i Rekomendacje</div>
+        </div>
+        <table class="table">
+          <thead><tr><th>Priorytet</th><th>Problem</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="badge warn">ŚREDNI</span></td>
+              <td>node.exe hardlink zamiast symlink</td>
+              <td><span class="badge warn">DO NAPRAWY</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge warn">ŚREDNI</span></td>
+              <td>CORS_ORIGIN=:5173 vs Vite na :5174</td>
+              <td><span class="badge warn">DO SPRAWDZENIA</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge warn">ŚREDNI</span></td>
+              <td>grazyna-system/ = duplikat projektu (stary)</td>
+              <td><span class="badge warn">DO USUNIĘCIA</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge info">NISKI</span></td>
+              <td>react-beautiful-dnd niezalecany dla React 18</td>
+              <td><span class="badge info">OPCJONALNE</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge info">NISKI</span></td>
+              <td>react-query v3 (dostępny v5 TanStack)</td>
+              <td><span class="badge info">OPCJONALNE</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge ok">NAPRAWIONE</span></td>
+              <td>__init__.py w katalogach TypeScript</td>
+              <td><span class="badge ok">✅ USUNIĘTE</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge ok">NAPRAWIONE</span></td>
+              <td>database.js duplikat obok database.ts</td>
+              <td><span class="badge ok">✅ USUNIĘTE</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge ok">NAPRAWIONE</span></td>
+              <td>metrics.ts duplikat w root backend/</td>
+              <td><span class="badge ok">✅ USUNIĘTE</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge ok">NAPRAWIONE</span></td>
+              <td>frontend/.env brak VITE_ENV, VITE_DEBUG</td>
+              <td><span class="badge ok">✅ DODANE</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge ok">NAPRAWIONE</span></td>
+              <td>Duże pliki w .gitignore</td>
+              <td><span class="badge ok">✅ DODANE</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: GIT -->
+  <div class="tab-content" id="tab-git">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📦</span> Git Status</div>
+          <div class="badge ok">CLEAN</div>
+        </div>
+        <table class="table">
+          <tr><td style="color:var(--text3)">Branch</td><td class="mono">main</td></tr>
+          <tr><td style="color:var(--text3)">Remote</td><td class="mono" style="font-size:11px;">github.com/wiciomalta-spec/Grazyna_5.0</td></tr>
+          <tr><td style="color:var(--text3)">Sync</td><td><span class="badge ok">≡ Up to date</span></td></tr>
+          <tr><td style="color:var(--text3)">Last commit</td><td class="mono">3bea9b2</td></tr>
+        </table>
+        <div class="section-title" style="margin-top:16px;">Historia commitów</div>
+        <div class="timeline">
+          <div class="timeline-item ok">
+            <div class="timeline-hash">3bea9b2</div>
+            <div class="timeline-msg">fix: cleanup __init__.py, database.js duplikat, metrics.ts duplikat, .gitignore aktualizacja</div>
+            <div class="timeline-date">2026-05-29 • 20 files changed</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-hash">c631501</div>
+            <div class="timeline-msg">chore: ignore tools/__init__.py</div>
+            <div class="timeline-date">2026-05-28</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-hash">07f6aa8</div>
+            <div class="timeline-msg">chore: ignore tools/__init__.py</div>
+            <div class="timeline-date">2026-05-28</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-hash">d78c449</div>
+            <div class="timeline-msg">chore: remove tools/ from git, add to gitignore</div>
+            <div class="timeline-date">2026-05-28</div>
+          </div>
+          <div class="timeline-item warn">
+            <div class="timeline-hash">9c0ef45</div>
+            <div class="timeline-msg">fix: migracja Node.js na E:, naprawa srodowiska v5.0</div>
+            <div class="timeline-date">2026-05-27</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-hash">2758230</div>
+            <div class="timeline-msg">Merge branch 'main' of github.com/wiciomalta-spec/Grazyna_5.0</div>
+            <div class="timeline-date">2026-05-27</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">💻</span> Git Komendy</div>
+        </div>
+        <div class="section-title">Podstawowe</div>
+        <div class="cmd-block">git status<button class="copy-btn" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && git status')">📋 Kopiuj</button></div>
+        <div class="cmd-block">git log --oneline -10<button class="copy-btn" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && git log --oneline -10')">📋 Kopiuj</button></div>
+        <div class="cmd-block">git diff<button class="copy-btn" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && git diff')">📋 Kopiuj</button></div>
+        <div class="section-title" style="margin-top:12px;">Commit i Push</div>
+        <div class="cmd-block">git add -A && git commit -m "msg" && git push<button class="copy-btn" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && git add -A && git commit -m \"update\" && git push origin main')">📋 Kopiuj</button></div>
+        <div class="section-title" style="margin-top:12px;">Synchronizacja</div>
+        <div class="cmd-block">git pull origin main<button class="copy-btn" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && git pull origin main')">📋 Kopiuj</button></div>
+        <div class="cmd-block">git fetch --all<button class="copy-btn" onclick="copyCmd('cd E:\\\\Grazyna_5.0 && git fetch --all')">📋 Kopiuj</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: COMMANDS -->
+  <div class="tab-content" id="tab-commands">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🔧</span> Naprawa node.exe Hardlink → Symlink</div>
+          <div class="badge warn">WYMAGA ADMINA</div>
+        </div>
+        <div class="alert warn">
+          <div class="alert-icon">⚠️</div>
+          <div>Uruchom <strong>po zatrzymaniu wszystkich procesów Node.js</strong>. Wymaga PowerShell jako Administrator.</div>
+        </div>
+        <div class="terminal">
+<span class="t-gray"># Krok 1: Zatrzymaj Node.js</span>
+<span class="t-yellow">Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force</span>
+
+<span class="t-gray"># Krok 2: Przejmij własność pliku</span>
+<span class="t-yellow">takeown /f "E:\Grazyna_5.0\tools\nodejs\node.exe" /a</span>
+<span class="t-yellow">icacls "E:\Grazyna_5.0\tools\nodejs\node.exe" /grant Administrators:F</span>
+
+<span class="t-gray"># Krok 3: Usuń hardlink i utwórz symlink</span>
+<span class="t-yellow">$dst = "E:\Grazyna_5.0\tools\nodejs\node.exe"</span>
+<span class="t-yellow">$src = "E:\Grazyna_5.0\tools\nvm\nodejs\node.exe"</span>
+<span class="t-yellow">Remove-Item $dst -Force</span>
+<span class="t-yellow">New-Item -ItemType SymbolicLink -Path $dst -Target $src</span>
+
+<span class="t-gray"># Krok 4: Weryfikacja</span>
+<span class="t-yellow">(Get-Item $dst).LinkType</span>
+<span class="t-gray"># Powinno wyświetlić: SymbolicLink</span>
+        </div>
+        <button class="btn btn-warn" style="margin-top:12px;" onclick="copyNodeFix()">📋 Kopiuj cały skrypt</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🗑️</span> Usunięcie grazyna-system/ (duplikat)</div>
+          <div class="badge warn">OPCJONALNE</div>
+        </div>
+        <div class="alert info">
+          <div class="alert-icon">ℹ️</div>
+          <div>Katalog <code>grazyna-system/</code> to stara kopia projektu. Można bezpiecznie usunąć po weryfikacji.</div>
+        </div>
+        <div class="terminal">
+<span class="t-gray"># Sprawdź co jest w grazyna-system/</span>
+<span class="t-yellow">ls E:\Grazyna_5.0\grazyna-system\ | Select-Object Name</span>
+
+<span class="t-gray"># Usuń (po weryfikacji że nie potrzebujesz)</span>
+<span class="t-yellow">Remove-Item "E:\Grazyna_5.0\grazyna-system" -Recurse -Force</span>
+
+<span class="t-gray"># Commit usunięcia</span>
+<span class="t-yellow">cd E:\Grazyna_5.0</span>
+<span class="t-yellow">git add -A</span>
+<span class="t-yellow">git commit -m "chore: remove grazyna-system duplicate"</span>
+<span class="t-yellow">git push origin main</span>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:12px;" onclick="copyCmd('Remove-Item \"E:\\\\Grazyna_5.0\\\\grazyna-system\" -Recurse -Force')">📋 Kopiuj komendę usunięcia</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🔄</span> Naprawa CORS (port 5173 vs 5174)</div>
+        </div>
+        <div class="alert warn">
+          <div class="alert-icon">⚠️</div>
+          <div>Backend ma CORS_ORIGIN=:5173 ale Vite uruchomił się na :5174. Napraw jeśli masz błędy CORS.</div>
+        </div>
+        <div class="terminal">
+<span class="t-gray"># Opcja A: Zmień .env backendu na :5174</span>
+<span class="t-yellow">(Get-Content E:\Grazyna_5.0\backend\.env) -replace</span>
+<span class="t-yellow">  'CORS_ORIGIN=http://localhost:5173',</span>
+<span class="t-yellow">  'CORS_ORIGIN=http://localhost:5174' |</span>
+<span class="t-yellow">  Set-Content E:\Grazyna_5.0\backend\.env</span>
+
+<span class="t-gray"># Opcja B: Wymuś Vite na port 5173 (vite.config.ts)</span>
+<span class="t-gray"># server: { port: 5173, strictPort: true }</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📦</span> npm install / rebuild</div>
+        </div>
+        <div class="terminal">
+<span class="t-gray"># Backend — reinstall</span>
+<span class="t-yellow">cd E:\Grazyna_5.0\backend</span>
+<span class="t-yellow">..\..\tools\nodejs\npm.cmd install</span>
+
+<span class="t-gray"># Frontend — reinstall</span>
+<span class="t-yellow">cd E:\Grazyna_5.0\frontend</span>
+<span class="t-yellow">..\..\tools\nodejs\npm.cmd install</span>
+
+<span class="t-gray"># Backend — rebuild TypeScript</span>
+<span class="t-yellow">cd E:\Grazyna_5.0\backend</span>
+<span class="t-yellow">..\..\tools\nodejs\npm.cmd run rebuild</span>
+
+<span class="t-gray"># Prisma generate</span>
+<span class="t-yellow">cd E:\Grazyna_5.0\backend</span>
+<span class="t-yellow">..\..\tools\nodejs\npm.cmd run db:generate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: INSTALL -->
+  <div class="tab-content" id="tab-install">
+    <div class="alert info">
+      <div class="alert-icon">ℹ️</div>
+      <div><strong>Pełna instalacja środowiska</strong> — uruchom na świeżym systemie lub po reinstalacji. Skrypt sprawdza i instaluje wszystkie zależności.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🚀</span> Skrypt Pełnej Instalacji</div>
+          <div class="badge info">KOPIUJ DO PS1</div>
+        </div>
+        <div class="terminal" style="max-height:500px;">
+<span class="t-purple"># GRAŻYNA 5.0 — PEŁNA INSTALACJA</span>
+<span class="t-gray"># Uruchom jako Administrator</span>
+
+<span class="t-yellow">$proj = "E:\Grazyna_5.0"</span>
+<span class="t-yellow">$node = "$proj\tools\nodejs\node.exe"</span>
+<span class="t-yellow">$npm  = "$proj\tools\nodejs\npm.cmd"</span>
+
+<span class="t-green">Write-Host "=== KROK 1: Node.js ===" -ForegroundColor Cyan</span>
+<span class="t-yellow">& $node --version</span>
+<span class="t-yellow">& $npm --version</span>
+
+<span class="t-green">Write-Host "=== KROK 2: Backend npm install ===" -ForegroundColor Cyan</span>
+<span class="t-yellow">Push-Location "$proj\backend"</span>
+<span class="t-yellow">& $npm install</span>
+<span class="t-yellow">Pop-Location</span>
+
+<span class="t-green">Write-Host "=== KROK 3: Frontend npm install ===" -ForegroundColor Cyan</span>
+<span class="t-yellow">Push-Location "$proj\frontend"</span>
+<span class="t-yellow">& $npm install</span>
+<span class="t-yellow">Pop-Location</span>
+
+<span class="t-green">Write-Host "=== KROK 4: Prisma generate ===" -ForegroundColor Cyan</span>
+<span class="t-yellow">Push-Location "$proj\backend"</span>
+<span class="t-yellow">& $npm run db:generate</span>
+<span class="t-yellow">Pop-Location</span>
+
+<span class="t-green">Write-Host "=== KROK 5: Backend build ===" -ForegroundColor Cyan</span>
+<span class="t-yellow">Push-Location "$proj\backend"</span>
+<span class="t-yellow">& $npm run build</span>
+<span class="t-yellow">Pop-Location</span>
+
+<span class="t-green">Write-Host "=== KROK 6: Python deps ===" -ForegroundColor Cyan</span>
+<span class="t-yellow">$py = "$proj\tools\PythonPortable\python.exe"</span>
+<span class="t-yellow">if (Test-Path $py) {</span>
+<span class="t-yellow">  & $py -m pip install -r "$proj\requirements.txt"</span>
+<span class="t-yellow">}</span>
+
+<span class="t-green">Write-Host "✅ Instalacja zakończona!" -ForegroundColor Green</span>
+<span class="t-green">Write-Host "Uruchom: & '$proj\GRAZYNA_START.ps1'" -ForegroundColor Cyan</span>
+        </div>
+        <button class="btn btn-primary" style="margin-top:12px;" onclick="copyFullInstall()">📋 Kopiuj skrypt instalacji</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">✅</span> Checklist Instalacji</div>
+        </div>
+        <table class="table">
+          <thead><tr><th>Krok</th><th>Komenda</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Node.js v20+</td><td class="mono">node --version</td><td><span class="badge ok">v20.11.0 ✅</span></td></tr>
+            <tr><td>npm 9+</td><td class="mono">npm --version</td><td><span class="badge ok">10.9.8 ✅</span></td></tr>
+            <tr><td>backend/node_modules</td><td class="mono">npm install</td><td><span class="badge ok">ISTNIEJE ✅</span></td></tr>
+            <tr><td>frontend/node_modules</td><td class="mono">npm install</td><td><span class="badge ok">ISTNIEJE ✅</span></td></tr>
+            <tr><td>Prisma generate</td><td class="mono">npm run db:generate</td><td><span class="badge warn">SPRAWDŹ</span></td></tr>
+            <tr><td>backend/dist/</td><td class="mono">npm run build</td><td><span class="badge ok">ISTNIEJE ✅</span></td></tr>
+            <tr><td>Docker (PostgreSQL)</td><td class="mono">docker-compose up -d</td><td><span class="badge warn">OPCJONALNE</span></td></tr>
+            <tr><td>Docker (Redis)</td><td class="mono">docker-compose up -d</td><td><span class="badge warn">OPCJONALNE</span></td></tr>
+            <tr><td>Python deps</td><td class="mono">pip install -r requirements.txt</td><td><span class="badge warn">SPRAWDŹ</span></td></tr>
+            <tr><td>node.exe symlink</td><td class="mono">takeown + New-Item SymbolicLink</td><td><span class="badge warn">DO NAPRAWY</span></td></tr>
+          </tbody>
+        </table>
+        <div class="section-title" style="margin-top:16px;">requirements.txt</div>
+        <div class="terminal" style="max-height:120px;">
+<span class="t-green">requests</span>
+<span class="t-green">flask</span>
+<span class="t-green">python-dotenv</span>
+<span class="t-green">psutil</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// CLOCK
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('pl-PL', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// TABS
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// COPY
+function copyCmd(cmd) {
+  navigator.clipboard.writeText(cmd).then(() => {
+    const fb = document.getElementById('copy-feedback');
+    if (fb) { fb.style.display='block'; setTimeout(()=>fb.style.display='none', 2000); }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = cmd; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+function copyNodeFix() {
+  const script = `# Zatrzymaj Node.js
+Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force
+
+# Przejmij własność
+takeown /f "E:\\Grazyna_5.0\\tools\\nodejs\\node.exe" /a
+icacls "E:\\Grazyna_5.0\\tools\\nodejs\\node.exe" /grant Administrators:F
+
+# Zamień hardlink na symlink
+$dst = "E:\\Grazyna_5.0\\tools\\nodejs\\node.exe"
+$src = "E:\\Grazyna_5.0\\tools\\nvm\\nodejs\\node.exe"
+Remove-Item $dst -Force
+New-Item -ItemType SymbolicLink -Path $dst -Target $src
+
+# Weryfikacja
+(Get-Item $dst).LinkType`;
+  copyCmd(script);
+  alert('✅ Skrypt naprawy node.exe skopiowany do schowka!');
+}
+
+function copyFullInstall() {
+  const script = `$proj = "E:\\Grazyna_5.0"
+$node = "$proj\\tools\\nodejs\\node.exe"
+$npm  = "$proj\\tools\\nodejs\\npm.cmd"
+
+Write-Host "=== KROK 1: Node.js ===" -ForegroundColor Cyan
+& $node --version; & $npm --version
+
+Write-Host "=== KROK 2: Backend npm install ===" -ForegroundColor Cyan
+Push-Location "$proj\\backend"; & $npm install; Pop-Location
+
+Write-Host "=== KROK 3: Frontend npm install ===" -ForegroundColor Cyan
+Push-Location "$proj\\frontend"; & $npm install; Pop-Location
+
+Write-Host "=== KROK 4: Prisma generate ===" -ForegroundColor Cyan
+Push-Location "$proj\\backend"; & $npm run db:generate; Pop-Location
+
+Write-Host "=== KROK 5: Backend build ===" -ForegroundColor Cyan
+Push-Location "$proj\\backend"; & $npm run build; Pop-Location
+
+Write-Host "=== KROK 6: Python deps ===" -ForegroundColor Cyan
+$py = "$proj\\tools\\PythonPortable\\python.exe"
+if (Test-Path $py) { & $py -m pip install -r "$proj\\requirements.txt" }
+
+Write-Host "✅ Instalacja zakończona!" -ForegroundColor Green
+Write-Host "Uruchom: & '$proj\\GRAZYNA_START.ps1'" -ForegroundColor Cyan`;
+  copyCmd(script);
+  alert('✅ Skrypt instalacji skopiowany do schowka!');
+}
+
+function runHealthCheck() {
+  const rows = document.querySelectorAll('#health-table tr');
+  rows.forEach(row => {
+    const badge = row.querySelector('.badge');
+    if (badge && badge.classList.contains('ok')) {
+      badge.style.animation = 'pulse 0.5s ease';
+      setTimeout(() => badge.style.animation = '', 500);
+    }
+  });
+}
+</script>
+</body>
+</html>

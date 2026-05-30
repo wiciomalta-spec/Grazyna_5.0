@@ -1,0 +1,56 @@
+{
+  "title": "GRAZYNA Backend Autoscale Monitor",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Event Loop Lag p99",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "nodejs_eventloop_lag_p99_seconds", "legendFormat": "lag p99" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Heap Usage %",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "(nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes) * 100", "legendFormat": "heap %" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Resident Memory (RSS)",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "process_resident_memory_bytes", "legendFormat": "rss" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Requests/sec",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "rate(http_requests_total[1m])", "legendFormat": "{{route}}" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "5xx Errors/sec",
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "rate(http_errors_total[1m])", "legendFormat": "5xx" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Worker Processes",
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "worker_processes", "legendFormat": "workers" }
+      ]
+    }
+  ]
+}
