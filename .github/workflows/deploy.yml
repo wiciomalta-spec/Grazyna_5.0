@@ -3,26 +3,54 @@ name: deploy-to-k8s
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: setup kubectl
-        run: |
-          curl -LO https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: setup kubeconfig
+      - name: Install
+        run: npm ci
+
+      - name: Lint (opcjonalnie)
+        run: npm run lint || true
+
+      - name: Build
+        run: npm run build
+
+      - name: Test (opcjonalnie)
+        run: npm test || true
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.30.0'
+
+      - name: Configure kubeconfig
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
 
-      - name: deploy
+      - name: Verify cluster
         run: |
-          kubectl apply -f backend/k8s
+          kubectl version --short
+          kubectl get nodes
+          kubectl get ns
+
+      - name: Apply manifests
+        run: kubectl apply -f k8s/
+
+      - name: Check rollout
+        run: |
+          kubectl get deploy -A
+          kubectl get pods -A
