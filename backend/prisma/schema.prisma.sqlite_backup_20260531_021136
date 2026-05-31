@@ -1,5 +1,7 @@
 // ============================================================
-// GRAŻYNA 5.0 — Schema Prisma dla PostgreSQL (Supabase)
+// GRAŻYNA 5.0 — ZOPTYMALIZOWANA SCHEMA PRISMA
+// Kompatybilna z SQLite (dev) i PostgreSQL (prod)
+// Użycie: skopiuj do backend/prisma/schema.prisma
 // ============================================================
 
 generator client {
@@ -7,75 +9,16 @@ generator client {
   binaryTargets = ["native"]
 }
 
+// ── DATASOURCE ────────────────────────────────────────────
+// DEV:  DATABASE_URL=file:./dev.db  (SQLite)
+// PROD: DATABASE_URL=postgresql://... (PostgreSQL)
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // ════════════════════════════════════════════════════════
-// ENUMS (PostgreSQL obsługuje natywnie)
-// ════════════════════════════════════════════════════════
-
-enum Role {
-  ADMIN
-  MANAGER
-  OPERATOR
-  VIEWER
-}
-
-enum VehicleType {
-  STANDARD
-  HEAVY
-  LIGHT
-  DRONE
-  SPECIAL
-}
-
-enum VehicleStatus {
-  IDLE
-  ACTIVE
-  CHARGING
-  MAINTENANCE
-  OFFLINE
-  ERROR
-}
-
-enum MissionStatus {
-  PENDING
-  SCHEDULED
-  IN_PROGRESS
-  PAUSED
-  COMPLETED
-  CANCELLED
-  FAILED
-}
-
-enum Priority {
-  LOW
-  NORMAL
-  HIGH
-  CRITICAL
-}
-
-enum EventType {
-  SYSTEM
-  VEHICLE
-  MISSION
-  USER
-  SECURITY
-  MAINTENANCE
-}
-
-enum Severity {
-  DEBUG
-  INFO
-  WARNING
-  ERROR
-  CRITICAL
-}
-
-// ════════════════════════════════════════════════════════
-// UŻYTKOWNICY
+// UŻYTKOWNICY I AUTORYZACJA
 // ════════════════════════════════════════════════════════
 
 model User {
@@ -85,17 +28,20 @@ model User {
   passwordHash String
   firstName    String?
   lastName     String?
-  role         Role      @default(OPERATOR)
+  // SQLite: enum → String z @default("VALUE")
+  role         String    @default("OPERATOR")
+  // Możliwe wartości: ADMIN | MANAGER | OPERATOR | VIEWER
   active       Boolean   @default(true)
   lastLoginAt  DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  sessions      Session[]
+  // Relacje
+  sessions     Session[]
   refreshTokens RefreshToken[]
-  assignments   VehicleAssignment[]
-  missions      Mission[]  @relation("MissionCreator")
-  events        Event[]
+  assignedVehicles VehicleAssignment[]
+  createdMissions  Mission[] @relation("MissionCreator")
+  events       Event[]
 
   @@index([email])
   @@index([username])
@@ -133,28 +79,32 @@ model RefreshToken {
 }
 
 // ════════════════════════════════════════════════════════
-// POJAZDY
+// POJAZDY (FLOTA)
 // ════════════════════════════════════════════════════════
 
 model Vehicle {
-  id           String        @id @default(cuid())
+  id           String   @id @default(cuid())
   name         String
-  licensePlate String        @unique
-  vin          String?       @unique
-  type         VehicleType   @default(STANDARD)
-  status       VehicleStatus @default(IDLE)
-  battery      Int           @default(100)
-  mileage      Float         @default(0)
+  licensePlate String   @unique
+  vin          String?  @unique
+  // Możliwe wartości: STANDARD | HEAVY | LIGHT | DRONE | SPECIAL
+  type         String   @default("STANDARD")
+  // Możliwe wartości: IDLE | ACTIVE | CHARGING | MAINTENANCE | OFFLINE | ERROR
+  status       String   @default("IDLE")
+  battery      Int      @default(100)
+  mileage      Float    @default(0)
   fuelLevel    Float?
   lat          Float?
   lng          Float?
   speed        Float?
   heading      Float?
   lastSeenAt   DateTime?
-  metadata     Json?         // PostgreSQL obsługuje Json natywnie!
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  // SQLite: Json → String (przechowuj jako JSON string)
+  metadata     String?  // JSON string: { "color": "red", "year": 2023 }
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
+  // Relacje
   assignments  VehicleAssignment[]
   missions     Mission[]
   telemetry    Telemetry[]
@@ -186,25 +136,28 @@ model VehicleAssignment {
 // ════════════════════════════════════════════════════════
 
 model Mission {
-  id          String        @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
   description String?
   vehicleId   String?
   createdById String
-  status      MissionStatus @default(PENDING)
-  priority    Priority      @default(NORMAL)
+  // Możliwe wartości: PENDING | SCHEDULED | IN_PROGRESS | PAUSED | COMPLETED | CANCELLED | FAILED
+  status      String    @default("PENDING")
+  // Możliwe wartości: LOW | NORMAL | HIGH | CRITICAL
+  priority    String    @default("NORMAL")
   startLat    Float?
   startLng    Float?
   endLat      Float?
   endLng      Float?
-  waypoints   Json?         // PostgreSQL Json — tablice punktów GPS
+  // SQLite: Json → String (przechowuj jako JSON string)
+  waypoints   String?   // JSON string: [{"lat":52.2,"lng":21.0},...]
   scheduledAt DateTime?
   startedAt   DateTime?
   completedAt DateTime?
   distance    Float?
-  duration    Int?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  duration    Int?      // sekundy
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
   createdBy User     @relation("MissionCreator", fields: [createdById], references: [id])
@@ -229,7 +182,8 @@ model Telemetry {
   heading   Float?
   battery   Int?
   altitude  Float?
-  rawData   Json?    // surowe dane z sensora
+  // SQLite: Json → String
+  rawData   String?  // JSON string surowych danych z sensora
   timestamp DateTime @default(now())
 
   vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
@@ -239,13 +193,13 @@ model Telemetry {
 }
 
 // ════════════════════════════════════════════════════════
-// SERWIS
+// SERWIS I KONSERWACJA
 // ════════════════════════════════════════════════════════
 
 model MaintenanceRecord {
   id          String    @id @default(cuid())
   vehicleId   String
-  type        String
+  type        String    // oil_change | tire_change | inspection | repair | other
   description String
   cost        Float?
   mileageAt   Float?
@@ -262,19 +216,22 @@ model MaintenanceRecord {
 }
 
 // ════════════════════════════════════════════════════════
-// ZDARZENIA
+// ZDARZENIA I LOGI
 // ════════════════════════════════════════════════════════
 
 model Event {
-  id        String    @id @default(cuid())
-  type      EventType
-  severity  Severity  @default(INFO)
+  id        String   @id @default(cuid())
+  // Możliwe wartości: SYSTEM | VEHICLE | MISSION | USER | SECURITY | MAINTENANCE
+  type      String
+  // Możliwe wartości: DEBUG | INFO | WARNING | ERROR | CRITICAL
+  severity  String   @default("INFO")
   message   String
-  metadata  Json?
+  // SQLite: Json → String
+  metadata  String?  // JSON string dodatkowych danych
   vehicleId String?
   missionId String?
   userId    String?
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   vehicle Vehicle? @relation(fields: [vehicleId], references: [id])
   mission Mission? @relation(fields: [missionId], references: [id])
@@ -292,14 +249,16 @@ model Event {
 
 model Alert {
   id         String    @id @default(cuid())
-  type       String
-  severity   Priority  @default(LOW)
+  type       String    // speed | geofence | maintenance | fuel | system | custom
+  severity   String    @default("LOW")
+  // Możliwe wartości: LOW | MEDIUM | HIGH | CRITICAL
   message    String
   vehicleId  String?
   resolved   Boolean   @default(false)
   resolvedAt DateTime?
   resolvedBy String?
-  metadata   Json?
+  // SQLite: Json → String
+  metadata   String?   // JSON string
   createdAt  DateTime  @default(now())
 
   @@index([resolved])
@@ -315,7 +274,7 @@ model Alert {
 model SystemConfig {
   id        String   @id @default(cuid())
   key       String   @unique
-  value     Json     // PostgreSQL Json dla złożonych wartości
+  value     String   // JSON string dla złożonych wartości
   category  String   @default("general")
   updatedAt DateTime @updatedAt
 
