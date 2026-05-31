@@ -6,6 +6,7 @@ spec:
   selector:
     app: grazyna
   ports:
-    - port: 80
-      targetPort: 3001
-  type: ClusterIP
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: NodePort
