@@ -1,0 +1,32 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: telegram
+  group_by: ['alertname', 'job']
+  group_wait: 10s
+  group_interval: 5m
+  repeat_interval: 3h
+  routes:
+    - matchers:
+        - severity="critical"
+      receiver: discord
+      continue: true
+    - matchers:
+        - severity="critical"
+      receiver: telegram
+    - matchers:
+        - severity="warning"
+      receiver: telegram
+
+receivers:
+  - name: telegram
+    telegram_configs:
+      - bot_token: "TELEGRAM_BOT_TOKEN"
+        chat_id: 123456789
+        send_resolved: true
+
+  - name: discord
+    webhook_configs:
+      - url: "https://discord.com/api/webhooks/REPLACE_ME"
+        send_resolved: true

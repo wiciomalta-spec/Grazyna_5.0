@@ -1,0 +1,282 @@
+// ============================================================
+// GRAŻYNA 5.0 — ZOPTYMALIZOWANA SCHEMA PRISMA
+// Kompatybilna z SQLite (dev) i PostgreSQL (prod)
+// Użycie: skopiuj do backend/prisma/schema.prisma
+// ============================================================
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+// ── DATASOURCE ────────────────────────────────────────────
+// DEV:  DATABASE_URL=file:./dev.db  (SQLite)
+// PROD: DATABASE_URL=postgresql://... (PostgreSQL)
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ════════════════════════════════════════════════════════
+// UŻYTKOWNICY I AUTORYZACJA
+// ════════════════════════════════════════════════════════
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  username     String    @unique
+  passwordHash String
+  firstName    String?
+  lastName     String?
+  // SQLite: enum → String z @default("VALUE")
+  role         String    @default("OPERATOR")
+  // Możliwe wartości: ADMIN | MANAGER | OPERATOR | VIEWER
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relacje
+  sessions     Session[]
+  refreshTokens RefreshToken[]
+  assignedVehicles VehicleAssignment[]
+  createdMissions  Mission[] @relation("MissionCreator")
+  events       Event[]
+
+  @@index([email])
+  @@index([username])
+  @@index([role])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+// ════════════════════════════════════════════════════════
+// POJAZDY (FLOTA)
+// ════════════════════════════════════════════════════════
+
+model Vehicle {
+  id           String   @id @default(cuid())
+  name         String
+  licensePlate String   @unique
+  vin          String?  @unique
+  // Możliwe wartości: STANDARD | HEAVY | LIGHT | DRONE | SPECIAL
+  type         String   @default("STANDARD")
+  // Możliwe wartości: IDLE | ACTIVE | CHARGING | MAINTENANCE | OFFLINE | ERROR
+  status       String   @default("IDLE")
+  battery      Int      @default(100)
+  mileage      Float    @default(0)
+  fuelLevel    Float?
+  lat          Float?
+  lng          Float?
+  speed        Float?
+  heading      Float?
+  lastSeenAt   DateTime?
+  // SQLite: Json → String (przechowuj jako JSON string)
+  metadata     String?  // JSON string: { "color": "red", "year": 2023 }
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relacje
+  assignments  VehicleAssignment[]
+  missions     Mission[]
+  telemetry    Telemetry[]
+  maintenance  MaintenanceRecord[]
+  events       Event[]
+
+  @@index([status])
+  @@index([type])
+  @@index([licensePlate])
+}
+
+model VehicleAssignment {
+  id        String    @id @default(cuid())
+  vehicleId String
+  userId    String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  notes     String?
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([userId])
+}
+
+// ════════════════════════════════════════════════════════
+// MISJE
+// ════════════════════════════════════════════════════════
+
+model Mission {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  vehicleId   String?
+  createdById String
+  // Możliwe wartości: PENDING | SCHEDULED | IN_PROGRESS | PAUSED | COMPLETED | CANCELLED | FAILED
+  status      String    @default("PENDING")
+  // Możliwe wartości: LOW | NORMAL | HIGH | CRITICAL
+  priority    String    @default("NORMAL")
+  startLat    Float?
+  startLng    Float?
+  endLat      Float?
+  endLng      Float?
+  // SQLite: Json → String (przechowuj jako JSON string)
+  waypoints   String?   // JSON string: [{"lat":52.2,"lng":21.0},...]
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  distance    Float?
+  duration    Int?      // sekundy
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+  createdBy User     @relation("MissionCreator", fields: [createdById], references: [id])
+  events    Event[]
+
+  @@index([status])
+  @@index([priority])
+  @@index([vehicleId])
+  @@index([createdById])
+}
+
+// ════════════════════════════════════════════════════════
+// TELEMETRIA
+// ════════════════════════════════════════════════════════
+
+model Telemetry {
+  id        String   @id @default(cuid())
+  vehicleId String
+  lat       Float?
+  lng       Float?
+  speed     Float?
+  heading   Float?
+  battery   Int?
+  altitude  Float?
+  // SQLite: Json → String
+  rawData   String?  // JSON string surowych danych z sensora
+  timestamp DateTime @default(now())
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([timestamp])
+}
+
+// ════════════════════════════════════════════════════════
+// SERWIS I KONSERWACJA
+// ════════════════════════════════════════════════════════
+
+model MaintenanceRecord {
+  id          String    @id @default(cuid())
+  vehicleId   String
+  type        String    // oil_change | tire_change | inspection | repair | other
+  description String
+  cost        Float?
+  mileageAt   Float?
+  performedAt DateTime  @default(now())
+  nextDueAt   DateTime?
+  performedBy String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([type])
+}
+
+// ════════════════════════════════════════════════════════
+// ZDARZENIA I LOGI
+// ════════════════════════════════════════════════════════
+
+model Event {
+  id        String   @id @default(cuid())
+  // Możliwe wartości: SYSTEM | VEHICLE | MISSION | USER | SECURITY | MAINTENANCE
+  type      String
+  // Możliwe wartości: DEBUG | INFO | WARNING | ERROR | CRITICAL
+  severity  String   @default("INFO")
+  message   String
+  // SQLite: Json → String
+  metadata  String?  // JSON string dodatkowych danych
+  vehicleId String?
+  missionId String?
+  userId    String?
+  createdAt DateTime @default(now())
+
+  vehicle Vehicle? @relation(fields: [vehicleId], references: [id])
+  mission Mission? @relation(fields: [missionId], references: [id])
+  user    User?    @relation(fields: [userId], references: [id])
+
+  @@index([type])
+  @@index([severity])
+  @@index([vehicleId])
+  @@index([createdAt])
+}
+
+// ════════════════════════════════════════════════════════
+// ALERTY
+// ════════════════════════════════════════════════════════
+
+model Alert {
+  id         String    @id @default(cuid())
+  type       String    // speed | geofence | maintenance | fuel | system | custom
+  severity   String    @default("LOW")
+  // Możliwe wartości: LOW | MEDIUM | HIGH | CRITICAL
+  message    String
+  vehicleId  String?
+  resolved   Boolean   @default(false)
+  resolvedAt DateTime?
+  resolvedBy String?
+  // SQLite: Json → String
+  metadata   String?   // JSON string
+  createdAt  DateTime  @default(now())
+
+  @@index([resolved])
+  @@index([severity])
+  @@index([vehicleId])
+  @@index([createdAt])
+}
+
+// ════════════════════════════════════════════════════════
+// SYSTEM CONFIG
+// ════════════════════════════════════════════════════════
+
+model SystemConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // JSON string dla złożonych wartości
+  category  String   @default("general")
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+}

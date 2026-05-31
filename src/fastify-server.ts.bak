@@ -1,0 +1,20 @@
+import Fastify from "fastify";
+import fastifySocketIO from "fastify-socket.io";
+
+const fastify = Fastify({ logger:true });
+
+await fastify.register(fastifySocketIO);
+
+fastify.get("/health", async () => ({status:"ok"}));
+fastify.get("/api", async () => ({mode:"fastify"}));
+
+fastify.ready().then(()=>{
+  fastify.io.on("connection", socket=>{
+    socket.emit("system:status",{
+      uptime:process.uptime()
+    });
+  });
+});
+
+await fastify.listen({port:3001});
+console.log("FASTIFY READY");

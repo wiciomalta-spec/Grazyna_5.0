@@ -1,0 +1,28 @@
+import cluster from "node:cluster";
+import os from "node:os";
+
+const numCPUs = os.cpus().length;
+
+if (cluster.isPrimary) {
+  console.log("MASTER:", process.pid);
+
+  for (let i=0;i<numCPUs;i++){
+    cluster.fork();
+  }
+
+  cluster.on("exit", (worker)=>{
+    console.log("Worker died:", worker.process.pid);
+    cluster.fork();
+  });
+
+} else {
+
+  const MODE = process.env.USE_FASTIFY === "true";
+
+  if (MODE) {
+    await import("./fastify-server.js");
+  } else {
+    await import("./express-server.js");
+  }
+
+}

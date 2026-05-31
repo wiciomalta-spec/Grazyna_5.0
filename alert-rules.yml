@@ -1,0 +1,26 @@
+groups:
+  - name: grazyna-autoscale
+    rules:
+      - alert: BackendDown
+        expr: up == 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend is down"
+
+      - alert: HighHeapUsage
+        expr: (nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes) > 0.90
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Heap > 90%"
+
+      - alert: EventLoopLagHigh
+        expr: nodejs_eventloop_lag_p99_seconds > 0.05
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Event loop lag p99 > 50ms"

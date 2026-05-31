@@ -1,0 +1,46 @@
+# =============================================
+# PRODUCTION STABLE DOCKERFILE (FINAL)
+# =============================================
+
+# ========= BUILDER =========
+FROM node:20-slim AS builder
+
+WORKDIR /app
+
+# deps do build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# install deps
+COPY package*.json ./
+RUN npm ci
+
+# prisma
+COPY prisma ./prisma
+RUN npx prisma generate
+
+# build
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
+
+
+# ========= RUNTIME =========
+FROM node:20-slim
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+# kopiujemy gotowe artefakty
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+
+# bezpieczeństwo
+RUN useradd --user-group --create-home --shell /bin/false appuser
+USER appuser
+
+EXPOSE 3001
+
+CMD ["node", "dist/index.js"]
