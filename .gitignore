@@ -1,6 +1,47 @@
+# Node
 node_modules
 dist
-.env
-*.log
-*.bak
 coverage
+*.log
+npm-debug.log*
+
+# Env
+.env
+.env.*
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+
+# Builds
+build
+.cache
+.tmp
+
+# Docker
+docker-compose.override.yml
+
+# Prisma
+prisma/migrations
+
+# Logs
+logs
+*.log
+
+# Python (bo masz Python CLI)
+__pycache__
+*.pyc
+
+# Backup files
+*.bak
+*.old
+*.tmp
+
+# Monitoring
+grafana-data
+prometheus-data
