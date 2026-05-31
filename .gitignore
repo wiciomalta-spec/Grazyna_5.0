@@ -1,47 +1,74 @@
-# Node
-node_modules
-dist
-coverage
+# =========================
+# Node.js
+# =========================
+node_modules/
+dist/
+build/
+coverage/
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Env
+# =========================
+# Environment
+# =========================
 .env
 .env.*
 *.env
 
-# OS
+# =========================
+# OS files
+# =========================
 .DS_Store
 Thumbs.db
 
-# IDE
-.vscode
-.idea
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.swp
 
-# Builds
-build
-.cache
-.tmp
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
 
+# =========================
+# Cache / temp
+# =========================
+.cache/
+.tmp/
+.temp/
+.nyc_output/
+
+# =========================
 # Docker
+# =========================
 docker-compose.override.yml
 
+# =========================
+# Kubernetes / monitoring
+# =========================
+grafana-data/
+prometheus-data/
+
+# =========================
 # Prisma
-prisma/migrations
+# =========================
+prisma/migrations/
 
-# Logs
-logs
-*.log
-
-# Python (bo masz Python CLI)
-__pycache__
+# =========================
+# Python (masz GPM / Python tool)
+# =========================
+__pycache__/
 *.pyc
 
-# Backup files
+# =========================
+# Backup / dev junk
+# =========================
 *.bak
 *.old
 *.tmp
 
-# Monitoring
-grafana-data
-prometheus-data
