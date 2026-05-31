@@ -1,11 +1,14 @@
 {
   "name": "grazyna-backend",
   "version": "1.0.0",
+  "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "lint": "echo \"Lint OK\"",
-    "test": "echo \"All tests passed\"",
-    "build": "mkdir -p dist && echo \"console.log('Grazyna работает 🚀');\" > dist/index.js"
+    "lint": "echo \"Lint OK (placeholder)\"",
+    "test": "echo \"Tests OK (placeholder)\"",
+    "build": "mkdir -p dist && printf 'console.log(\"Grazyna backend running 🚀\")\n' > dist/index.js",
+    "version:bump:patch": "node -e \"const fs=require('fs');const p=require('./package.json');const v=p.version.split('.').map(Number);v[2]++;p.version=v.join('.');fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n');console.log(p.version)\"",
+    "version:print": "node -e \"console.log(require('./package.json').version)\""
   },
   "dependencies": {},
   "devDependencies": {}
