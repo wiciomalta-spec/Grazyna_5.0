@@ -6,6 +6,7 @@ const errorRate    = new Rate('error_rate');
 const authDuration = new Trend('auth_duration_ms', true);
 const apiDuration  = new Trend('api_duration_ms',  true);
 const totalReqs    = new Counter('total_requests');
+const healthDuration = new Trend('health_duration_ms', true);
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
 
