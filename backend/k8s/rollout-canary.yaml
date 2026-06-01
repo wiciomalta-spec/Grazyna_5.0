@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: grazyna
+spec:
+  replicas: 5
+
+  selector:
+    matchLabels:
+      app: grazyna
+
+  template:
+    metadata:
+      labels:
+        app: grazyna
+    spec:
+      containers:
+        - name: grazyna
+          image: ghcr.io/wiciomalta-spec/grazyna:v1.0.0
+
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { duration: 2m }
+
+        - analysis:
+            templates:
+              - templateName: error-rate
+            args:
+              - name: service-name
+                value: grazyna
+
+        - setWeight: 100

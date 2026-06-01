@@ -1,33 +1,42 @@
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: any | undefined;
-}
+import { Pool } from "pg";
 
-let prisma: any = undefined;
+const DATABASE_URL =
+  process.env.DATABASE_URL ||
+  "postgres://postgres:postgres@localhost:5433/postgres";
 
-try {
-  // Try to dynamically import @prisma/client (may not be generated in some environments)
-  // Use top-level await (ES2022) so this file can gracefully fallback when prisma client is missing
-  const mod = await import('@prisma/client').catch(() => null);
-  if (mod && mod.PrismaClient) {
-    const PrismaClient = mod.PrismaClient;
-    prisma = global.prisma || new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-    });
-    if (process.env.NODE_ENV !== 'production') {
-      global.prisma = prisma;
-    }
-  } else {
-    throw new Error('prisma client not available');
+export const pool = new Pool({
+  connectionString: DATABASE_URL,
+  max: 10,              // max connections
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+});
+
+// ✅ logi
+pool.on("connect", () => {
+  console.log("✅ DB pool connected");
+});
+
+pool.on("error", (err) => {
+  console.error("❌ DB pool error", err.message);
+});
+
+// ✅ test connection
+export async function initDatabase() {
+  try {
+    await pool.query("SELECT 1");
+    console.log("✅ DB ready");
+  } catch (err) {
+    console.warn("⚠️ DB unavailable — running in fallback mode");
   }
-} catch (err) {
-  console.warn('Prisma client not available; using fallback in-memory stub.');
-  prisma = {
-    $disconnect: async () => { },
-    user: { findUnique: async () => null },
-    vehicle: { findMany: async () => [] },
-  };
 }
 
-export { prisma };
-export default prisma;
+// ✅ helper do query
+export async function dbQuery(text: string, params?: any[]) {
+  try {
+    const res = await pool.query(text, params);
+    return res;
+  } catch (err) {
+    console.error("DB query error:", err.message);
+    throw err;
+  }
+}

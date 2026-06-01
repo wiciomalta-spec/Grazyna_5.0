@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: grazyna-app-alerts
+spec:
+  groups:
+    - name: grazyna.rules
+
+      rules:
+        # 🚨 ERROR RATE
+        - alert: HighErrorRate
+          expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: High HTTP 5xx errors
+
+        # 🚨 LATENCY
+        - alert: HighLatency
+          expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High latency > 1s
+
+        # 🚨 CRASH LOOP
+        - alert: PodCrashLoop
+          expr: kube_pod_container_status_restarts_total > 3
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Pod restarting too often

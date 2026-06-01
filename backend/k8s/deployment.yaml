@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grazyna
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grazyna
+  template:
+    metadata:
+      labels:
+        app: grazyna
+    spec:
+      containers:
+        - name: grazyna
+          image: ghcr.io/wiciomalta-spec/grazyna:latest
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3

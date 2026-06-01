@@ -1,0 +1,83 @@
+# =========================
+# Node.js / TypeScript
+# =========================
+node_modules/
+dist/
+build/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+*.env
+!.env.example
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# =========================
+# IDE / editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.iml
+
+# =========================
+# Cache / temp
+# =========================
+.cache/
+.parcel-cache/
+.tmp/
+.temp/
+tmp/
+*.tmp
+
+# =========================
+# Docker / containers
+# =========================
+docker-compose.override.yml
+*.pid
+*.seed
+*.pid.lock
+
+# =========================
+# Kubernetes / monitoring
+# =========================
+grafana-data/
+prometheus-data/
+
+# =========================
+# Prisma
+# =========================
+prisma/migrations/
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# =========================
+# Backup / local junk
+# =========================
+*.bak
+*.old
+*.orig

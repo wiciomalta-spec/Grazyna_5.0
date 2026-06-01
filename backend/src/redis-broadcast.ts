@@ -1,94 +1,140 @@
-import { createClient } from "redis";
+import { createClient, type RedisClientType } from "redis";
 
-const redisUrl = process.env.REDIS_URL || "redis://127.0.0.1:6379";
-const broadcastChannel = "grazyna:broadcast";
-const jobsKey = "grazyna:jobs";
+const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
 
-let pub: any = null;
-let sub: any = null;
-let queueClient: any = null;
-let started = false;
-let queueStarted = false;
-let emitter: ((event: string, payload: any) => void) | null = null;
+type AnyRedis = RedisClientType<any, any, any>;
 
-async function safeConnect(kind: string) {
+let pubClient: AnyRedis | null = null;
+let subClient: AnyRedis | null = null;
+let queueClient: AnyRedis | null = null;
+let initPromise: Promise<void> | null = null;
+
+function onRedisError(name: string) {
+  return (err: unknown) => {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[redis] ${name} error: ${message}`);
+  };
+}
+
+async function connectClient(name: string, client: AnyRedis): Promise<AnyRedis | null> {
+  client.on("error", onRedisError(name));
+
   try {
-    const c = createClient({ url: redisUrl, socket: { reconnectStrategy: false } });
-    c.on("error", () => {});
-    await c.connect();
-    return c;
-  } catch {
-    console.warn(`[redis] ${kind} unavailable — fallback mode`);
+    if (!client.isOpen) {
+      await client.connect();
+    }
+    return client;
+  } catch (err) {
+    console.warn(`[redis] ${name} unavailable — fallback mode`);
+    try {
+      if (client.isOpen) {
+        await client.quit();
+      }
+    } catch {
+      // ignore
+    }
     return null;
   }
 }
 
-async function ensureClients() {
-  if (!pub) pub = await safeConnect("pub");
-  if (!sub) sub = await safeConnect("sub");
-  if (!queueClient) queueClient = await safeConnect("queue");
+export async function initRedis(): Promise<void> {
+  if (initPromise) return initPromise;
+
+  initPromise = (async () => {
+    const base = createClient({ url: REDIS_URL });
+    const sub = base.duplicate();
+    const queue = base.duplicate();
+
+    pubClient = await connectClient("pub", base);
+    subClient = await connectClient("sub", sub);
+    queueClient = await connectClient("queue", queue);
+  })();
+
+  return initPromise;
 }
 
-export async function attachSocketBridge(ioLike: any) {
-  emitter = (event: string, payload: any) => {
-    ioLike.emit(event, payload);
-  };
+void initRedis();
 
-  if (started) return;
-  await ensureClients();
-
-  if (!sub) {
-    console.warn("[redis] socket bridge disabled");
-    return;
-  }
-
-  await sub.subscribe(broadcastChannel, (message: string) => {
-    try {
-      const msg = JSON.parse(message);
-      if (emitter) emitter(msg.event, msg.payload);
-    } catch {}
-  });
-
-  started = true;
-  console.log("[redis-broadcast] attached");
+export function getRedisPubClient() {
+  return pubClient;
 }
 
-export async function publishSocketEvent(event: string, payload: any) {
-  await ensureClients();
-  if (!pub) return false;
-
-  await pub.publish(broadcastChannel, JSON.stringify({ event, payload }));
-  return true;
+export function getRedisSubClient() {
+  return subClient;
 }
 
-// ===== Redis queue (jobs) =====
-export async function enqueueJob(type: string, payload: any) {
-  await ensureClients();
-  if (!queueClient) {
-    console.warn("[redis-queue] unavailable — queue disabled");
+export function getRedisQueueClient() {
+  return queueClient;
+}
+
+/**
+ * Publikuje event do kanału socket:broadcast.
+ * Zakładamy sygnaturę: publishSocketEvent(eventName, payload)
+ */
+export async function publishSocketEvent(event: string, payload: unknown): Promise<boolean> {
+  try {
+    await initRedis();
+
+    if (!pubClient || !pubClient.isOpen) {
+      console.warn("[redis] pub unavailable — fallback mode");
+      return false;
+    }
+
+    await pubClient.publish("socket:broadcast", JSON.stringify({ event, payload }));
+    return true;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[redis] publish failed — fallback mode (${message})`);
     return false;
   }
-  await queueClient.lPush(jobsKey, JSON.stringify({ type, payload, ts: Date.now() }));
-  return true;
 }
 
-export async function consumeJobs(handler: (job: any) => Promise<void>) {
-  await ensureClients();
-  if (!queueClient || queueStarted) return;
+/**
+ * Podpina bridge Redis -> Socket.IO
+ */
+export async function attachSocketBridge(io: { emit: (event: string, payload: any) => void }) {
+  try {
+    await initRedis();
 
-  queueStarted = true;
-  console.log("[redis-queue] consumer started");
+    if (!subClient || !subClient.isOpen) {
+      console.warn("[redis] socket bridge disabled");
+      return;
+    }
 
-  while (true) {
+    await subClient.subscribe("socket:broadcast", (message: string) => {
+      try {
+        const parsed = JSON.parse(message);
+        if (parsed?.event) {
+          io.emit(parsed.event, parsed.payload);
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn(`[redis] socket bridge parse error: ${msg}`);
+      }
+    });
+
+    console.log("[redis-broadcast] attached");
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[redis] socket bridge disabled (${message})`);
+  }
+}
+
+export async function closeRedis() {
+  const clients = [pubClient, subClient, queueClient].filter(Boolean) as AnyRedis[];
+
+  for (const client of clients) {
     try {
-      const result = await queueClient.brPop(jobsKey, 5);
-      if (!result) continue;
-
-      const item = Array.isArray(result) ? result[1] : result.element;
-      const job = JSON.parse(item);
-      await handler(job);
+      if (client.isOpen) {
+        await client.quit();
+      }
     } catch {
-      await new Promise((r) => setTimeout(r, 2000));
+      // ignore close errors
     }
   }
+
+  pubClient = null;
+  subClient = null;
+  queueClient = null;
+  initPromise = null;
 }

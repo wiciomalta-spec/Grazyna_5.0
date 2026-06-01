@@ -1,0 +1,51 @@
+name: version-bump
+
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  bump-patch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump patch version in package.json
+        run: npm run version:bump:patch
+
+      - name: Read version
+        id: version
+        run: echo "version=$(npm run -s version:print)" >> $GITHUB_OUTPUT
+
+      - name: Commit version file
+        run: |
+          git add package.json
+          git commit -m "chore: bump version to v${{ steps.version.outputs.version }} [skip actions]" || true
+
+      - name: Create tag
+        run: git tag "v${{ steps.version.outputs.version }}" || true
+
+      - name: Push commit and tag
+        run: |
+          git push origin main
+          git push origin "v${{ steps.version.outputs.version }}"
