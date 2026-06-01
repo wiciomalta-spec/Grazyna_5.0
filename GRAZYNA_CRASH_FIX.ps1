@@ -245,7 +245,7 @@ $endpoints = @(
     @{ url="http://localhost:3001/api/system/env";   name="/api/system/env" },
     @{ url="http://localhost:3001/api/vehicles";     name="/api/vehicles" },
     @{ url="http://localhost:3001/api/alerts";       name="/api/alerts" },
-    @{ url="http://localhost:3001/api/ws/status";    name="/api/ws/status" },
+    @{ url="http://localhost:3001/api/ws/status";    name="/api/ws/status" }
 )
 
 foreach ($ep in $endpoints) {
