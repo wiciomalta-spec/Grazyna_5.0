@@ -41,7 +41,7 @@ export default function(data) {
   const h = { 'Content-Type':'application/json', 'Authorization': data.token ? `Bearer ${data.token}` : '' };
 
   group('health', () => {
-    const r = http.get(`${BASE_URL}/health`, { tags:{ endpoint:'health' } });
+    const r = http.get(`${BASE_URL}/api/health`, { tags:{ endpoint:'health' } });
     healthDuration.add(r.timings.duration);
     errorRate.add(r.status !== 200);
     check(r, { 'health 200': r => r.status===200, 'health <50ms': r => r.timings.duration<50 });
