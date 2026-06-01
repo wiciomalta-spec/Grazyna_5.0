@@ -5,6 +5,31 @@ import { publishSocketEvent } from "./redis-broadcast";
 export async function startExpressServer() {
   const app = express();
 
+// ── HEALTH ENDPOINT ──────────────────────────────────────
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    version: '5.0.0',
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    memory: {
+      heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+      heapTotal: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+    },
+    node: process.version,
+  });
+});
+
+app.get('/metrics-json', (req, res) => {
+  const mem = process.memoryUsage();
+  res.json({
+    heap_pct: Math.round(mem.heapUsed / mem.heapTotal * 100),
+    rss_mb: Math.round(mem.rss / 1024 / 1024),
+    uptime: Math.floor(process.uptime()),
+  });
+});
+
+
   app.get("/", (_req, res) => {
     res.send("OK");
   });
