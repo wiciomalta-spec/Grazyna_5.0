@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRAŻYNA 5.0 — Console Panel</title>
+<style>
+:root{--bg:#060b18;--bg2:#0a1020;--bg3:#0e1628;--card:#111827;--border:#1e2d4a;--border2:#2a3d6a;--cyan:#00e5ff;--purple:#a855f7;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--blue:#3b82f6;--text:#f1f5f9;--text2:#94a3b8;--text3:#475569;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(0,229,255,0.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(168,85,247,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+.hdr{position:sticky;top:0;z-index:200;background:rgba(6,11,24,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;}
+.logo{font-size:18px;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);position:relative;}
+.pulse::after{content:'';position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;border-radius:50%;border:2px solid var(--green);animation:pr 1.5s infinite;opacity:0;}
+@keyframes pr{0%{transform:scale(0.8);opacity:0.8;}100%{transform:scale(1.6);opacity:0;}}
+.clock{font-family:monospace;font-size:12px;color:var(--cyan);}
+
+.nav{position:sticky;top:52px;z-index:190;background:rgba(6,11,24,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 16px;}
+.nav::-webkit-scrollbar{height:2px;}.nav::-webkit-scrollbar-thumb{background:var(--border2);}
+.ntab{padding:8px 14px;font-size:10px;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;text-transform:uppercase;}
+.ntab:hover{color:var(--text2);}.ntab.on{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+.main{position:relative;z-index:1;padding:14px;max-width:1800px;margin:0 auto;}
+.pane{display:none;}.pane.on{display:block;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px;}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:1400px){.g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){.g4,.g3,.g2,.g21{grid-template-columns:1fr;}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;transition:all 0.2s;}
+.card:hover{border-color:var(--border2);box-shadow:0 0 18px rgba(0,229,255,0.07);}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden;cursor:default;transition:all 0.25s;}
+.sc:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,0.4);}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:2px;}
+.sc-bar.c{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.sc-bar.p{background:linear-gradient(90deg,var(--purple),#ec4899);}
+.sc-bar.g{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.sc-bar.o{background:linear-gradient(90deg,var(--orange),#fbbf24);}
+.sc-bar.r{background:linear-gradient(90deg,var(--red),var(--orange));}
+.sc-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:5px;}
+.sc-val{font-size:22px;font-weight:900;line-height:1;margin-bottom:3px;font-family:monospace;transition:all 0.5s;}
+.sc-val.c{color:var(--cyan);}.sc-val.p{color:var(--purple);}.sc-val.g{color:var(--green);}.sc-val.o{color:var(--orange);}.sc-val.r{color:var(--red);}
+.sc-sub{font-size:9px;color:var(--text3);}
+.sc-ico{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:28px;opacity:0.07;}
+.sc-trend{position:absolute;right:10px;bottom:10px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;}
+.sc-trend.up{background:rgba(16,185,129,0.15);color:var(--green);}
+.sc-trend.dn{background:rgba(239,68,68,0.15);color:var(--red);}
+.sc-trend.warn{background:rgba(245,158,11,0.15);color:var(--orange);}
+
+.b{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;}
+.b::before{content:'●';font-size:6px;}
+.b-ok{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
+.b-warn{background:rgba(245,158,11,0.12);color:var(--orange);border:1px solid rgba(245,158,11,0.25);}
+.b-err{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25);}
+.b-info{background:rgba(0,229,255,0.12);color:var(--cyan);border:1px solid rgba(0,229,255,0.25);}
+
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.sh-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+.sh-title::before{content:'';width:2px;height:11px;background:var(--cyan);border-radius:2px;display:block;}
+.sh-title.g::before{background:var(--green);}.sh-title.o::before{background:var(--orange);}.sh-title.r::before{background:var(--red);}
+
+.tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.tbl th{padding:5px 8px;color:var(--text3);font-size:9px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);text-align:left;font-weight:700;}
+.tbl td{padding:7px 8px;border-bottom:1px solid rgba(30,45,74,0.4);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}.tbl tr:hover td{background:rgba(255,255,255,0.02);}
+.mono{font-family:monospace;font-size:10px;color:var(--cyan);}
+
+.prg{margin-bottom:7px;}
+.prg-lbl{display:flex;justify-content:space-between;margin-bottom:3px;font-size:10px;}
+.prg-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.prg-fill{height:100%;border-radius:2px;transition:width 1.5s ease;}
+.prg-fill.c{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.prg-fill.g{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.prg-fill.o{background:linear-gradient(90deg,var(--orange),#fbbf24);}
+.prg-fill.r{background:linear-gradient(90deg,var(--red),var(--orange));}
+
+.alert{padding:8px 10px;border-radius:6px;margin-bottom:7px;display:flex;align-items:flex-start;gap:7px;font-size:10px;}
+.alert-ok{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fcd34d;}
+.alert-err{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;}
+.alert-info{background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:#67e8f9;}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;border:none;font-size:10px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-c{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#000;}
+.btn-c:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,229,255,0.4);}
+.btn-g{background:linear-gradient(135deg,var(--green),var(--cyan));color:#000;}
+.btn-g:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(16,185,129,0.4);}
+.btn-o{background:linear-gradient(135deg,var(--orange),#fbbf24);color:#000;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+.bgrp{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;}
+
+.sep{height:1px;background:var(--border);margin:9px 0;}
+#notif{position:fixed;bottom:14px;right:14px;z-index:999;background:#162035;border:1px solid var(--green);color:var(--green);padding:7px 12px;border-radius:8px;font-size:10px;font-weight:700;transform:translateY(50px);opacity:0;transition:all 0.3s;}
+#notif.show{transform:translateY(0);opacity:1;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* ── KONSOLA ─────────────────────────────────────────────── */
+.console-wrap{background:#020509;border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;height:500px;}
+.console-header{background:#0a1020;border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;}
+.console-title{font-size:11px;font-weight:700;color:var(--cyan);display:flex;align-items:center;gap:8px;}
+.console-dots{display:flex;gap:5px;}
+.console-dot{width:10px;height:10px;border-radius:50%;}
+.console-dot.r{background:#ef4444;}.console-dot.y{background:#f59e0b;}.console-dot.g{background:#10b981;}
+.console-output{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Cascadia Code','Fira Code',monospace;font-size:11px;line-height:1.6;}
+.console-output::-webkit-scrollbar{width:3px;}.console-output::-webkit-scrollbar-thumb{background:var(--border2);}
+.console-line{margin-bottom:2px;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-5px);}to{opacity:1;transform:none;}}
+.console-line.cmd{color:#00e5ff;}
+.console-line.out{color:#f1f5f9;}
+.console-line.err{color:#ef4444;}
+.console-line.ok{color:#10b981;}
+.console-line.warn{color:#f59e0b;}
+.console-line.info{color:#94a3b8;}
+.console-line.json{color:#a855f7;}
+.console-input-wrap{border-top:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;background:#0a1020;}
+.console-prompt{color:var(--green);font-family:monospace;font-size:11px;font-weight:700;white-space:nowrap;}
+.console-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Cascadia Code','Fira Code',monospace;font-size:11px;caret-color:var(--cyan);}
+.console-input::placeholder{color:var(--text3);}
+.console-send{background:linear-gradient(135deg,var(--cyan),var(--blue));border:none;color:#000;padding:4px 10px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.console-send:hover{transform:translateY(-1px);}
+
+/* Autocomplete */
+.autocomplete{position:absolute;background:var(--card2,#162035);border:1px solid var(--border2);border-radius:6px;max-height:200px;overflow-y:auto;z-index:100;min-width:300px;box-shadow:0 8px 24px rgba(0,0,0,0.5);}
+.ac-item{padding:6px 12px;font-family:monospace;font-size:10px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.1s;}
+.ac-item:hover,.ac-item.selected{background:rgba(0,229,255,0.1);}
+.ac-cmd{color:var(--cyan);font-weight:700;}
+.ac-desc{color:var(--text3);font-size:9px;}
+.ac-type{font-size:8px;padding:1px 5px;border-radius:3px;font-weight:700;}
+.ac-type.bash{background:rgba(16,185,129,0.2);color:var(--green);}
+.ac-type.ps{background:rgba(0,229,255,0.2);color:var(--cyan);}
+.ac-type.api{background:rgba(168,85,247,0.2);color:var(--purple);}
+.ac-type.git{background:rgba(245,158,11,0.2);color:var(--orange);}
+
+/* Quick commands */
+.qcmd{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);font-family:monospace;font-size:9px;color:var(--cyan);cursor:pointer;transition:all 0.2s;margin:2px;}
+.qcmd:hover{border-color:var(--cyan);background:rgba(0,229,255,0.08);}
+.qcmd-type{font-size:8px;padding:1px 4px;border-radius:2px;font-weight:700;}
+.qcmd-type.bash{background:rgba(16,185,129,0.2);color:var(--green);}
+.qcmd-type.api{background:rgba(168,85,247,0.2);color:var(--purple);}
+.qcmd-type.git{background:rgba(245,158,11,0.2);color:var(--orange);}
+</style>
+</head>
+<body>
+<div id="notif">📋 Skopiowano!</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="logo">⚡ GRAŻYNA 5.0</div>
+    <div style="font-size:9px;padding:2px 8px;border-radius:12px;background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(168,85,247,0.15));border:1px solid rgba(0,229,255,0.25);color:var(--cyan);">CONSOLE PANEL</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;font-size:10px;">
+    <div class="pulse"></div>
+    <span style="color:var(--green);font-weight:700;margin-left:3px;" id="sys-status">ONLINE</span>
+    <span style="color:var(--text3)">|</span>
+    <span style="color:var(--text3)">:3001 <span id="hdr-b" style="color:var(--green)">✓</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">Heap <span id="hdr-h" style="color:var(--orange)">—</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">EL <span id="hdr-e" style="color:var(--green)">—</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">Git <span style="color:var(--green)">ef911e6</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">Security <span style="color:var(--green)">0 vuln</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:7px;">
+    <span class="clock" id="clock">--:--:--</span>
+    <button class="btn btn-ghost" style="padding:2px 6px;font-size:9px;" onclick="fetchMetrics()">🔄</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="ntab on" onclick="tab('console')" id="nt-console">💻 Konsola</div>
+  <div class="ntab" onclick="tab('dash')" id="nt-dash">📊 Dashboard</div>
+  <div class="ntab" onclick="tab('security')" id="nt-security">🔒 Security</div>
+  <div class="ntab" onclick="tab('deploy')" id="nt-deploy">🚀 Deploy</div>
+  <div class="ntab" onclick="tab('vite')" id="nt-vite">⚡ Vite</div>
+  <div class="ntab" onclick="tab('cmd')" id="nt-cmd">📋 Komendy</div>
+</div>
+
+<div class="main">
+
+<!-- ═══ KONSOLA ═══ -->
+<div class="pane on" id="pane-console">
+  <div class="g21">
+    <!-- GŁÓWNA KONSOLA -->
+    <div>
+      <div class="console-wrap" id="console-wrap">
+        <div class="console-header">
+          <div class="console-title">
+            <div class="console-dots">
+              <div class="console-dot r"></div>
+              <div class="console-dot y"></div>
+              <div class="console-dot g"></div>
+            </div>
+            <span>GRAŻYNA Console — Auto-rozpoznawanie komend</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <div class="b b-ok" id="console-mode">BASH</div>
+            <button class="btn btn-ghost" style="padding:2px 6px;font-size:9px;" onclick="clearConsole()">🗑 Clear</button>
+            <button class="btn btn-ghost" style="padding:2px 6px;font-size:9px;" onclick="copyLastOutput()">📋 Copy</button>
+          </div>
+        </div>
+        <div class="console-output" id="console-output">
+          <div class="console-line info">╔══════════════════════════════════════════════╗</div>
+          <div class="console-line info">║  GRAŻYNA 5.0 — Interactive Console          ║</div>
+          <div class="console-line info">╚══════════════════════════════════════════════╝</div>
+          <div class="console-line info">Auto-rozpoznawanie: bash | PowerShell | API | git</div>
+          <div class="console-line info">Wpisz komendę lub wybierz z listy poniżej</div>
+          <div class="console-line info">─────────────────────────────────────────────</div>
+        </div>
+        <div style="position:relative;">
+          <div class="autocomplete" id="autocomplete" style="display:none;bottom:100%;left:0;right:0;"></div>
+          <div class="console-input-wrap">
+            <span class="console-prompt" id="console-prompt">bash $</span>
+            <input class="console-input" id="console-input" placeholder="Wpisz komendę... (Tab=autocomplete, ↑↓=historia)" autocomplete="off" spellcheck="false">
+            <button class="console-send" onclick="executeCommand()">▶ Run</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK COMMANDS -->
+      <div class="card" style="margin-top:10px;">
+        <div class="sh"><div class="sh-title">Szybkie Komendy</div><div class="b b-info" id="detected-type">Auto-detect</div></div>
+        <div id="quick-cmds">
+          <div style="margin-bottom:6px;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">🟢 Bash / Git Bash</div>
+          <span class="qcmd" onclick="insertCmd('curl -s http://localhost:3001/health')"><span class="qcmd-type bash">bash</span>curl /health</span>
+          <span class="qcmd" onclick="insertCmd('curl -s http://localhost:3001/api/system/ping')"><span class="qcmd-type bash">bash</span>ping</span>
+          <span class="qcmd" onclick="insertCmd('curl -s http://localhost:3001/metrics | head -20')"><span class="qcmd-type bash">bash</span>metrics</span>
+          <span class="qcmd" onclick="insertCmd('curl -s http://localhost:3001/api/system/heap')"><span class="qcmd-type bash">bash</span>heap</span>
+          <span class="qcmd" onclick="insertCmd('curl -s -X POST http://localhost:3001/api/system/gc')"><span class="qcmd-type bash">bash</span>force GC</span>
+          <span class="qcmd" onclick="insertCmd('curl -s http://localhost:3001/api/vehicles')"><span class="qcmd-type bash">bash</span>vehicles</span>
+          <div style="margin:6px 0;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">🟣 API Direct</div>
+          <span class="qcmd" onclick="apiCall('GET','http://localhost:3001/health')"><span class="qcmd-type api">api</span>GET /health</span>
+          <span class="qcmd" onclick="apiCall('GET','http://localhost:3001/api')"><span class="qcmd-type api">api</span>GET /api</span>
+          <span class="qcmd" onclick="apiCall('GET','http://localhost:3001/api/system/heap')"><span class="qcmd-type api">api</span>GET /heap</span>
+          <span class="qcmd" onclick="apiCall('POST','http://localhost:3001/api/system/gc')"><span class="qcmd-type api">api</span>POST /gc</span>
+          <span class="qcmd" onclick="apiCall('GET','http://localhost:3001/api/system/env')"><span class="qcmd-type api">api</span>GET /env</span>
+          <span class="qcmd" onclick="apiCall('GET','http://localhost:3001/metrics')"><span class="qcmd-type api">api</span>GET /metrics</span>
+          <div style="margin:6px 0;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">🟡 Git</div>
+          <span class="qcmd" onclick="insertCmd('git status')"><span class="qcmd-type git">git</span>status</span>
+          <span class="qcmd" onclick="insertCmd('git log --oneline -10')"><span class="qcmd-type git">git</span>log</span>
+          <span class="qcmd" onclick="insertCmd('git add -A && git commit -m \"update\" && git push origin main')"><span class="qcmd-type git">git</span>push all</span>
+          <span class="qcmd" onclick="insertCmd('git pull origin main')"><span class="qcmd-type git">git</span>pull</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRAWY PANEL: Status + Historia -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <!-- Live Status -->
+      <div class="card">
+        <div class="sh"><div class="sh-title">Live Status</div><button class="btn btn-ghost" style="padding:2px 6px;font-size:9px;" onclick="fetchMetrics()">🔄</button></div>
+        <table class="tbl">
+          <tr><td style="color:var(--text3)">Backend</td><td><span class="b b-ok" id="st-backend">ONLINE</span></td></tr>
+          <tr><td style="color:var(--text3)">Frontend</td><td><span class="b b-ok">:5173</span></td></tr>
+          <tr><td style="color:var(--text3)">Heap</td><td class="mono" id="st-heap" style="color:var(--orange)">—%</td></tr>
+          <tr><td style="color:var(--text3)">EL Lag</td><td class="mono" id="st-el" style="color:var(--green)">—ms</td></tr>
+          <tr><td style="color:var(--text3)">RSS</td><td class="mono" id="st-rss">—MB</td></tr>
+          <tr><td style="color:var(--text3)">Uptime</td><td class="mono" id="st-uptime">—s</td></tr>
+          <tr><td style="color:var(--text3)">Security</td><td><span class="b b-ok">0 vuln ✅</span></td></tr>
+          <tr><td style="color:var(--text3)">Git</td><td class="mono" style="color:var(--green)">ef911e6</td></tr>
+        </table>
+      </div>
+
+      <!-- Historia komend -->
+      <div class="card">
+        <div class="sh"><div class="sh-title">Historia</div><button class="btn btn-ghost" style="padding:2px 6px;font-size:9px;" onclick="clearHistory()">🗑</button></div>
+        <div id="cmd-history" style="max-height:200px;overflow-y:auto;font-family:monospace;font-size:10px;">
+          <div style="color:var(--text3)">Brak historii...</div>
+        </div>
+      </div>
+
+      <!-- Wykrywanie typu -->
+      <div class="card">
+        <div class="sh"><div class="sh-title">Auto-Detect</div></div>
+        <div style="font-size:10px;color:var(--text2);line-height:1.8;">
+          <div><span style="color:var(--green)">bash/sh</span> — curl, ls, cd, cat, grep...</div>
+          <div><span style="color:var(--cyan)">PowerShell</span> — Get-, Set-, Invoke-, $var...</div>
+          <div><span style="color:var(--purple)">API</span> — GET/POST/PUT/DELETE http://...</div>
+          <div><span style="color:var(--orange)">git</span> — git status/log/push/pull...</div>
+          <div><span style="color:var(--blue)">node</span> — node, npm, npx, tsx...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="pane" id="pane-dash">
+  <div class="g4">
+    <div class="sc"><div class="sc-bar c"></div><div class="sc-lbl">Backend API</div><div class="sc-val c">:3001</div><div class="sc-sub">Express • ONLINE</div><div class="sc-ico">🔧</div><div class="sc-trend up">▲ LIVE</div></div>
+    <div class="sc"><div class="sc-bar o"></div><div class="sc-lbl">Heap Usage</div><div class="sc-val o" id="sv-heap">—%</div><div class="sc-sub" id="sv-heap-sub">— / — MB</div><div class="sc-ico">🧠</div></div>
+    <div class="sc"><div class="sc-bar g"></div><div class="sc-lbl">EL Lag</div><div class="sc-val g" id="sv-el">—ms</div><div class="sc-sub" id="sv-el-sub">max: —ms</div><div class="sc-ico">🔄</div></div>
+    <div class="sc"><div class="sc-bar g"></div><div class="sc-lbl">Security</div><div class="sc-val g">0</div><div class="sc-sub">vulnerabilities ✅</div><div class="sc-ico">🔒</div><div class="sc-trend up">▲ CLEAN</div></div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="sh"><div class="sh-title">Endpointy</div><button class="btn btn-ghost" style="padding:2px 6px;font-size:9px;" onclick="pingAll()">🔄 Ping</button></div>
+      <table class="tbl"><thead><tr><th>Endpoint</th><th>Status</th><th>ms</th></tr></thead><tbody id="ep-table">
+        <tr><td class="mono">/health</td><td><span class="b b-info" id="ep-s-health">—</span></td><td class="mono" id="ep-t-health">—</td></tr>
+        <tr><td class="mono">/api</td><td><span class="b b-info" id="ep-s-api">—</span></td><td class="mono" id="ep-t-api">—</td></tr>
+        <tr><td class="mono">/metrics</td><td><span class="b b-info" id="ep-s-metrics">—</span></td><td class="mono" id="ep-t-metrics">—</td></tr>
+        <tr><td class="mono">/api/system/heap</td><td><span class="b b-info" id="ep-s-heap">—</span></td><td class="mono" id="ep-t-heap">—</td></tr>
+        <tr><td class="mono">/api/system/ping</td><td><span class="b b-info" id="ep-s-ping">—</span></td><td class="mono" id="ep-t-ping">—</td></tr>
+        <tr><td class="mono">/api/vehicles</td><td><span class="b b-info" id="ep-s-veh">—</span></td><td class="mono" id="ep-t-veh">—</td></tr>
+        <tr><td class="mono">/api/alerts</td><td><span class="b b-info" id="ep-s-alerts">—</span></td><td class="mono" id="ep-t-alerts">—</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-title">Postęp</div></div>
+      <div class="prg"><div class="prg-lbl"><span>Backend API</span><span style="color:var(--cyan)">88%</span></div><div class="prg-bar"><div class="prg-fill c" style="width:0%" data-w="88%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Frontend</span><span style="color:var(--green)">75%</span></div><div class="prg-bar"><div class="prg-fill g" style="width:0%" data-w="75%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Security</span><span style="color:var(--green)">95%</span></div><div class="prg-bar"><div class="prg-fill g" style="width:0%" data-w="95%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>CI/CD</span><span style="color:var(--orange)">70%</span></div><div class="prg-bar"><div class="prg-fill o" style="width:0%" data-w="70%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Produkcja</span><span style="color:var(--orange)">20%</span></div><div class="prg-bar"><div class="prg-fill o" style="width:0%" data-w="20%"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-title">Alerty</div></div>
+      <div class="alert alert-ok"><div>✅</div><div><strong>0 vulnerabilities</strong> — npm audit fix zakończony</div></div>
+      <div class="alert alert-ok"><div>✅</div><div><strong>Backend :3001</strong> — express-server.ts naprawiony</div></div>
+      <div class="alert alert-ok"><div>✅</div><div><strong>Frontend :5173</strong> — Vite działa</div></div>
+      <div class="alert alert-warn"><div>⚠️</div><div><strong>node.exe hardlink</strong> — uruchom GRAZYNA_FIX_NODELINK.ps1</div></div>
+      <div class="alert alert-warn"><div>⚠️</div><div><strong>JWT_SECRET słaby</strong> — zmień grazyna_secret_2026</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECURITY ═══ -->
+<div class="pane" id="pane-security">
+  <div class="alert alert-ok"><div>✅</div><div><strong>npm audit fix zakończony</strong> — 0 vulnerabilities po naprawie (było 18: 1 low, 6 moderate, 11 high)</div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-title r">Zagrożenia JWT</div><div class="b b-warn">3 do naprawy</div></div>
+      <div class="alert alert-err"><div>🔴</div><div><strong>Słaby JWT_SECRET</strong> — "grazyna_secret_2026" to tylko 22 znaki. Wymagane min. 256 bitów (32 bajty).<br><code style="color:var(--cyan);font-size:9px;">openssl rand -base64 32</code></div></div>
+      <div class="alert alert-warn"><div>⚠️</div><div><strong>Brak algorytmu w verify()</strong> — jwt.verify() bez <code>algorithms: ['HS256']</code> podatne na alg:none attack.</div></div>
+      <div class="alert alert-warn"><div>⚠️</div><div><strong>Brak rate limiting</strong> — /api/auth/login bez limitu prób → brute force możliwy.</div></div>
+      <div class="alert alert-info"><div>ℹ️</div><div><strong>Token TTL</strong> — brak expiry w JWT. Dodaj <code>expiresIn: '15m'</code> dla access token.</div></div>
+      <div class="sep"></div>
+      <div class="sh-title" style="margin-bottom:6px;font-size:9px;">Fix JWT (bash)</div>
+      <div style="background:#020509;border:1px solid var(--border);border-radius:6px;padding:8px;font-family:monospace;font-size:10px;color:var(--green);">
+        # Generuj silny secret<br>
+        openssl rand -base64 32<br>
+        # Lub:<br>
+        node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+      </div>
+      <button class="btn btn-c" style="margin-top:8px;" onclick="apiCall('GET','http://localhost:3001/api/system/env')">🔍 Sprawdź .env</button>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-title r">Zagrożenia API</div><div class="b b-warn">4 do naprawy</div></div>
+      <div class="alert alert-err"><div>🔴</div><div><strong>Brak HTTPS</strong> — API działa na HTTP. Na produkcji wymagany SSL/TLS.</div></div>
+      <div class="alert alert-warn"><div>⚠️</div><div><strong>CORS zbyt szeroki</strong> — CORS_ORIGIN=:5173 ale Vite na :5174. Ustaw dokładne domeny.</div></div>
+      <div class="alert alert-warn"><div>⚠️</div><div><strong>Brak helmet.js</strong> — brak nagłówków bezpieczeństwa (X-Frame-Options, CSP, etc.).</div></div>
+      <div class="alert alert-info"><div>ℹ️</div><div><strong>Endpointy bez auth</strong> — /api/vehicles, /api/drivers dostępne bez JWT. Dodaj authMiddleware.</div></div>
+      <div class="sep"></div>
+      <div class="sh-title" style="margin-bottom:6px;font-size:9px;">Fix (bash)</div>
+      <div style="background:#020509;border:1px solid var(--border);border-radius:6px;padding:8px;font-family:monospace;font-size:10px;color:var(--green);">
+        cd /e/Grazyna_5.0/backend<br>
+        # Zainstaluj helmet<br>
+        /e/Grazyna_5.0/tools/nodejs/npm.cmd install helmet express-rate-limit
+      </div>
+      <button class="btn btn-c" style="margin-top:8px;" onclick="insertAndSwitch('cd /e/Grazyna_5.0/backend && /e/Grazyna_5.0/tools/nodejs/npm.cmd install helmet express-rate-limit')">📋 Kopiuj do konsoli</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">npm audit — Historia</div></div>
+    <table class="tbl"><thead><tr><th>Data</th><th>Przed</th><th>Po</th><th>Status</th></tr></thead><tbody>
+      <tr><td>2026-06-01</td><td style="color:var(--red)">18 (11 high)</td><td style="color:var(--green)">0</td><td><span class="b b-ok">✅ CLEAN</span></td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<!-- ═══ DEPLOY ═══ -->
+<div class="pane" id="pane-deploy">
+  <div class="g3">
+    <div class="card" style="border-color:rgba(0,229,255,0.3);">
+      <div style="font-size:13px;font-weight:800;color:var(--cyan);margin-bottom:6px;">🖥️ Hetzner CX21</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">VPS — pełna kontrola</div>
+      <div style="font-size:20px;font-weight:900;color:var(--cyan);margin-bottom:8px;">€4.35/mies</div>
+      <table class="tbl">
+        <tr><td style="color:var(--text3)">CPU</td><td class="mono">2 vCPU</td></tr>
+        <tr><td style="color:var(--text3)">RAM</td><td class="mono">4 GB</td></tr>
+        <tr><td style="color:var(--text3)">Disk</td><td class="mono">40 GB SSD</td></tr>
+        <tr><td style="color:var(--text3)">Region</td><td class="mono">Frankfurt (EU)</td></tr>
+        <tr><td style="color:var(--text3)">SSL</td><td class="mono">certbot (free)</td></tr>
+        <tr><td style="color:var(--text3)">DB</td><td class="mono">Supabase (free)</td></tr>
+      </table>
+      <div class="sep"></div>
+      <div class="alert alert-ok"><div>✅</div><div>Pełna kontrola, najtańszy, PM2 cluster</div></div>
+      <div class="alert alert-warn"><div>⚠️</div><div>Wymaga konfiguracji (nginx, certbot, PM2)</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:800;color:var(--purple);margin-bottom:6px;">🚂 Railway</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">PaaS — zero DevOps</div>
+      <div style="font-size:20px;font-weight:900;color:var(--purple);margin-bottom:8px;">$5-20/mies</div>
+      <table class="tbl">
+        <tr><td style="color:var(--text3)">Deploy</td><td class="mono">git push → auto</td></tr>
+        <tr><td style="color:var(--text3)">DB</td><td class="mono">PostgreSQL wbudowany</td></tr>
+        <tr><td style="color:var(--text3)">Redis</td><td class="mono">Add-on dostępny</td></tr>
+        <tr><td style="color:var(--text3)">SSL</td><td class="mono">Auto ✅</td></tr>
+        <tr><td style="color:var(--text3)">Sleep</td><td class="mono">Nie (paid)</td></tr>
+      </table>
+      <div class="sep"></div>
+      <div class="alert alert-ok"><div>✅</div><div>Najszybszy start, auto-deploy z GitHub</div></div>
+      <div class="alert alert-warn"><div>⚠️</div><div>Droższy przy dużym ruchu</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:6px;">🎨 Render</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">PaaS — free tier</div>
+      <div style="font-size:20px;font-weight:900;color:var(--green);margin-bottom:8px;">Free / $7</div>
+      <table class="tbl">
+        <tr><td style="color:var(--text3)">Free tier</td><td class="mono">512MB RAM</td></tr>
+        <tr><td style="color:var(--text3)">Sleep</td><td class="mono">⚠️ 15min idle</td></tr>
+        <tr><td style="color:var(--text3)">DB</td><td class="mono">PostgreSQL add-on</td></tr>
+        <tr><td style="color:var(--text3)">SSL</td><td class="mono">Auto ✅</td></tr>
+        <tr><td style="color:var(--text3)">Deploy</td><td class="mono">git push → auto</td></tr>
+      </table>
+      <div class="sep"></div>
+      <div class="alert alert-ok"><div>✅</div><div>Darmowy tier na start, zero konfiguracji</div></div>
+      <div class="alert alert-err"><div>❌</div><div>Sleep po 15min — nieodpowiedni dla produkcji</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Rekomendacja dla GRAŻYNA 5.0</div></div>
+    <table class="tbl"><thead><tr><th>Kryterium</th><th style="color:var(--cyan)">Hetzner</th><th style="color:var(--purple)">Railway</th><th style="color:var(--green)">Render</th></tr></thead><tbody>
+      <tr><td>Koszt/mies</td><td style="color:var(--green)">€4.35 ✅</td><td style="color:var(--orange)">$5-20</td><td style="color:var(--green)">Free/$7</td></tr>
+      <tr><td>Kontrola</td><td style="color:var(--green)">Pełna ✅</td><td style="color:var(--orange)">Ograniczona</td><td style="color:var(--orange)">Ograniczona</td></tr>
+      <tr><td>Cluster/PM2</td><td style="color:var(--green)">✅ Tak</td><td style="color:var(--orange)">Ograniczony</td><td style="color:var(--orange)">Ograniczony</td></tr>
+      <tr><td>Redis</td><td style="color:var(--green)">Self-hosted</td><td style="color:var(--orange)">Add-on $</td><td style="color:var(--orange)">Add-on $</td></tr>
+      <tr><td>Czas setup</td><td style="color:var(--orange)">~2h</td><td style="color:var(--green)">~30min ✅</td><td style="color:var(--green)">~20min ✅</td></tr>
+      <tr><td><strong>WYBÓR</strong></td><td style="color:var(--cyan);font-weight:700;">✅ PROD v1</td><td style="color:var(--purple);">Szybki start</td><td style="color:var(--text3)">Prototyp</td></tr>
+    </tbody></table>
+    <div class="alert alert-info" style="margin-top:8px;"><div>💡</div><div><strong>Strategia:</strong> Render (free) → prototyp → Railway ($5) → MVP → Hetzner (€4.35) → produkcja</div></div>
+  </div>
+</div>
+
+<!-- ═══ VITE ═══ -->
+<div class="pane" id="pane-vite">
+  <div class="alert alert-ok"><div>✅</div><div><strong>Aktualny build:</strong> 7.75s, 479 modułów, PWA + gzip. Już dobry! Poniżej optymalizacje dla dalszej poprawy.</div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-title">Aktualne Bundle Sizes</div></div>
+      <table class="tbl"><thead><tr><th>Chunk</th><th>Raw</th><th>Gzip</th><th>Status</th></tr></thead><tbody>
+        <tr><td class="mono">react-vendor</td><td class="mono">159.75 KB</td><td class="mono" style="color:var(--green)">52.20 KB</td><td><span class="b b-ok">OK</span></td></tr>
+        <tr><td class="mono">ui-vendor</td><td class="mono">141.88 KB</td><td class="mono" style="color:var(--green)">48.38 KB</td><td><span class="b b-ok">OK</span></td></tr>
+        <tr><td class="mono">data-vendor</td><td class="mono">46.05 KB</td><td class="mono" style="color:var(--green)">18.12 KB</td><td><span class="b b-ok">OK</span></td></tr>
+        <tr><td class="mono">index</td><td class="mono">31.17 KB</td><td class="mono" style="color:var(--green)">9.27 KB</td><td><span class="b b-ok">OK</span></td></tr>
+        <tr><td class="mono">map-vendor</td><td class="mono">0.08 KB</td><td class="mono" style="color:var(--green)">0.10 KB</td><td><span class="b b-ok">OK</span></td></tr>
+        <tr><td><strong>TOTAL</strong></td><td class="mono"><strong>378.93 KB</strong></td><td class="mono" style="color:var(--green)"><strong>128.07 KB</strong></td><td><span class="b b-ok">✅</span></td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-title">Optymalizacje vite.config.ts</div></div>
+      <div style="background:#020509;border:1px solid var(--border);border-radius:6px;padding:10px;font-family:monospace;font-size:10px;color:var(--green);margin-bottom:8px;">
+        <span style="color:var(--text3)">// vite.config.ts — optymalizacje</span><br>
+        build: {<br>
+        &nbsp;&nbsp;minify: <span style="color:var(--cyan)">'esbuild'</span>, <span style="color:var(--text3)">// szybszy niż terser</span><br>
+        &nbsp;&nbsp;sourcemap: <span style="color:var(--orange)">false</span>, <span style="color:var(--text3)">// produkcja</span><br>
+        &nbsp;&nbsp;chunkSizeWarningLimit: <span style="color:var(--purple)">500</span>,<br>
+        &nbsp;&nbsp;rollupOptions: {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;output: {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manualChunks: {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--cyan)">'react-core'</span>: [<span style="color:var(--cyan)">'react'</span>, <span style="color:var(--cyan)">'react-dom'</span>],<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--cyan)">'router'</span>: [<span style="color:var(--cyan)">'react-router-dom'</span>],<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--cyan)">'ui'</span>: [<span style="color:var(--cyan)">'styled-components'</span>],<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--cyan)">'charts'</span>: [<span style="color:var(--cyan)">'recharts'</span>],<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--cyan)">'maps'</span>: [<span style="color:var(--cyan)">'leaflet'</span>, <span style="color:var(--cyan)">'react-leaflet'</span>],<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;}<br>
+        }
+      </div>
+      <div class="alert alert-info"><div>💡</div><div>Szacowana poprawa: build -30% czasu, bundle -15% rozmiar</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Uruchom build test</div></div>
+    <button class="btn btn-c" onclick="insertAndSwitch('cd /e/Grazyna_5.0/frontend && time /e/Grazyna_5.0/tools/nodejs/node.exe node_modules/vite/bin/vite.js build')">⚡ Test build w konsoli</button>
+    <button class="btn btn-ghost" style="margin-left:8px;" onclick="insertAndSwitch('cd /e/Grazyna_5.0/frontend && /e/Grazyna_5.0/tools/nodejs/node.exe node_modules/vite/bin/vite.js build --mode production')">🏭 Production build</button>
+  </div>
+</div>
+
+<!-- ═══ KOMENDY ═══ -->
+<div class="pane" id="pane-cmd">
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-title">Backend</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <button class="btn btn-g" onclick="insertAndSwitch('cd /e/Grazyna_5.0/backend && /e/Grazyna_5.0/tools/nodejs/node.exe --max-old-space-size=512 --expose-gc node_modules/tsx/dist/cli.mjs src/express-server.ts &')">▶ Start Backend</button>
+        <button class="btn btn-c" onclick="insertAndSwitch('curl -s http://localhost:3001/health')">❤️ Health Check</button>
+        <button class="btn btn-c" onclick="insertAndSwitch('curl -s http://localhost:3001/api/system/heap')">🧠 Heap Diag</button>
+        <button class="btn btn-c" onclick="insertAndSwitch('curl -s -X POST http://localhost:3001/api/system/gc')">🗑️ Force GC</button>
+        <button class="btn btn-ghost" onclick="insertAndSwitch('pkill -f express-server')">⏹ Stop Backend</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-title">Git & Deploy</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <button class="btn btn-o" onclick="insertAndSwitch('cd /e/Grazyna_5.0 && git add -A && git commit -m \"update\" && git push origin main')">📦 Git Push All</button>
+        <button class="btn btn-ghost" onclick="insertAndSwitch('cd /e/Grazyna_5.0 && git status')">📋 Git Status</button>
+        <button class="btn btn-ghost" onclick="insertAndSwitch('cd /e/Grazyna_5.0 && git log --oneline -10')">📜 Git Log</button>
+        <button class="btn btn-ghost" onclick="insertAndSwitch('cd /e/Grazyna_5.0/backend && /e/Grazyna_5.0/tools/nodejs/npm.cmd audit')">🔒 npm audit</button>
+        <button class="btn btn-ghost" onclick="insertAndSwitch('cd /e/Grazyna_5.0/frontend && /e/Grazyna_5.0/tools/nodejs/node.exe node_modules/vite/bin/vite.js build')">⚡ Vite Build</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── CLOCK ──────────────────────────────────────────────────
+function updateClock(){
+  document.getElementById('clock').textContent=new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock,1000);updateClock();
+
+// ── NOTIFY ─────────────────────────────────────────────────
+function notify(msg){const n=document.getElementById('notif');n.textContent=msg;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),2000);}
+
+// ── TABS ───────────────────────────────────────────────────
+function tab(name){
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('nt-'+name).classList.add('on');
+  document.getElementById('pane-'+name).classList.add('on');
+  setTimeout(()=>document.querySelectorAll('.prg-fill[data-w]').forEach(el=>{el.style.width='0%';setTimeout(()=>el.style.width=el.dataset.w,50);}),100);
+}
+
+// ── FETCH METRICS ──────────────────────────────────────────
+async function fetchMetrics(){
+  try{
+    const r=await fetch('http://localhost:3001/metrics',{signal:AbortSignal.timeout(4000)});
+    const t=await r.text();
+    function pm(p){const m=t.match(new RegExp(p+'\\s+([\\d.]+)'));return m?parseFloat(m[1]):0;}
+    const hu=pm('nodejs_heap_size_used_bytes'),ht=pm('nodejs_heap_size_total_bytes');
+    const rss=pm('process_resident_memory_bytes'),el=pm('nodejs_eventloop_lag_seconds');
+    const elMax=pm('nodejs_eventloop_lag_max_seconds'),up=pm('process_start_time_seconds');
+    const heapPct=ht>0?Math.round(hu/ht*100):0;
+    const rssMB=Math.round(rss/1024/1024*10)/10;
+    const elMs=Math.round(el*1000*100)/100;
+    const elMaxMs=Math.round(elMax*1000*10)/10;
+    const uptime=Math.floor(Date.now()/1000-up);
+    // Header
+    const hh=document.getElementById('hdr-h');if(hh){hh.textContent=heapPct+'%';hh.style.color=heapPct>90?'var(--red)':heapPct>80?'var(--orange)':'var(--green)';}
+    const he=document.getElementById('hdr-e');if(he){he.textContent=elMs+'ms';}
+    document.getElementById('hdr-b').textContent=':3001 ✓';
+    // Dashboard
+    const sv=id=>document.getElementById(id);
+    if(sv('sv-heap')){sv('sv-heap').textContent=heapPct+'%';sv('sv-heap-sub').textContent=`${Math.round(hu/1024/1024*10)/10}/${Math.round(ht/1024/1024*10)/10}MB`;}
+    if(sv('sv-el')){sv('sv-el').textContent=elMs+'ms';sv('sv-el-sub').textContent=`max:${elMaxMs}ms`;}
+    // Console status
+    if(sv('st-heap'))sv('st-heap').textContent=heapPct+'%';
+    if(sv('st-el'))sv('st-el').textContent=elMs+'ms';
+    if(sv('st-rss'))sv('st-rss').textContent=rssMB+'MB';
+    if(sv('st-uptime'))sv('st-uptime').textContent=uptime+'s';
+    if(sv('st-backend')){sv('st-backend').textContent='ONLINE';sv('st-backend').className='b b-ok';}
+    document.getElementById('sys-status').textContent='ONLINE';
+  }catch(e){
+    document.getElementById('hdr-b').textContent=':3001 ✗';
+    document.getElementById('hdr-b').style.color='var(--red)';
+    document.getElementById('sys-status').textContent='OFFLINE';
+    const sb=document.getElementById('st-backend');if(sb){sb.textContent='OFFLINE';sb.className='b b-err';}
+  }
+}
+
+// ── PING ALL ───────────────────────────────────────────────
+async function pingAll(){
+  const eps=[
+    {url:'http://localhost:3001/health',s:'ep-s-health',t:'ep-t-health'},
+    {url:'http://localhost:3001/api',s:'ep-s-api',t:'ep-t-api'},
+    {url:'http://localhost:3001/metrics',s:'ep-s-metrics',t:'ep-t-metrics'},
+    {url:'http://localhost:3001/api/system/heap',s:'ep-s-heap',t:'ep-t-heap'},
+    {url:'http://localhost:3001/api/system/ping',s:'ep-s-ping',t:'ep-t-ping'},
+    {url:'http://localhost:3001/api/vehicles',s:'ep-s-veh',t:'ep-t-veh'},
+    {url:'http://localhost:3001/api/alerts',s:'ep-s-alerts',t:'ep-t-alerts'},
+  ];
+  for(const ep of eps){
+    try{
+      const t0=Date.now();await fetch(ep.url,{signal:AbortSignal.timeout(3000)});const ms=Date.now()-t0;
+      const se=document.getElementById(ep.s);if(se){se.textContent='200';se.className='b b-ok';}
+      const te=document.getElementById(ep.t);if(te)te.textContent=ms+'ms';
+    }catch{
+      const se=document.getElementById(ep.s);if(se){se.textContent='ERR';se.className='b b-err';}
+    }
+  }
+}
+
+// ── KONSOLA ────────────────────────────────────────────────
+let cmdHistory=[];
+let historyIdx=-1;
+let lastOutput='';
+
+// Baza komend do autocomplete
+const COMMANDS=[
+  {cmd:'curl -s http://localhost:3001/health',desc:'Health check',type:'bash'},
+  {cmd:'curl -s http://localhost:3001/api',desc:'API root',type:'bash'},
+  {cmd:'curl -s http://localhost:3001/api/system/ping',desc:'Ping',type:'bash'},
+  {cmd:'curl -s http://localhost:3001/api/system/heap',desc:'Heap diagnostics',type:'bash'},
+  {cmd:'curl -s http://localhost:3001/api/system/env',desc:'Env variables',type:'bash'},
+  {cmd:'curl -s -X POST http://localhost:3001/api/system/gc',desc:'Force GC',type:'bash'},
+  {cmd:'curl -s http://localhost:3001/metrics | head -30',desc:'Prometheus metrics',type:'bash'},
+  {cmd:'curl -s http://localhost:3001/api/vehicles',desc:'List vehicles',type:'bash'},
+  {cmd:'curl -s http://localhost:3001/api/alerts',desc:'List alerts',type:'bash'},
+  {cmd:'curl -s http://localhost:3001/api/ws/status',desc:'WebSocket status',type:'bash'},
+  {cmd:'git status',desc:'Git status',type:'git'},
+  {cmd:'git log --oneline -10',desc:'Git log',type:'git'},
+  {cmd:'git add -A && git commit -m "update" && git push origin main',desc:'Push all',type:'git'},
+  {cmd:'git pull origin main',desc:'Pull',type:'git'},
+  {cmd:'git diff HEAD',desc:'Diff',type:'git'},
+  {cmd:'cd /e/Grazyna_5.0/backend',desc:'Go to backend',type:'bash'},
+  {cmd:'cd /e/Grazyna_5.0/frontend',desc:'Go to frontend',type:'bash'},
+  {cmd:'ls /e/Grazyna_5.0/backend/src/',desc:'List src files',type:'bash'},
+  {cmd:'cat /e/Grazyna_5.0/backend/src/express-server.ts | head -30',desc:'Show express-server',type:'bash'},
+  {cmd:'/e/Grazyna_5.0/tools/nodejs/node.exe --max-old-space-size=512 --expose-gc node_modules/tsx/dist/cli.mjs src/express-server.ts &',desc:'Start backend',type:'bash'},
+  {cmd:'pkill -f express-server',desc:'Stop backend',type:'bash'},
+  {cmd:'/e/Grazyna_5.0/tools/nodejs/node.exe node_modules/vite/bin/vite.js &',desc:'Start frontend',type:'bash'},
+  {cmd:'/e/Grazyna_5.0/tools/nodejs/npm.cmd audit',desc:'npm audit',type:'bash'},
+  {cmd:'/e/Grazyna_5.0/tools/nodejs/npm.cmd audit fix',desc:'npm audit fix',type:'bash'},
+  {cmd:'netstat -ano | grep :3001',desc:'Check port 3001',type:'bash'},
+  {cmd:'ps aux | grep node',desc:'Node processes',type:'bash'},
+];
+
+// Wykryj typ komendy
+function detectType(cmd){
+  cmd=cmd.trim().toLowerCase();
+  if(cmd.startsWith('get ')||cmd.startsWith('post ')||cmd.startsWith('put ')||cmd.startsWith('delete ')||cmd.startsWith('http://')) return 'api';
+  if(cmd.startsWith('git ')) return 'git';
+  if(cmd.startsWith('get-')||cmd.startsWith('set-')||cmd.startsWith('invoke-')||cmd.startsWith('$')||cmd.startsWith('write-host')) return 'ps';
+  if(cmd.startsWith('node ')||cmd.startsWith('npm ')||cmd.startsWith('npx ')||cmd.startsWith('tsx ')) return 'node';
+  return 'bash';
+}
+
+function getPrompt(type){
+  const prompts={bash:'bash $',ps:'PS >',api:'API >',git:'git $',node:'node $'};
+  return prompts[type]||'$ ';
+}
+
+// Input handler
+const input=document.getElementById('console-input');
+const ac=document.getElementById('autocomplete');
+
+input.addEventListener('input',()=>{
+  const val=input.value;
+  const type=detectType(val);
+  document.getElementById('console-prompt').textContent=getPrompt(type);
+  document.getElementById('console-mode').textContent=type.toUpperCase();
+  document.getElementById('detected-type').textContent=type.toUpperCase();
+  showAutocomplete(val);
+});
+
+input.addEventListener('keydown',(e)=>{
+  if(e.key==='Enter'){e.preventDefault();executeCommand();}
+  else if(e.key==='Tab'){e.preventDefault();applyFirstAC();}
+  else if(e.key==='ArrowUp'){e.preventDefault();navigateHistory(-1);}
+  else if(e.key==='ArrowDown'){e.preventDefault();navigateHistory(1);}
+  else if(e.key==='Escape'){hideAC();}
+});
+
+function showAutocomplete(val){
+  if(!val||val.length<2){hideAC();return;}
+  const matches=COMMANDS.filter(c=>c.cmd.toLowerCase().includes(val.toLowerCase())||c.desc.toLowerCase().includes(val.toLowerCase())).slice(0,8);
+  if(matches.length===0){hideAC();return;}
+  ac.innerHTML=matches.map((c,i)=>`<div class="ac-item" onclick="applyAC('${c.cmd.replace(/'/g,"\\'")}')"><span class="ac-type ${c.type}">${c.type}</span><span class="ac-cmd">${c.cmd.substring(0,50)}${c.cmd.length>50?'...':''}</span><span class="ac-desc">${c.desc}</span></div>`).join('');
+  ac.style.display='block';
+}
+
+function hideAC(){ac.style.display='none';}
+function applyAC(cmd){input.value=cmd;hideAC();input.focus();const type=detectType(cmd);document.getElementById('console-prompt').textContent=getPrompt(type);}
+function applyFirstAC(){const first=ac.querySelector('.ac-item');if(first)first.click();}
+
+function navigateHistory(dir){
+  if(cmdHistory.length===0)return;
+  historyIdx=Math.max(-1,Math.min(cmdHistory.length-1,historyIdx+dir));
+  input.value=historyIdx>=0?cmdHistory[cmdHistory.length-1-historyIdx]:'';
+}
+
+function addLine(text,cls='out'){
+  const out=document.getElementById('console-output');
+  const div=document.createElement('div');
+  div.className=`console-line ${cls}`;
+  div.textContent=text;
+  out.appendChild(div);
+  out.scrollTop=out.scrollHeight;
+  lastOutput=text;
+}
+
+async function executeCommand(){
+  const cmd=input.value.trim();
+  if(!cmd)return;
+  hideAC();
+  const type=detectType(cmd);
+  cmdHistory.push(cmd);historyIdx=-1;
+  addLine(`${getPrompt(type)} ${cmd}`,'cmd');
+  input.value='';
+  updateHistory();
+
+  if(type==='api'||cmd.startsWith('GET ')||cmd.startsWith('POST ')||cmd.startsWith('curl')){
+    await executeAPI(cmd);
+  } else {
+    // Dla bash/git/ps — pokaż komendę do skopiowania
+    addLine(`[${type.toUpperCase()}] Skopiuj do terminala:`, 'info');
+    addLine(cmd,'warn');
+    navigator.clipboard.writeText(cmd).catch(()=>{});
+    notify('📋 Komenda skopiowana do schowka!');
+  }
+}
+
+async function executeAPI(cmd){
+  let method='GET',url='';
+  if(cmd.startsWith('curl')){
+    const xMatch=cmd.match(/-X\s+(\w+)/);
+    method=xMatch?xMatch[1]:'GET';
+    const urlMatch=cmd.match(/https?:\/\/[^\s'"]+/);
+    url=urlMatch?urlMatch[0]:'';
+  } else {
+    const parts=cmd.split(' ');
+    method=parts[0].toUpperCase();
+    url=parts[1]||'';
+  }
+  if(!url){addLine('Błąd: brak URL','err');return;}
+  try{
+    addLine(`→ ${method} ${url}`,'info');
+    const t0=Date.now();
+    const r=await fetch(url,{method,signal:AbortSignal.timeout(8000)});
+    const ms=Date.now()-t0;
+    const text=await r.text();
+    addLine(`← HTTP ${r.status} (${ms}ms)`,'ok');
+    try{
+      const json=JSON.parse(text);
+      const pretty=JSON.stringify(json,null,2);
+      pretty.split('\n').forEach(l=>addLine(l,'json'));
+    }catch{
+      text.split('\n').slice(0,20).forEach(l=>addLine(l,'out'));
+    }
+  }catch(e){
+    addLine(`✗ Błąd: ${e.message}`,'err');
+  }
+}
+
+async function apiCall(method,url){
+  tab('console');
+  input.value=`${method} ${url}`;
+  await executeCommand();
+}
+
+function insertCmd(cmd){
+  tab('console');
+  input.value=cmd;
+  input.focus();
+  const type=detectType(cmd);
+  document.getElementById('console-prompt').textContent=getPrompt(type);
+  document.getElementById('console-mode').textContent=type.toUpperCase();
+}
+
+function insertAndSwitch(cmd){
+  insertCmd(cmd);
+  tab('console');
+}
+
+function clearConsole(){document.getElementById('console-output').innerHTML='<div class="console-line info">Console cleared.</div>';}
+function copyLastOutput(){navigator.clipboard.writeText(lastOutput).catch(()=>{});notify('📋 Skopiowano!');}
+function clearHistory(){cmdHistory=[];historyIdx=-1;updateHistory();}
+
+function updateHistory(){
+  const h=document.getElementById('cmd-history');
+  if(cmdHistory.length===0){h.innerHTML='<div style="color:var(--text3)">Brak historii...</div>';return;}
+  h.innerHTML=cmdHistory.slice(-10).reverse().map((c,i)=>`<div style="padding:3px 0;border-bottom:1px solid rgba(30,45,74,0.3);cursor:pointer;color:var(--cyan);" onclick="insertCmd('${c.replace(/'/g,"\\'")}')">▶ ${c.substring(0,50)}${c.length>50?'...':''}</div>`).join('');
+}
+
+// ── INIT ───────────────────────────────────────────────────
+fetchMetrics();
+setInterval(fetchMetrics,10000);
+setTimeout(pingAll,2000);
+setTimeout(()=>document.querySelectorAll('.prg-fill[data-w]').forEach(el=>{el.style.width='0%';setTimeout(()=>el.style.width=el.dataset.w,100);}),300);
+</script>
+</body>
+</html>
