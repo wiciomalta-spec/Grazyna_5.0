@@ -4,6 +4,22 @@ import process from "node:process";
 import http from "node:http";
 import { monitorEventLoopDelay } from "node:perf_hooks";
 
+
+
+// ── FIX: Obsługa EADDRINUSE ──────────────────────────────
+process.on('uncaughtException', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`[cluster] Port ${err.port} zajęty — czekam 3s i restartuję...`);
+    setTimeout(() => process.exit(1), 3000);
+  } else {
+    console.error('[cluster] Uncaught exception:', err.message);
+    process.exit(1);
+  }
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  console.error('[cluster] Unhandled rejection:', reason?.message || reason);
+});
 const cpuCount = os.cpus().length;
 const minWorkers = 1;
 const maxWorkers = Math.max(
@@ -27,9 +43,41 @@ async function startWorkerRuntime() {
 
   if (useFastify) {
     const { startFastifyServer } = await import("./fastify-server.js");
+
+
+// ── FIX: Obsługa EADDRINUSE ──────────────────────────────
+process.on('uncaughtException', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`[cluster] Port ${err.port} zajęty — czekam 3s i restartuję...`);
+    setTimeout(() => process.exit(1), 3000);
+  } else {
+    console.error('[cluster] Uncaught exception:', err.message);
+    process.exit(1);
+  }
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  console.error('[cluster] Unhandled rejection:', reason?.message || reason);
+});
     await startFastifyServer();
   } else {
     const { startExpressServer } = await import("./express-server.js");
+
+
+// ── FIX: Obsługa EADDRINUSE ──────────────────────────────
+process.on('uncaughtException', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`[cluster] Port ${err.port} zajęty — czekam 3s i restartuję...`);
+    setTimeout(() => process.exit(1), 3000);
+  } else {
+    console.error('[cluster] Uncaught exception:', err.message);
+    process.exit(1);
+  }
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  console.error('[cluster] Unhandled rejection:', reason?.message || reason);
+});
     await startExpressServer();
   }
 }
