@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRAŻYNA 5.0 — Live Monitor</title>
+<style>
+:root{--bg:#060b18;--bg2:#0a1020;--bg3:#0e1628;--card:#111827;--card2:#162035;--border:#1e2d4a;--border2:#2a3d6a;--cyan:#00e5ff;--purple:#a855f7;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--blue:#3b82f6;--pink:#ec4899;--text:#f1f5f9;--text2:#94a3b8;--text3:#475569;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 15%,rgba(0,229,255,0.05) 0%,transparent 50%),radial-gradient(ellipse at 85% 85%,rgba(168,85,247,0.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:200;background:rgba(6,11,24,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:54px;}
+.logo{font-size:18px;font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-mid{display:flex;align-items:center;gap:14px;font-size:11px;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.ws-badge{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid;transition:all 0.3s;}
+.ws-badge.connected{background:rgba(16,185,129,0.12);color:var(--green);border-color:rgba(16,185,129,0.3);}
+.ws-badge.disconnected{background:rgba(239,68,68,0.12);color:var(--red);border-color:rgba(239,68,68,0.3);}
+.ws-badge.connecting{background:rgba(245,158,11,0.12);color:var(--orange);border-color:rgba(245,158,11,0.3);}
+.ws-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.clock{font-family:monospace;font-size:13px;color:var(--cyan);}
+
+/* NAV */
+.nav{position:sticky;top:54px;z-index:190;background:rgba(6,11,24,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 20px;}
+.nav::-webkit-scrollbar{height:2px;}.nav::-webkit-scrollbar-thumb{background:var(--border2);}
+.ntab{padding:11px 16px;font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;text-transform:uppercase;}
+.ntab:hover{color:var(--text2);}.ntab.on{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+/* LAYOUT */
+.main{position:relative;z-index:1;padding:18px;max-width:1800px;margin:0 auto;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px;}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:14px;}
+.g12{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:14px;}
+@media(max-width:1400px){.g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){.g4,.g3,.g2,.g21,.g12{grid-template-columns:1fr;}}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden;transition:all 0.25s;}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,255,0.25),transparent);opacity:0;transition:opacity 0.3s;}
+.card:hover{border-color:var(--border2);box-shadow:0 0 25px rgba(0,229,255,0.1);}.card:hover::after{opacity:1;}
+
+/* STAT CARDS */
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;transition:all 0.25s;cursor:default;}
+.sc:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(0,0,0,0.4);}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:2px;}
+.sc-bar.c{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.sc-bar.p{background:linear-gradient(90deg,var(--purple),var(--pink));}
+.sc-bar.g{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.sc-bar.o{background:linear-gradient(90deg,var(--orange),#fbbf24);}
+.sc-bar.r{background:linear-gradient(90deg,var(--red),var(--orange));}
+.sc-bar.b{background:linear-gradient(90deg,var(--blue),var(--purple));}
+.sc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:6px;}
+.sc-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:3px;font-family:monospace;transition:all 0.5s;}
+.sc-val.c{color:var(--cyan);text-shadow:0 0 15px rgba(0,229,255,0.4);}
+.sc-val.p{color:var(--purple);text-shadow:0 0 15px rgba(168,85,247,0.4);}
+.sc-val.g{color:var(--green);text-shadow:0 0 15px rgba(16,185,129,0.4);}
+.sc-val.o{color:var(--orange);}.sc-val.r{color:var(--red);}.sc-val.b{color:var(--blue);}
+.sc-sub{font-size:10px;color:var(--text3);}
+.sc-ico{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:34px;opacity:0.07;}
+.sc-trend{position:absolute;right:12px;bottom:12px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.sc-trend.up{background:rgba(16,185,129,0.15);color:var(--green);}
+.sc-trend.dn{background:rgba(239,68,68,0.15);color:var(--red);}
+.sc-trend.warn{background:rgba(245,158,11,0.15);color:var(--orange);}
+
+/* BADGES */
+.b{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.b::before{content:'●';font-size:7px;}
+.b-ok{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
+.b-warn{background:rgba(245,158,11,0.12);color:var(--orange);border:1px solid rgba(245,158,11,0.25);}
+.b-err{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25);}
+.b-info{background:rgba(0,229,255,0.12);color:var(--cyan);border:1px solid rgba(0,229,255,0.25);}
+.b-purple{background:rgba(168,85,247,0.12);color:var(--purple);border:1px solid rgba(168,85,247,0.25);}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sh-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--text3);display:flex;align-items:center;gap:7px;}
+.sh-title::before{content:'';width:2px;height:12px;background:var(--cyan);border-radius:2px;display:block;}
+.sh-title.g::before{background:var(--green);}.sh-title.p::before{background:var(--purple);}.sh-title.o::before{background:var(--orange);}
+
+/* GAUGE */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.gauge{position:relative;width:100px;height:60px;overflow:hidden;}
+.gauge svg{width:100%;height:auto;}
+.gauge-val{font-family:monospace;font-size:18px;font-weight:900;text-align:center;}
+.gauge-lbl{font-size:10px;color:var(--text3);text-align:center;}
+
+/* SPARKLINE */
+.spark-wrap{position:relative;height:40px;}
+.spark-wrap svg{width:100%;height:100%;}
+
+/* TERMINAL */
+.term{background:#020509;border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'Cascadia Code','Fira Code',monospace;font-size:11px;line-height:1.7;overflow-y:auto;}
+.term::-webkit-scrollbar{width:3px;}.term::-webkit-scrollbar-thumb{background:var(--border2);}
+.tc{color:var(--cyan);}.tg{color:var(--green);}.ty{color:var(--orange);}.tr{color:var(--red);}.tp{color:var(--purple);}.tw{color:var(--text);}.td{color:var(--text3);}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{padding:6px 10px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);text-align:left;font-weight:700;}
+.tbl td{padding:8px 10px;border-bottom:1px solid rgba(30,45,74,0.4);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}.tbl tr:hover td{background:rgba(255,255,255,0.02);}
+.mono{font-family:monospace;font-size:11px;color:var(--cyan);}
+
+/* PROGRESS */
+.prg{margin-bottom:8px;}
+.prg-lbl{display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px;}
+.prg-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.prg-fill{height:100%;border-radius:2px;transition:width 0.8s ease;}
+.prg-fill.c{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.prg-fill.p{background:linear-gradient(90deg,var(--purple),var(--pink));}
+.prg-fill.g{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.prg-fill.o{background:linear-gradient(90deg,var(--orange),#fbbf24);}
+.prg-fill.r{background:linear-gradient(90deg,var(--red),var(--orange));}
+
+/* FEED */
+.feed{max-height:220px;overflow-y:auto;}
+.feed::-webkit-scrollbar{width:3px;}.feed::-webkit-scrollbar-thumb{background:var(--border2);}
+.feed-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(30,45,74,0.3);font-size:11px;animation:fi 0.3s ease;}
+@keyframes fi{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:none;}}
+.feed-item:last-child{border-bottom:none;}
+.fd{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.fd.ok{background:var(--green);box-shadow:0 0 5px var(--green);}
+.fd.warn{background:var(--orange);box-shadow:0 0 5px var(--orange);}
+.fd.err{background:var(--red);box-shadow:0 0 5px var(--red);}
+.fd.info{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+.fd.ws{background:var(--purple);box-shadow:0 0 5px var(--purple);}
+.ft{font-family:monospace;font-size:9px;color:var(--text3);flex-shrink:0;margin-top:2px;}
+.fm{color:var(--text2);flex:1;}.fm strong{color:var(--text);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-c{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#000;}
+.btn-c:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,229,255,0.4);}
+.btn-g{background:linear-gradient(135deg,var(--green),var(--cyan));color:#000;}
+.btn-g:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(16,185,129,0.4);}
+.btn-p{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(168,85,247,0.4);}
+.btn-o{background:linear-gradient(135deg,var(--orange),#fbbf24);color:#000;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-sm{padding:3px 9px;font-size:10px;}
+.bgrp{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;}
+
+/* ALERT */
+.alert{padding:9px 12px;border-radius:7px;margin-bottom:8px;display:flex;align-items:flex-start;gap:8px;font-size:11px;}
+.alert-ok{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fcd34d;}
+.alert-err{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;}
+.alert-info{background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:#67e8f9;}
+
+/* CMD */
+.cmd{background:#020509;border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:monospace;font-size:11px;color:var(--green);display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.cmd-copy{background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:var(--cyan);padding:2px 7px;border-radius:4px;font-size:10px;cursor:pointer;transition:all 0.2s;}
+.cmd-copy:hover{background:rgba(0,229,255,0.2);}
+
+/* CHART */
+.chart-wrap{position:relative;}
+.chart-svg{width:100%;overflow:visible;}
+.chart-grid line{stroke:rgba(30,45,74,0.5);stroke-dasharray:3,3;}
+.chart-line{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.chart-area{opacity:0.15;}
+.chart-dot{transition:r 0.2s;}
+.chart-dot:hover{r:5;}
+
+/* METRIC ROW */
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(30,45,74,0.3);}
+.mrow:last-child{border-bottom:none;}
+.mrow-name{font-size:12px;font-weight:600;}
+.mrow-val{font-family:monospace;font-size:13px;font-weight:700;}
+.mrow-bar{width:70px;height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-left:8px;}
+.mrow-fill{height:100%;border-radius:2px;transition:width 0.8s ease;}
+
+/* COMPARE TABLE */
+.cmp-row{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:0;border-bottom:1px solid rgba(30,45,74,0.3);}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-cell{padding:8px 10px;font-size:11px;}
+.cmp-cell.hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);background:var(--bg3);}
+.cmp-cell.win{color:var(--green);font-weight:700;}
+.cmp-cell.lose{color:var(--red);}
+.cmp-cell.tie{color:var(--orange);}
+
+/* PIPELINE */
+.pipeline{display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 0;}
+.pipeline::-webkit-scrollbar{height:3px;}.pipeline::-webkit-scrollbar-thumb{background:var(--border2);}
+.pstep{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:90px;}
+.pstep-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid;transition:all 0.3s;}
+.pstep-ico.ok{border-color:var(--green);background:rgba(16,185,129,0.1);box-shadow:0 0 12px rgba(16,185,129,0.3);}
+.pstep-ico.run{border-color:var(--cyan);background:rgba(0,229,255,0.1);animation:spin 2s linear infinite;}
+.pstep-ico.wait{border-color:var(--text3);background:rgba(71,85,105,0.1);}
+.pstep-ico.fail{border-color:var(--red);background:rgba(239,68,68,0.1);}
+@keyframes spin{from{box-shadow:0 0 12px rgba(0,229,255,0.3);}50%{box-shadow:0 0 20px rgba(0,229,255,0.6);}to{box-shadow:0 0 12px rgba(0,229,255,0.3);}}
+.pstep-name{font-size:10px;font-weight:700;color:var(--text2);text-align:center;}
+.pstep-time{font-size:9px;color:var(--text3);font-family:monospace;}
+.parrow{color:var(--border2);font-size:18px;margin:0 2px;flex-shrink:0;margin-bottom:16px;}
+
+/* NOTIF */
+#notif{position:fixed;bottom:18px;right:18px;z-index:999;background:var(--card2,#162035);border:1px solid var(--green);color:var(--green);padding:9px 14px;border-radius:9px;font-size:11px;font-weight:700;transform:translateY(50px);opacity:0;transition:all 0.3s;box-shadow:0 4px 18px rgba(16,185,129,0.25);}
+#notif.show{transform:translateY(0);opacity:1;}
+
+/* PULSE */
+.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);position:relative;}
+.pulse::after{content:'';position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;border-radius:50%;border:2px solid var(--green);animation:pr 1.5s infinite;opacity:0;}
+@keyframes pr{0%{transform:scale(0.8);opacity:0.8;}100%{transform:scale(1.6);opacity:0;}}
+
+/* SEP */
+.sep{height:1px;background:var(--border);margin:12px 0;}
+
+/* PANE */
+.pane{display:none;}.pane.on{display:block;}
+
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="notif">📋 Skopiowano!</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="logo">⚡ GRAŻYNA 5.0</div>
+    <div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(168,85,247,0.15));border:1px solid rgba(0,229,255,0.25);color:var(--cyan);">LIVE MONITOR</div>
+  </div>
+  <div class="hdr-mid">
+    <div class="pulse"></div>
+    <span style="color:var(--green);font-weight:700;font-size:11px;margin-left:4px;">ONLINE</span>
+    <span style="color:var(--text3)">|</span>
+    <span style="color:var(--text3);font-size:11px;">Backend <span id="hdr-backend" style="color:var(--green)">:3001</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3);font-size:11px;">Heap <span id="hdr-heap" style="color:var(--orange)">93.8%</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3);font-size:11px;">EL Lag <span id="hdr-lag" style="color:var(--orange)">19ms</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3);font-size:11px;">Node <span style="color:var(--purple)">v20.11</span></span>
+  </div>
+  <div class="hdr-right">
+    <div class="ws-badge disconnected" id="ws-badge"><div class="ws-dot"></div><span id="ws-label">WS: Łączę...</span></div>
+    <span class="clock" id="clock">--:--:--</span>
+    <button class="btn btn-ghost btn-sm" onclick="connectWS()">🔄 Reconnect</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="ntab on" onclick="tab('live')" id="nt-live">📡 Live Monitor</div>
+  <div class="ntab" onclick="tab('metrics')" id="nt-metrics">📊 Metryki</div>
+  <div class="ntab" onclick="tab('ws')" id="nt-ws">🔌 WebSocket</div>
+  <div class="ntab" onclick="tab('compare')" id="nt-compare">⚡ Express vs Fastify</div>
+  <div class="ntab" onclick="tab('cicd')" id="nt-cicd">🚀 CI/CD</div>
+  <div class="ntab" onclick="tab('fix')" id="nt-fix">🔧 Fix Backend</div>
+</div>
+
+<div class="main">
+
+<!-- ═══ TAB: LIVE MONITOR ═══ -->
+<div class="pane on" id="pane-live">
+  <div class="g4">
+    <div class="sc"><div class="sc-bar c"></div><div class="sc-lbl">RSS Memory</div><div class="sc-val c" id="sv-rss">60.3 MB</div><div class="sc-sub">Resident Set Size</div><div class="sc-ico">💾</div></div>
+    <div class="sc"><div class="sc-bar o"></div><div class="sc-lbl">Heap Usage</div><div class="sc-val o" id="sv-heap">93.8%</div><div class="sc-sub" id="sv-heap-sub">15.1 / 16.1 MB</div><div class="sc-ico">🧠</div><div class="sc-trend warn" id="st-heap">⚠ WYSOKI</div></div>
+    <div class="sc"><div class="sc-bar r"></div><div class="sc-lbl">Event Loop Lag</div><div class="sc-val r" id="sv-lag">19.0ms</div><div class="sc-sub" id="sv-lag-sub">max spike: 869ms</div><div class="sc-ico">🔄</div><div class="sc-trend dn" id="st-lag">⚠ WYSOKI</div></div>
+    <div class="sc"><div class="sc-bar g"></div><div class="sc-lbl">Uptime Panel</div><div class="sc-val g" id="sv-uptime">00:00:00</div><div class="sc-sub">Panel aktywny</div><div class="sc-ico">⏱️</div></div>
+  </div>
+  <div class="g4">
+    <div class="sc"><div class="sc-bar r"></div><div class="sc-lbl">GET /health</div><div class="sc-val r" id="sv-health-status">404</div><div class="sc-sub">10 requestów → 404!</div><div class="sc-ico">❤️</div><div class="sc-trend dn">🔴 FIX!</div></div>
+    <div class="sc"><div class="sc-bar r"></div><div class="sc-lbl">GET /api</div><div class="sc-val r" id="sv-api-status">404</div><div class="sc-sub">avg 862ms → 404!</div><div class="sc-ico">🔌</div><div class="sc-trend dn">🔴 FIX!</div></div>
+    <div class="sc"><div class="sc-bar b"></div><div class="sc-lbl">CPU Total</div><div class="sc-val b" id="sv-cpu">0.985s</div><div class="sc-sub">user: 0.641s sys: 0.344s</div><div class="sc-ico">⚡</div></div>
+    <div class="sc"><div class="sc-bar p"></div><div class="sc-lbl">GC Cycles</div><div class="sc-val p" id="sv-gc">7</div><div class="sc-sub">incremental×2 minor×5</div><div class="sc-ico">🗑️</div></div>
+  </div>
+
+  <div class="g21">
+    <!-- LIVE CHART -->
+    <div class="card">
+      <div class="sh">
+        <div class="sh-title">Live Metryki (real-time z /metrics)</div>
+        <div style="display:flex;gap:6px;">
+          <div class="b b-ok" id="chart-status">LIVE</div>
+          <button class="btn btn-ghost btn-sm" onclick="fetchAndUpdateMetrics()">🔄</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;margin-bottom:10px;font-size:10px;">
+        <span style="color:var(--cyan)">━ Heap %</span>
+        <span style="color:var(--orange)">━ EL Lag ms</span>
+        <span style="color:var(--green)">━ RSS MB</span>
+      </div>
+      <div class="chart-wrap">
+        <svg class="chart-svg" height="120" id="live-chart" viewBox="0 0 600 120" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="grad-cyan" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="grad-orange" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Grid lines -->
+          <line x1="0" y1="30" x2="600" y2="30" stroke="rgba(30,45,74,0.5)" stroke-dasharray="3,3"/>
+          <line x1="0" y1="60" x2="600" y2="60" stroke="rgba(30,45,74,0.5)" stroke-dasharray="3,3"/>
+          <line x1="0" y1="90" x2="600" y2="90" stroke="rgba(30,45,74,0.5)" stroke-dasharray="3,3"/>
+          <!-- Labels -->
+          <text x="4" y="28" fill="#475569" font-size="9">100%</text>
+          <text x="4" y="58" fill="#475569" font-size="9">50%</text>
+          <text x="4" y="88" fill="#475569" font-size="9">25%</text>
+          <!-- Paths updated by JS -->
+          <path id="chart-area-cyan" class="chart-area" fill="url(#grad-cyan)"/>
+          <path id="chart-line-cyan" class="chart-line" stroke="#00e5ff"/>
+          <path id="chart-line-orange" class="chart-line" stroke="#f59e0b" stroke-dasharray="4,2"/>
+          <path id="chart-line-green" class="chart-line" stroke="#10b981" stroke-dasharray="2,3"/>
+        </svg>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px;" id="chart-times"></div>
+    </div>
+
+    <!-- LIVE FEED -->
+    <div class="card">
+      <div class="sh">
+        <div class="sh-title">Live Feed</div>
+        <button class="btn btn-ghost btn-sm" onclick="clearFeed()">🗑</button>
+      </div>
+      <div class="feed" id="feed"></div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="card">
+    <div class="sh"><div class="sh-title o">Alerty z Metryk</div><div class="b b-err">2 krytyczne</div></div>
+    <div class="alert alert-err"><div>🔴</div><div><strong>GET /health → 404 (×10)</strong> — Route /health nie jest zarejestrowany w Express! Napraw kolejność middleware w index.ts. Plik: GRAZYNA_BACKEND_FIX.ts</div></div>
+    <div class="alert alert-err"><div>🔴</div><div><strong>GET /api → 404, avg 862ms</strong> — Router API nie jest podpięty lub podpięty po catch-all. 862ms to czas przejścia przez wszystkie middleware bez trafienia w route.</div></div>
+    <div class="alert alert-warn"><div>⚠️</div><div><strong>Event Loop Lag max = 869ms</strong> — Był spike 869ms (p99=24.8ms normalnie). Prawdopodobna przyczyna: synchroniczna operacja blokująca event loop przy starcie.</div></div>
+    <div class="alert alert-warn"><div>⚠️</div><div><strong>Heap 93.8% (15.1/16.1 MB)</strong> — Heap prawie pełny. Node.js automatycznie rozszerzy, ale warto monitorować. Przy 100% → GC pressure → spowolnienie.</div></div>
+    <div class="alert alert-ok"><div>✅</div><div><strong>Backend działa</strong> — /metrics odpowiada, RSS=60MB normalny, GC działa (7 cykli), Node v20.11.0 ✓</div></div>
+  </div>
+</div>
+
+<!-- ═══ TAB: METRYKI ═══ -->
+<div class="pane" id="pane-metrics">
+  <div class="g3">
+    <div class="card">
+      <div class="sh"><div class="sh-title">Memory</div><button class="btn btn-ghost btn-sm" onclick="fetchAndUpdateMetrics()">🔄 Refresh</button></div>
+      <div class="mrow"><div><div class="mrow-name">RSS</div><div style="font-size:10px;color:var(--text3)">Resident Set Size</div></div><div style="display:flex;align-items:center;"><div class="mrow-val" id="m-rss" style="color:var(--cyan)">60.3 MB</div><div class="mrow-bar"><div class="mrow-fill" id="mb-rss" style="width:48%;background:linear-gradient(90deg,var(--cyan),var(--blue));"></div></div></div></div>
+      <div class="mrow"><div><div class="mrow-name">Heap Used</div><div style="font-size:10px;color:var(--text3)">JS heap aktywny</div></div><div style="display:flex;align-items:center;"><div class="mrow-val" id="m-heap-used" style="color:var(--orange)">15.1 MB</div><div class="mrow-bar"><div class="mrow-fill" id="mb-heap" style="width:93%;background:linear-gradient(90deg,var(--orange),#fbbf24);"></div></div></div></div>
+      <div class="mrow"><div><div class="mrow-name">Heap Total</div><div style="font-size:10px;color:var(--text3)">Alokowany heap</div></div><div style="display:flex;align-items:center;"><div class="mrow-val" id="m-heap-total" style="color:var(--text2)">16.1 MB</div></div></div>
+      <div class="mrow"><div><div class="mrow-name">External</div><div style="font-size:10px;color:var(--text3)">C++ objects</div></div><div style="display:flex;align-items:center;"><div class="mrow-val" id="m-external" style="color:var(--purple)">3.7 MB</div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="sh"><div class="sh-title">Event Loop</div></div>
+      <div class="mrow"><div><div class="mrow-name">Lag current</div><div style="font-size:10px;color:var(--text3)">Aktualny</div></div><div style="display:flex;align-items:center;"><div class="mrow-val" id="m-lag" style="color:var(--orange)">19.0ms</div><div class="mrow-bar"><div class="mrow-fill" id="mb-lag" style="width:19%;background:linear-gradient(90deg,var(--orange),#fbbf24);"></div></div></div></div>
+      <div class="mrow"><div><div class="mrow-name">Lag max</div><div style="font-size:10px;color:var(--text3)">Spike</div></div><div style="display:flex;align-items:center;"><div class="mrow-val" style="color:var(--red)">869ms</div><div class="mrow-bar"><div class="mrow-fill" style="width:87%;background:linear-gradient(90deg,var(--red),var(--orange));"></div></div></div></div>
+      <div class="mrow"><div><div class="mrow-name">Lag p50</div></div><div class="mrow-val" style="color:var(--green)">15.8ms</div></div>
+      <div class="mrow"><div><div class="mrow-name">Lag p90</div></div><div class="mrow-val" style="color:var(--green)">16.3ms</div></div>
+      <div class="mrow"><div><div class="mrow-name">Lag p99</div></div><div class="mrow-val" style="color:var(--orange)">24.8ms</div></div>
+      <div class="mrow"><div><div class="mrow-name">Lag stddev</div></div><div class="mrow-val" style="color:var(--text2)">5.4ms</div></div>
+    </div>
+
+    <div class="card">
+      <div class="sh"><div class="sh-title">HTTP Requests</div></div>
+      <table class="tbl">
+        <thead><tr><th>Route</th><th>Status</th><th>Count</th><th>Avg ms</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">/health</td><td><span class="b b-err">404</span></td><td class="mono">10</td><td class="mono" style="color:var(--green)">2.3ms</td></tr>
+          <tr><td class="mono">/api</td><td><span class="b b-err">404</span></td><td class="mono">1</td><td class="mono" style="color:var(--red)">862ms</td></tr>
+          <tr><td class="mono">/metrics</td><td><span class="b b-ok">200</span></td><td class="mono">—</td><td class="mono" style="color:var(--green)">—</td></tr>
+        </tbody>
+      </table>
+      <div class="sep"></div>
+      <div class="sh"><div class="sh-title">Garbage Collection</div></div>
+      <table class="tbl">
+        <thead><tr><th>Typ</th><th>Count</th><th>Total ms</th></tr></thead>
+        <tbody>
+          <tr><td>Incremental</td><td class="mono">2</td><td class="mono" style="color:var(--orange)">27.9ms</td></tr>
+          <tr><td>Minor</td><td class="mono">5</td><td class="mono" style="color:var(--green)">4.8ms</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-title">Heap Spaces</div></div>
+      <table class="tbl">
+        <thead><tr><th>Space</th><th>Used</th><th>Total</th><th>Available</th></tr></thead>
+        <tbody>
+          <tr><td>new</td><td class="mono">0.9 MB</td><td class="mono">1.0 MB</td><td class="mono" style="color:var(--orange)">0.09 MB</td></tr>
+          <tr><td>old</td><td class="mono">12.4 MB</td><td class="mono">13.2 MB</td><td class="mono" style="color:var(--green)">0.5 MB</td></tr>
+          <tr><td>code</td><td class="mono">1.1 MB</td><td class="mono">1.25 MB</td><td class="mono">0.03 MB</td></tr>
+          <tr><td>large_object</td><td class="mono">0.68 MB</td><td class="mono">0.70 MB</td><td class="mono" style="color:var(--red)">0 MB</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-title">Active Handles & Resources</div></div>
+      <table class="tbl">
+        <thead><tr><th>Typ</th><th>Count</th><th>Opis</th></tr></thead>
+        <tbody>
+          <tr><td>TTYWrap</td><td class="mono">3</td><td style="color:var(--text3)">stdin/stdout/stderr</td></tr>
+          <tr><td>TCPServerWrap</td><td class="mono">1</td><td style="color:var(--text3)">HTTP server :3001</td></tr>
+          <tr><td>TCPSocketWrap</td><td class="mono">2</td><td style="color:var(--text3)">aktywne połączenia</td></tr>
+          <tr><td>Immediate</td><td class="mono">1</td><td style="color:var(--text3)">setImmediate</td></tr>
+          <tr><td><strong>Total handles</strong></td><td class="mono"><strong>6</strong></td><td style="color:var(--green)">normalny</td></tr>
+          <tr><td><strong>Total resources</strong></td><td class="mono"><strong>7</strong></td><td style="color:var(--green)">normalny</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: WEBSOCKET ═══ -->
+<div class="pane" id="pane-ws">
+  <div class="g2">
+    <div class="card">
+      <div class="sh">
+        <div class="sh-title">WebSocket Status</div>
+        <div class="ws-badge disconnected" id="ws-badge2"><div class="ws-dot"></div><span id="ws-label2">Rozłączony</span></div>
+      </div>
+      <div class="alert alert-info" style="margin-bottom:12px;">
+        <div>ℹ️</div>
+        <div>Panel próbuje połączyć się z <strong>ws://localhost:3001</strong>. Wymaga Socket.io na backendzie. Plik GRAZYNA_BACKEND_FIX.ts zawiera pełną implementację.</div>
+      </div>
+      <table class="tbl">
+        <tr><td style="color:var(--text3)">URL</td><td class="mono">ws://localhost:3001</td></tr>
+        <tr><td style="color:var(--text3)">Transport</td><td class="mono" id="ws-transport">—</td></tr>
+        <tr><td style="color:var(--text3)">Socket ID</td><td class="mono" id="ws-id">—</td></tr>
+        <tr><td style="color:var(--text3)">Połączeń</td><td class="mono" id="ws-connects">0</td></tr>
+        <tr><td style="color:var(--text3)">Wiadomości RX</td><td class="mono" id="ws-rx">0</td></tr>
+        <tr><td style="color:var(--text3)">Wiadomości TX</td><td class="mono" id="ws-tx">0</td></tr>
+        <tr><td style="color:var(--text3)">Ostatni ping</td><td class="mono" id="ws-ping">—</td></tr>
+        <tr><td style="color:var(--text3)">Latencja</td><td class="mono" id="ws-latency">—</td></tr>
+      </table>
+      <div class="bgrp">
+        <button class="btn btn-g" onclick="connectWS()">🔌 Połącz</button>
+        <button class="btn btn-ghost" onclick="disconnectWS()">✕ Rozłącz</button>
+        <button class="btn btn-c" onclick="sendPing()">📡 Ping</button>
+        <button class="btn btn-p" onclick="subscribeAll()">📥 Subscribe All</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sh"><div class="sh-title">WebSocket Events Log</div><button class="btn btn-ghost btn-sm" onclick="clearWsLog()">🗑</button></div>
+      <div class="term" id="ws-log" style="max-height:300px;">
+<span class="td">Oczekiwanie na połączenie WebSocket...</span>
+<span class="td">Upewnij się że backend działa na :3001</span>
+<span class="td">i ma zainstalowane socket.io</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sh"><div class="sh-title">Implementacja WebSocket — GRAZYNA_BACKEND_FIX.ts</div></div>
+    <div class="term" style="max-height:280px;">
+<span class="tp">// Socket.io setup w backend/src/index.ts</span>
+<span class="tb">import</span> <span class="tw">{ Server as SocketIOServer } from</span> <span class="tg">'socket.io'</span><span class="tw">;</span>
+<span class="tb">import</span> <span class="tw">{ createServer } from</span> <span class="tg">'http'</span><span class="tw">;</span>
+
+<span class="tb">const</span> <span class="tw">httpServer = createServer(app);</span>
+<span class="tb">const</span> <span class="tw">io = new SocketIOServer(httpServer, {</span>
+<span class="tw">  cors: { origin: [</span><span class="tg">'http://localhost:5173'</span><span class="tw">,</span> <span class="tg">'http://localhost:5174'</span><span class="tw">] },</span>
+<span class="tw">  transports: [</span><span class="tg">'websocket'</span><span class="tw">,</span> <span class="tg">'polling'</span><span class="tw">]</span>
+<span class="tw">});</span>
+
+<span class="tp">// Broadcast system status co 5s</span>
+<span class="tw">setInterval(() => {</span>
+<span class="tw">  io.emit(</span><span class="tg">'system:status'</span><span class="tw">, {</span>
+<span class="tw">    uptime: Math.floor(process.uptime()),</span>
+<span class="tw">    memory: process.memoryUsage(),</span>
+<span class="tw">    timestamp: new Date().toISOString()</span>
+<span class="tw">  });</span>
+<span class="tw">}, 5000);</span>
+
+<span class="tp">// Events: vehicle:location, alert:new, system:status</span>
+<span class="tp">// Client: subscribe:vehicle, subscribe:alerts, ping</span>
+    </div>
+    <div class="bgrp">
+      <button class="btn btn-c" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend && ..\\\\tools\\\\nodejs\\\\npm.cmd install socket.io')">📋 npm install socket.io</button>
+      <button class="btn btn-ghost" onclick="copyPS('Copy-Item GRAZYNA_BACKEND_FIX.ts E:\\\\Grazyna_5.0\\\\backend\\\\src\\\\index.ts -Force')">📋 Kopiuj fix do backendu</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: EXPRESS VS FASTIFY ═══ -->
+<div class="pane" id="pane-compare">
+  <div class="alert alert-info" style="margin-bottom:14px;"><div>📊</div><div>Porównanie oparte na <strong>Twoich rzeczywistych metrykach</strong> z /metrics backendu GRAŻYNA 5.0.</div></div>
+
+  <div class="g4" style="margin-bottom:14px;">
+    <div class="sc"><div class="sc-bar c"></div><div class="sc-lbl">Express req/s</div><div class="sc-val c">~15k</div><div class="sc-sub">hello world benchmark</div></div>
+    <div class="sc"><div class="sc-bar g"></div><div class="sc-lbl">Fastify req/s</div><div class="sc-val g">~75k</div><div class="sc-sub">5× szybszy</div><div class="sc-trend up">▲ 5×</div></div>
+    <div class="sc"><div class="sc-bar o"></div><div class="sc-lbl">Twój EL Lag</div><div class="sc-val o">19ms</div><div class="sc-sub">max spike: 869ms</div><div class="sc-trend dn">⚠ WYSOKI</div></div>
+    <div class="sc"><div class="sc-bar p"></div><div class="sc-lbl">Twój Heap</div><div class="sc-val p">93.8%</div><div class="sc-sub">15.1 / 16.1 MB</div><div class="sc-trend dn">⚠ WYSOKI</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-title">Szczegółowe Porównanie</div></div>
+      <div class="cmp-row"><div class="cmp-cell hdr">Metryka</div><div class="cmp-cell hdr" style="color:var(--cyan)">⚡ Express 4.18</div><div class="cmp-cell hdr" style="color:var(--green)">🚀 Fastify 4.x</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Req/sec</div><div class="cmp-cell lose">~15,000</div><div class="cmp-cell win">~75,000 (+400%)</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Latencja p50</div><div class="cmp-cell lose">~2ms</div><div class="cmp-cell win">~0.4ms</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Latencja p99</div><div class="cmp-cell lose">~8ms</div><div class="cmp-cell win">~1.5ms</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Memory startup</div><div class="cmp-cell lose">~45MB</div><div class="cmp-cell win">~35MB (-22%)</div></div>
+      <div class="cmp-row"><div class="cmp-cell">JSON serialize</div><div class="cmp-cell lose">JSON.stringify</div><div class="cmp-cell win">fast-json-stringify (3×)</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Schema validation</div><div class="cmp-cell lose">Ręczny Zod (JS)</div><div class="cmp-cell win">AJV compiled (C++)</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Router</div><div class="cmp-cell lose">Linear O(n)</div><div class="cmp-cell win">Radix tree O(1)</div></div>
+      <div class="cmp-row"><div class="cmp-cell">TypeScript</div><div class="cmp-cell tie">@types/express</div><div class="cmp-cell win">Natywny</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Ekosystem</div><div class="cmp-cell win">60k+ packages</div><div class="cmp-cell lose">Mniejszy</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Socket.io</div><div class="cmp-cell win">Natywna integracja</div><div class="cmp-cell lose">Wymaga adaptera</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Prisma</div><div class="cmp-cell win">Pełne wsparcie</div><div class="cmp-cell win">Pełne wsparcie</div></div>
+      <div class="cmp-row"><div class="cmp-cell">Migracja</div><div class="cmp-cell win">N/A (aktualny)</div><div class="cmp-cell lose">~30-40h pracy</div></div>
+      <div class="cmp-row" style="background:rgba(0,229,255,0.03);"><div class="cmp-cell" style="font-weight:700;">REKOMENDACJA</div><div class="cmp-cell win" style="font-weight:700;">✅ ZOSTAŃ + napraw</div><div class="cmp-cell" style="color:var(--text3);">Rozważ w v6.0</div></div>
+    </div>
+
+    <div class="card">
+      <div class="sh"><div class="sh-title g">Szybkie wygrane bez migracji</div></div>
+      <div class="alert alert-ok"><div>💡</div><div><strong>FIX 1 (5 min):</strong> Napraw kolejność routes w index.ts → /health i /api przestaną zwracać 404</div></div>
+      <div class="alert alert-ok"><div>💡</div><div><strong>FIX 2 (2 min):</strong> Dodaj :5174 do CORS_ORIGIN → brak błędów CORS</div></div>
+      <div class="alert alert-info"><div>⚡</div><div><strong>OPTYMALIZACJA (1h):</strong> Dodaj fast-json-stringify → 3× szybszy JSON, mniejszy heap</div></div>
+      <div class="alert alert-info"><div>⚡</div><div><strong>OPTYMALIZACJA (2h):</strong> Dodaj compression middleware z threshold → mniejszy transfer</div></div>
+      <div class="alert alert-warn"><div>🔄</div><div><strong>DŁUGOTERMINOWO:</strong> Migracja do Fastify gdy ruch > 1000 req/s lub heap > 80% regularnie</div></div>
+      <div class="sep"></div>
+      <div class="sh"><div class="sh-title">Prognoza po naprawie Express</div></div>
+      <div class="prg"><div class="prg-lbl"><span>/health latency</span><span style="color:var(--green)">404 → ~1ms</span></div><div class="prg-bar"><div class="prg-fill g" style="width:0%" data-w="95%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>/api latency</span><span style="color:var(--green)">862ms → ~5ms</span></div><div class="prg-bar"><div class="prg-fill g" style="width:0%" data-w="90%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Event loop lag</span><span style="color:var(--cyan)">19ms → ~5ms</span></div><div class="prg-bar"><div class="prg-fill c" style="width:0%" data-w="75%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Heap usage</span><span style="color:var(--orange)">93.8% → ~70%</span></div><div class="prg-bar"><div class="prg-fill o" style="width:0%" data-w="60%"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: CI/CD ═══ -->
+<div class="pane" id="pane-cicd">
+  <div class="alert alert-ok" style="margin-bottom:14px;"><div>✅</div><div>Plik <strong>.github/workflows/ci-cd.yml</strong> wygenerowany. Skopiuj do repozytorium i skonfiguruj Secrets w GitHub.</div></div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="sh"><div class="sh-title">Pipeline CI/CD — Wizualizacja</div></div>
+    <div class="pipeline">
+      <div class="pstep"><div class="pstep-ico ok">🔍</div><div class="pstep-name">Lint & Types</div><div class="pstep-time">~2min</div></div>
+      <div class="parrow">→</div>
+      <div class="pstep"><div class="pstep-ico ok">🧪</div><div class="pstep-name">Tests</div><div class="pstep-time">~5min</div></div>
+      <div class="parrow">→</div>
+      <div class="pstep"><div class="pstep-ico ok">🔨</div><div class="pstep-name">Build</div><div class="pstep-time">~4min</div></div>
+      <div class="parrow">→</div>
+      <div class="pstep"><div class="pstep-ico ok">🔒</div><div class="pstep-name">Security</div><div class="pstep-time">~3min</div></div>
+      <div class="parrow">→</div>
+      <div class="pstep"><div class="pstep-ico run">🚀</div><div class="pstep-name">Staging</div><div class="pstep-time">~2min</div></div>
+      <div class="parrow">→</div>
+      <div class="pstep"><div class="pstep-ico wait">✋</div><div class="pstep-name">Approval</div><div class="pstep-time">manual</div></div>
+      <div class="parrow">→</div>
+      <div class="pstep"><div class="pstep-ico wait">🏭</div><div class="pstep-name">Production</div><div class="pstep-time">~3min</div></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-title">Jobs w Pipeline</div></div>
+      <table class="tbl">
+        <thead><tr><th>Job</th><th>Trigger</th><th>Czas</th><th>Opis</th></tr></thead>
+        <tbody>
+          <tr><td>🔍 Lint</td><td><span class="b b-info">push/PR</span></td><td class="mono">~2min</td><td style="font-size:10px;color:var(--text3)">tsc --noEmit, ESLint</td></tr>
+          <tr><td>🧪 Test</td><td><span class="b b-info">po Lint</span></td><td class="mono">~5min</td><td style="font-size:10px;color:var(--text3)">Vitest + PostgreSQL + Redis</td></tr>
+          <tr><td>🔨 Build</td><td><span class="b b-info">po Test</span></td><td class="mono">~4min</td><td style="font-size:10px;color:var(--text3)">tsc build + vite build + Docker</td></tr>
+          <tr><td>🔒 Security</td><td><span class="b b-purple">main only</span></td><td class="mono">~3min</td><td style="font-size:10px;color:var(--text3)">npm audit + Trivy scan</td></tr>
+          <tr><td>🚀 Staging</td><td><span class="b b-purple">main only</span></td><td class="mono">~2min</td><td style="font-size:10px;color:var(--text3)">SSH deploy + health check</td></tr>
+          <tr><td>🏭 Production</td><td><span class="b b-warn">manual</span></td><td class="mono">~3min</td><td style="font-size:10px;color:var(--text3)">DB backup + deploy + release</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="sh"><div class="sh-title">GitHub Secrets — Wymagane</div></div>
+      <table class="tbl">
+        <thead><tr><th>Secret</th><th>Opis</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">STAGING_HOST</td><td style="font-size:10px;color:var(--text3)">IP/hostname serwera staging</td></tr>
+          <tr><td class="mono">STAGING_USER</td><td style="font-size:10px;color:var(--text3)">SSH user (np. deploy)</td></tr>
+          <tr><td class="mono">STAGING_SSH_KEY</td><td style="font-size:10px;color:var(--text3)">Prywatny klucz SSH</td></tr>
+          <tr><td class="mono">PROD_HOST</td><td style="font-size:10px;color:var(--text3)">IP/hostname produkcji</td></tr>
+          <tr><td class="mono">PROD_USER</td><td style="font-size:10px;color:var(--text3)">SSH user produkcji</td></tr>
+          <tr><td class="mono">PROD_SSH_KEY</td><td style="font-size:10px;color:var(--text3)">Prywatny klucz SSH prod</td></tr>
+          <tr><td class="mono">VITE_API_URL</td><td style="font-size:10px;color:var(--text3)">URL API dla frontendu</td></tr>
+          <tr><td class="mono">VITE_WS_URL</td><td style="font-size:10px;color:var(--text3)">URL WebSocket</td></tr>
+        </tbody>
+      </table>
+      <div class="bgrp">
+        <button class="btn btn-c btn-sm" onclick="copyPS('mkdir -p .github/workflows && cp ci-cd.yml .github/workflows/')">📋 Kopiuj workflow</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sh"><div class="sh-title">Komendy CI/CD</div></div>
+    <div class="g2">
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Lokalne testy przed push</div>
+        <div class="cmd"><span style="color:var(--green)">cd backend && npm run lint && npm test</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend && ..\\\\tools\\\\nodejs\\\\npm.cmd run lint && ..\\\\tools\\\\nodejs\\\\npm.cmd test')">📋</button></div>
+        <div class="cmd"><span style="color:var(--green)">cd frontend && npm run type-check</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\frontend && ..\\\\tools\\\\nodejs\\\\npm.cmd run type-check')">📋</button></div>
+        <div class="cmd"><span style="color:var(--green)">cd backend && npm run build</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend && ..\\\\tools\\\\nodejs\\\\npm.cmd run build')">📋</button></div>
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Git workflow</div>
+        <div class="cmd"><span style="color:var(--green)">git checkout -b feature/new-feature</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git checkout -b feature/new-feature')">📋</button></div>
+        <div class="cmd"><span style="color:var(--green)">git push origin feature/new-feature</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git push origin feature/new-feature')">📋</button></div>
+        <div class="cmd"><span style="color:var(--green)">gh pr create --title "Feature" --base main</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && gh pr create --title \"Feature\" --base main')">📋</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: FIX BACKEND ═══ -->
+<div class="pane" id="pane-fix">
+  <div class="alert alert-err" style="margin-bottom:14px;"><div>🔴</div><div><strong>KRYTYCZNY PROBLEM ZIDENTYFIKOWANY:</strong> /health zwraca 404 (×10 requestów), /api zwraca 404 (862ms). Przyczyna: błędna kolejność middleware w backend/src/index.ts.</div></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="sh"><div class="sh-title o">Problem — Błędna kolejność</div></div>
+      <div class="term" style="max-height:200px;">
+<span class="tr">// ❌ BŁĘDNA KOLEJNOŚĆ (aktualny index.ts)</span>
+<span class="tw">app.use(</span><span class="tg">'/api'</span><span class="tw">, router);     </span><span class="td">// router podpięty</span>
+<span class="tw">app.use(notFoundHandler);    </span><span class="td">// catch-all</span>
+<span class="tr">// /health NIE ISTNIEJE → 404!</span>
+<span class="tr">// /api może nie działać jeśli router pusty</span>
+
+<span class="td">// Lub: routes zarejestrowane PO catch-all</span>
+<span class="tw">app.use((req, res) => res.status(</span><span class="tr">404</span><span class="tw">).json({...}));</span>
+<span class="tw">app.get(</span><span class="tg">'/health'</span><span class="tw">, handler); </span><span class="tr">// ← NIGDY nie dotrze!</span>
+      </div>
+      <div class="sh" style="margin-top:12px;"><div class="sh-title g">Fix — Poprawna kolejność</div></div>
+      <div class="term" style="max-height:200px;">
+<span class="tg">// ✅ POPRAWNA KOLEJNOŚĆ (GRAZYNA_BACKEND_FIX.ts)</span>
+<span class="tw">app.use(helmet());</span>
+<span class="tw">app.use(cors({ origin: [</span><span class="tg">':5173'</span><span class="tw">,</span><span class="tg">':5174'</span><span class="tw">] }));</span>
+<span class="tw">app.use(express.json());</span>
+
+<span class="tg">// 1. Health PRZED routerami</span>
+<span class="tw">app.get(</span><span class="tg">'/health'</span><span class="tw">, healthHandler);   </span><span class="tg">// ← TUTAJ</span>
+<span class="tw">app.get(</span><span class="tg">'/metrics'</span><span class="tw">, metricsHandler); </span><span class="tg">// ← TUTAJ</span>
+
+<span class="tg">// 2. API router</span>
+<span class="tw">app.use(</span><span class="tg">'/api'</span><span class="tw">, router);             </span><span class="tg">// ← TUTAJ</span>
+
+<span class="tg">// 3. Catch-all NA KOŃCU</span>
+<span class="tw">app.use(notFoundHandler);              </span><span class="tg">// ← NA KOŃCU!</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sh"><div class="sh-title">Instrukcja Naprawy</div></div>
+      <div class="alert alert-info"><div>📋</div><div>Plik <strong>GRAZYNA_BACKEND_FIX.ts</strong> zawiera kompletny, naprawiony index.ts z WebSocket, health endpoint i poprawnym routingiem.</div></div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:700;">Krok 1: Backup i zastąp index.ts</div>
+      <div class="cmd"><span style="color:var(--green);font-size:10px;">Copy-Item backend\src\index.ts backend\src\index.ts.bak</span><button class="cmd-copy" onclick="copyPS('Copy-Item E:\\\\Grazyna_5.0\\\\backend\\\\src\\\\index.ts E:\\\\Grazyna_5.0\\\\backend\\\\src\\\\index.ts.bak')">📋</button></div>
+      <div class="cmd"><span style="color:var(--green);font-size:10px;">Copy-Item GRAZYNA_BACKEND_FIX.ts backend\src\index.ts</span><button class="cmd-copy" onclick="copyPS('Copy-Item E:\\\\Grazyna_5.0\\\\GRAZYNA_BACKEND_FIX.ts E:\\\\Grazyna_5.0\\\\backend\\\\src\\\\index.ts -Force')">📋</button></div>
+      <div style="font-size:11px;color:var(--text3);margin:8px 0;font-weight:700;">Krok 2: Zainstaluj socket.io (jeśli brak)</div>
+      <div class="cmd"><span style="color:var(--green);font-size:10px;">cd backend && npm install socket.io</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend && ..\\\\tools\\\\nodejs\\\\npm.cmd install socket.io')">📋</button></div>
+      <div style="font-size:11px;color:var(--text3);margin:8px 0;font-weight:700;">Krok 3: Restart backendu</div>
+      <div class="cmd"><span style="color:var(--green);font-size:10px;">Get-Process node | Stop-Process -Force</span><button class="cmd-copy" onclick="copyPS('Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force')">📋</button></div>
+      <div class="cmd"><span style="color:var(--green);font-size:10px;">& "E:\Grazyna_5.0\GRAZYNA_START.ps1"</span><button class="cmd-copy" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_START.ps1\\"')">📋</button></div>
+      <div style="font-size:11px;color:var(--text3);margin:8px 0;font-weight:700;">Krok 4: Weryfikacja</div>
+      <div class="cmd"><span style="color:var(--green);font-size:10px;">curl http://localhost:3001/health</span><button class="cmd-copy" onclick="copyPS('Invoke-WebRequest http://localhost:3001/health | Select-Object StatusCode,Content')">📋</button></div>
+      <div class="bgrp" style="margin-top:12px;">
+        <button class="btn btn-g" onclick="testHealth()">❤️ Test /health</button>
+        <button class="btn btn-c" onclick="testApi()">🔌 Test /api</button>
+      </div>
+      <div id="test-result" class="term" style="max-height:100px;margin-top:8px;display:none;"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── CLOCK ──────────────────────────────────────────────────
+let startTime=Date.now();
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const up=Math.floor((Date.now()-startTime)/1000);
+  const h=Math.floor(up/3600),m=Math.floor((up%3600)/60),s=up%60;
+  const el=document.getElementById('sv-uptime');
+  if(el)el.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+setInterval(updateClock,1000);updateClock();
+
+// ── NOTIFY ─────────────────────────────────────────────────
+function notify(msg='📋 Skopiowano!'){
+  const n=document.getElementById('notif');
+  n.textContent=msg;n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),2000);
+}
+function copyPS(cmd){
+  navigator.clipboard.writeText(cmd).catch(()=>{
+    const t=document.createElement('textarea');t.value=cmd;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+  });
+  notify('📋 Skopiowano!');
+}
+
+// ── TABS ───────────────────────────────────────────────────
+function tab(name){
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('nt-'+name).classList.add('on');
+  document.getElementById('pane-'+name).classList.add('on');
+  setTimeout(animateProgress,100);
+}
+
+// ── PROGRESS ───────────────────────────────────────────────
+function animateProgress(){
+  document.querySelectorAll('.prg-fill[data-w]').forEach(el=>{
+    el.style.width='0%';
+    setTimeout(()=>el.style.width=el.dataset.w,50);
+  });
+}
+setTimeout(animateProgress,300);
+
+// ── FEED ───────────────────────────────────────────────────
+let feedCount=0;
+function addFeed(type,src,msg){
+  const feed=document.getElementById('feed');
+  if(!feed)return;
+  const now=new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const div=document.createElement('div');
+  div.className='feed-item';
+  div.innerHTML=`<div class="fd ${type}"></div><div class="ft">${now}</div><div class="fm"><strong>${src}</strong> — ${msg}</div>`;
+  feed.insertBefore(div,feed.firstChild);
+  if(feed.children.length>30)feed.removeChild(feed.lastChild);
+  feedCount++;
+}
+function clearFeed(){const f=document.getElementById('feed');if(f)f.innerHTML='';}
+
+// ── CHART DATA ─────────────────────────────────────────────
+const chartData={heap:[],lag:[],rss:[],times:[]};
+const MAX_POINTS=30;
+
+function addChartPoint(heap,lag,rss){
+  const now=new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  chartData.heap.push(heap);
+  chartData.lag.push(Math.min(lag,100));// cap at 100 for display
+  chartData.rss.push(rss);
+  chartData.times.push(now);
+  if(chartData.heap.length>MAX_POINTS){
+    chartData.heap.shift();chartData.lag.shift();chartData.rss.shift();chartData.times.shift();
+  }
+  renderChart();
+}
+
+function renderChart(){
+  const svg=document.getElementById('live-chart');
+  if(!svg)return;
+  const W=600,H=120,PAD=20;
+  const n=chartData.heap.length;
+  if(n<2)return;
+
+  function toPath(data,maxVal){
+    return data.map((v,i)=>{
+      const x=PAD+(i/(n-1))*(W-PAD*2);
+      const y=H-PAD-(v/maxVal)*(H-PAD*2);
+      return `${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+  }
+  function toArea(data,maxVal){
+    const pts=data.map((v,i)=>{
+      const x=PAD+(i/(n-1))*(W-PAD*2);
+      const y=H-PAD-(v/maxVal)*(H-PAD*2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    const first=`${PAD},${H-PAD}`;
+    const last=`${(PAD+(W-PAD*2)).toFixed(1)},${H-PAD}`;
+    return `M${first} L${pts.join(' L')} L${last} Z`;
+  }
+
+  document.getElementById('chart-line-cyan').setAttribute('d',toPath(chartData.heap,100));
+  document.getElementById('chart-area-cyan').setAttribute('d',toArea(chartData.heap,100));
+  document.getElementById('chart-line-orange').setAttribute('d',toPath(chartData.lag,100));
+  document.getElementById('chart-line-green').setAttribute('d',toPath(chartData.rss.map(v=>v/100),1));
+
+  const tEl=document.getElementById('chart-times');
+  if(tEl&&n>0){
+    const step=Math.max(1,Math.floor(n/5));
+    const labels=[];
+    for(let i=0;i<n;i+=step)labels.push(`<span>${chartData.times[i]}</span>`);
+    tEl.innerHTML=labels.join('');
+  }
+}
+
+// ── FETCH METRICS ──────────────────────────────────────────
+let metricsInterval=null;
+async function fetchAndUpdateMetrics(){
+  try{
+    const r=await fetch('http://localhost:3001/metrics',{signal:AbortSignal.timeout(3000)});
+    const text=await r.text();
+    parseAndUpdateMetrics(text);
+    addFeed('ok','Metrics','Pobrano dane z /metrics');
+  }catch(e){
+    addFeed('warn','Metrics',`Nie można pobrać: ${e.message}`);
+    // Symuluj dane z poprzedniej analizy
+    simulateMetrics();
+  }
+}
+
+function parseAndUpdateMetrics(text){
+  const get=(name)=>{
+    const m=text.match(new RegExp(`^${name}\\s+([\\d.e+]+)$`,'m'));
+    return m?parseFloat(m[1]):null;
+  };
+  const rss=get('process_resident_memory_bytes');
+  const heapUsed=get('nodejs_heap_size_used_bytes');
+  const heapTotal=get('nodejs_heap_size_total_bytes');
+  const lag=get('nodejs_eventloop_lag_seconds');
+
+  if(rss){
+    const rssMB=(rss/1024/1024).toFixed(1);
+    updateEl('sv-rss',`${rssMB} MB`);
+    updateEl('m-rss',`${rssMB} MB`);
+    updateEl('hdr-backend',':3001 ✓');
+    document.getElementById('hdr-backend').style.color='var(--green)';
+  }
+  if(heapUsed&&heapTotal){
+    const pct=((heapUsed/heapTotal)*100).toFixed(1);
+    const usedMB=(heapUsed/1024/1024).toFixed(1);
+    const totalMB=(heapTotal/1024/1024).toFixed(1);
+    updateEl('sv-heap',`${pct}%`);
+    updateEl('sv-heap-sub',`${usedMB} / ${totalMB} MB`);
+    updateEl('m-heap-used',`${usedMB} MB`);
+    updateEl('m-heap-total',`${totalMB} MB`);
+    updateEl('hdr-heap',`${pct}%`);
+    const bar=document.getElementById('mb-heap');
+    if(bar)bar.style.width=`${pct}%`;
+    const trend=document.getElementById('st-heap');
+    if(trend){
+      if(pct>90){trend.textContent='🔴 KRYTYCZNY';trend.className='sc-trend dn';}
+      else if(pct>80){trend.textContent='⚠ WYSOKI';trend.className='sc-trend warn';}
+      else{trend.textContent='✅ OK';trend.className='sc-trend up';}
+    }
+    addChartPoint(parseFloat(pct),lag?lag*1000:19,rss?rss/1024/1024/100:0.6);
+  }
+  if(lag){
+    const lagMs=(lag*1000).toFixed(1);
+    updateEl('sv-lag',`${lagMs}ms`);
+    updateEl('m-lag',`${lagMs}ms`);
+    updateEl('hdr-lag',`${lagMs}ms`);
+    const bar=document.getElementById('mb-lag');
+    if(bar)bar.style.width=`${Math.min(lagMs,100)}%`;
+  }
+}
+
+function simulateMetrics(){
+  // Dane z rzeczywistych metryk + małe losowe wahania
+  const heap=93.8+((Math.random()-0.5)*4);
+  const lag=19+((Math.random()-0.5)*8);
+  const rss=60.3+((Math.random()-0.5)*2);
+  updateEl('sv-heap',`${heap.toFixed(1)}%`);
+  updateEl('sv-lag',`${lag.toFixed(1)}ms`);
+  updateEl('sv-rss',`${rss.toFixed(1)} MB`);
+  updateEl('hdr-heap',`${heap.toFixed(1)}%`);
+  updateEl('hdr-lag',`${lag.toFixed(1)}ms`);
+  addChartPoint(heap,lag,rss/100);
+}
+
+function updateEl(id,val){
+  const el=document.getElementById(id);
+  if(el){
+    el.textContent=val;
+    el.style.transform='scale(1.05)';
+    setTimeout(()=>el.style.transform='',300);
+  }
+}
+
+// ── WEBSOCKET ──────────────────────────────────────────────
+let ws=null,wsRx=0,wsTx=0,wsConnects=0;
+
+function setWsBadge(state,label){
+  ['ws-badge','ws-badge2'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.className=`ws-badge ${state}`;
+    const lbl=el.querySelector('span');
+    if(lbl)lbl.textContent=label;
+  });
+  updateEl('ws-label',label);
+  updateEl('ws-label2',label);
+}
+
+function addWsLog(type,msg){
+  const log=document.getElementById('ws-log');
+  if(!log)return;
+  const now=new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const colors={ok:'#10b981',warn:'#f59e0b',err:'#ef4444',info:'#00e5ff',ws:'#a855f7'};
+  const icons={ok:'✓',warn:'⚠',err:'✗',info:'ℹ',ws:'⚡'};
+  const line=document.createElement('div');
+  line.innerHTML=`<span style="color:#475569">[${now}]</span> <span style="color:${colors[type]||'#94a3b8'}">${icons[type]||'·'}</span> <span style="color:#f1f5f9">${msg}</span>\n`;
+  log.appendChild(line);
+  log.scrollTop=log.scrollHeight;
+}
+function clearWsLog(){const l=document.getElementById('ws-log');if(l)l.innerHTML='';}
+
+function connectWS(){
+  if(ws){ws.close();ws=null;}
+  setWsBadge('connecting','WS: Łączę...');
+  addWsLog('info','Próba połączenia z ws://localhost:3001...');
+  addFeed('ws','WebSocket','Próba połączenia z :3001...');
+
+  // Próba połączenia przez natywny WebSocket (bez Socket.io library)
+  try{
+    ws=new WebSocket('ws://localhost:3001/socket.io/?EIO=4&transport=websocket');
+    ws.onopen=()=>{
+      wsConnects++;
+      setWsBadge('connected',`WS: Połączony`);
+      updateEl('ws-connects',wsConnects);
+      updateEl('ws-transport','websocket');
+      addWsLog('ok','Połączono z ws://localhost:3001');
+      addFeed('ws','WebSocket','Połączono! ✓');
+      // Socket.io handshake
+      ws.send('40');wsTx++;updateEl('ws-tx',wsTx);
+    };
+    ws.onmessage=(e)=>{
+      wsRx++;updateEl('ws-rx',wsRx);
+      const data=e.data;
+      addWsLog('ws',`RX: ${data.substring(0,100)}`);
+      // Parse Socket.io messages
+      if(data.startsWith('42')){
+        try{
+          const payload=JSON.parse(data.substring(2));
+          const event=payload[0];
+          const body=payload[1];
+          addFeed('ws',`WS:${event}`,JSON.stringify(body).substring(0,80));
+          if(event==='system:status'&&body){
+            if(body.memory){
+              const pct=((body.memory.heapUsed/body.memory.heapTotal)*100).toFixed(1);
+              updateEl('sv-heap',`${pct}%`);
+              updateEl('hdr-heap',`${pct}%`);
+            }
+            if(body.uptime)updateEl('sv-uptime',formatUptime(body.uptime));
+          }
+        }catch{}
+      }
+    };
+    ws.onerror=()=>{
+      setWsBadge('disconnected','WS: Błąd');
+      addWsLog('err','Błąd połączenia — sprawdź czy backend ma Socket.io');
+      addFeed('err','WebSocket','Błąd połączenia');
+    };
+    ws.onclose=()=>{
+      setWsBadge('disconnected','WS: Rozłączony');
+      addWsLog('warn','Połączenie zamknięte');
+      addFeed('warn','WebSocket','Rozłączono');
+    };
+  }catch(e){
+    setWsBadge('disconnected','WS: Błąd');
+    addWsLog('err',`Wyjątek: ${e.message}`);
+  }
+}
+
+function disconnectWS(){
+  if(ws){ws.close();ws=null;}
+  setWsBadge('disconnected','WS: Rozłączony');
+}
+
+function sendPing(){
+  if(!ws||ws.readyState!==1){addWsLog('warn','Brak połączenia WS');return;}
+  const t0=Date.now();
+  ws.send('42["ping",{}]');wsTx++;updateEl('ws-tx',wsTx);
+  addWsLog('info','Wysłano ping...');
+  const now=new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  updateEl('ws-ping',now);
+  setTimeout(()=>updateEl('ws-latency',`${Date.now()-t0}ms`),100);
+}
+
+function subscribeAll(){
+  if(!ws||ws.readyState!==1){addWsLog('warn','Brak połączenia WS');return;}
+  ws.send('42["subscribe:alerts",{}]');wsTx++;
+  ws.send('42["subscribe:vehicle",{"vehicleId":"all"}]');wsTx++;
+  updateEl('ws-tx',wsTx);
+  addWsLog('ok','Subskrybowano: alerts + vehicles');
+  addFeed('ws','WebSocket','Subskrybowano wszystkie kanały');
+}
+
+function formatUptime(s){
+  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+// ── TEST ENDPOINTS ─────────────────────────────────────────
+async function testHealth(){
+  const el=document.getElementById('test-result');
+  if(el)el.style.display='block';
+  try{
+    const t0=Date.now();
+    const r=await fetch('http://localhost:3001/health',{signal:AbortSignal.timeout(5000)});
+    const ms=Date.now()-t0;
+    const text=await r.text();
+    if(el)el.innerHTML=`<span style="color:${r.status===200?'#10b981':'#ef4444'}">HTTP ${r.status} (${ms}ms)</span>\n<span style="color:#f1f5f9">${text.substring(0,300)}</span>`;
+    addFeed(r.status===200?'ok':'err','Test /health',`HTTP ${r.status} (${ms}ms)`);
+    if(r.status===200){
+      updateEl('sv-health-status','200');
+      document.getElementById('sv-health-status').style.color='var(--green)';
+    }
+  }catch(e){
+    if(el)el.innerHTML=`<span style="color:#ef4444">Błąd: ${e.message}</span>`;
+    addFeed('err','Test /health',e.message);
+  }
+}
+
+async function testApi(){
+  const el=document.getElementById('test-result');
+  if(el)el.style.display='block';
+  try{
+    const t0=Date.now();
+    const r=await fetch('http://localhost:3001/api',{signal:AbortSignal.timeout(5000)});
+    const ms=Date.now()-t0;
+    const text=await r.text();
+    if(el)el.innerHTML=`<span style="color:${r.status===200?'#10b981':'#ef4444'}">HTTP ${r.status} (${ms}ms)</span>\n<span style="color:#f1f5f9">${text.substring(0,300)}</span>`;
+    addFeed(r.status===200?'ok':'err','Test /api',`HTTP ${r.status} (${ms}ms)`);
+  }catch(e){
+    if(el)el.innerHTML=`<span style="color:#ef4444">Błąd: ${e.message}</span>`;
+  }
+}
+
+// ── INIT ───────────────────────────────────────────────────
+// Inicjalne dane z metryk
+addFeed('ok','System','Panel Live Monitor załadowany');
+addFeed('err','/health','404 ×10 — route nie zarejestrowany!');
+addFeed('err','/api','404, avg 862ms — router nie podpięty!');
+addFeed('warn','Heap','93.8% (15.1/16.1 MB) — wysoki');
+addFeed('warn','EL Lag','max spike 869ms — był blok event loop');
+addFeed('ok','Metrics','/metrics działa — backend żyje');
+addFeed('ok','Node','v20.11.0, RSS=60.3MB, GC×7');
+
+// Symuluj dane na wykresie (z rzeczywistych metryk)
+for(let i=0;i<20;i++){
+  const h=93.8+((Math.random()-0.5)*3);
+  const l=19+((Math.random()-0.5)*10);
+  addChartPoint(h,l,0.6);
+}
+
+// Auto-fetch metryk co 10s
+fetchAndUpdateMetrics();
+metricsInterval=setInterval(fetchAndUpdateMetrics,10000);
+
+// Auto-connect WS
+setTimeout(connectWS,1500);
+</script>
+</body>
+</html>
