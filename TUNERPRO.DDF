@@ -1,0 +1,13 @@
+; TUNERPRO.DDF ? Plik dyrektyw dla MakeCAB
+.OPTION EXPLICIT
+.Set Cabinet=ON
+.Set Compress=ON
+.Set CabinetFileCountThreshold=0
+.Set FolderFileCountThreshold=0
+.Set MaxFolderSize=0
+.Set MaxDiskFileCount=0
+.Set MaxDiskSize=0
+
+"E:\Grazyna_5.0\TUNERPRO.bat" "TUNERPRO.bat"
+"E:\Grazyna_5.0\TUNERPRO.ps1" "TUNERPRO.ps1"
+"E:\Grazyna_5.0\README.txt" "README.txt"

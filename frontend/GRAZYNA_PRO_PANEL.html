@@ -1,0 +1,465 @@
+# Utwórz katalog reports, jeśli nie istnieje
+$reportsDir = "E:\Grazyna_5.0\reports"
+if (-not (Test-Path $reportsDir)) {
+    New-Item -ItemType Directory -Path $reportsDir -Force | Out-Null
+}
+
+# Zapisz panel do pliku HTML
+$panelPath = "E:\Grazyna_5.0\reports\GRAZYNA_PRO_PANEL.html"
+$panelContent = @'
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAŻYNA 5.0 – PRO Panel Obsługi</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --background-color: #f5f7fa;
+            --text-color: #333;
+            --card-background: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            margin: 10px 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background: var(--card-background);
+            padding: 10px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .nav-tab {
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--secondary-color);
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-tab:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .nav-tab.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1em;
+            transition: var(--transition);
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: var(--primary-color);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-ok {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .status-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .status-error {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .mermaid-diagram {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+
+        .mermaid-diagram pre {
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .svg-container {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .svg-container object {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .theme-selector {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .theme-selector button {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-selector button:hover {
+            opacity: 0.8;
+        }
+
+        .log-box {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            white-space: pre;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .dashboard-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.1em;
+        }
+
+        .dashboard-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin: 10px 0;
+        }
+
+        .dashboard-card .label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            border-top: 1px solid #dee2e6;
+            margin-top: 30px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: none;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 GRAŻYNA 5.0 – PRO Panel Obsługi</h1>
+        <p>Pełna kontrola nad systemem: walidacja, naprawa, synchronizacja i monitorowanie</p>
+    </header>
+
+    <div class="container">
+        <!-- Nawigacja -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
+            <div class="nav-tab" onclick="showTab('structure')">🗂️ Struktura</div>
+            <div class="nav-tab" onclick="showTab('validation')">✅ Walidacja</div>
+            <div class="nav-tab" onclick="showTab('automation')">⚡ Automatyzacja</div>
+            <div class="nav-tab" onclick="showTab('reports')">📄 Raporty</div>
+            <div class="nav-tab" onclick="showTab('logs')">📜 Logi</div>
+            <div class="nav-tab" onclick="showTab('settings')">⚙️ Ustawienia</div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <div class="section">
+                <h2>📊 Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>📁 Pliki Kanoniczne</h3>
+                        <div class="value" id="canonicalFilesCount">15</div>
+                        <div class="label">Plików w strukturze</div>
+                        <span class="status status-ok">✅ OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>📊 Raporty</h3>
+                        <div class="value" id="reportsCount">7</div>
+                        <div class="label">Wygenerowanych raportów</div>
+                        <span class="status status-ok">✅ OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>🎨 Motywy</h3>
+                        <div class="value" id="themesCount">7</div>
+                        <div class="label">Dostępnych motywów</div>
+                        <span class="status status-ok">✅ OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>⚡ Automatyzacja</h3>
+                        <div class="value">2</div>
+                        <div class="label">Zadania aktywne</div>
+                        <span class="status status-ok">✅ OK</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🔥 Szybkie Akcje</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="runValidation()">✅ Uruchom Walidację</button>
+                        <button class="btn btn-success" onclick="generateReports()">📄 Generuj Raporty</button>
+                        <button class="btn btn-success" onclick="syncWithGrazyna()">🔄 Synchronizuj z Grażyną</button>
+                        <button class="btn btn-success" onclick="fixIssues()">🔧 Napraw Błędy</button>
+                        <button class="btn" onclick="openReportsFolder()">📁 Otwórz Folder Raportów</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🗺️ Diagram Struktury (Mermaid)</h2>
+                    <div class="mermaid-diagram">
+                        <pre>
+```mermaid
+graph TD
+    A[📁 GRAZYNA_5.0] --> B[📁 docs]
+    A --> C[📁 backend]
+    A --> D[📁 scripts]
+    A --> E[📁 infra]
+    A --> F[📁 .github]
+    A --> G[📁 config]
+
+    B --> B1[📁 analysis]
+    B --> B2[📁 deployment]
+    B --> B3[📁 architecture]
+
+    B1 --> B1_1[📄 GRAZYNA_ANALIZA_RAPORT.md]
+    B2 --> B2_1[📄 GRAZYNA_HETZNER_READY.md]
+    B3 --> B3_1[📄 GRAZYNA_DB_ANALYSIS.md]
+    B3 --> B3_2[📄 GRAZYNA_AUTH_JWT_VS_SESSIONS.md]
+
+    C --> C1[📁 src]
+    C1 --> C1_1[📁 system]
+    C1 --> C1_2[📁 services]
+    C1_1 --> C1_1_1[📄 GRAZYNA_BACKEND_FIX.ts]
+    C1_2 --> C1_2_1[📄 GRAZYNA_WORKER_THREADS.ts]
+
+    D --> D1[📁 monitoring]
+    D1 --> D1_1[📄 GRAZYNA_OOM_PREDICTOR.ps1]
+    D1 --> D1_2[📄 GRAZYNA_PREDICT_MONITOR.ps1]
+
+    E --> E1[📄 docker-compose.prod.yml]
+    E --> E2[📄 ecosystem.config.js]
+
+    F --> F1[📁 workflows]
+    F1 --> F1_1[📄 deploy-prod.yml]
+
+    G --> G1[📄 GRAZYNA_CONFIG.json]

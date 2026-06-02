@@ -1,0 +1,19 @@
+﻿Etap,Pytanie,Twoja odpowiedź
+1.1,Czy zezwalasz na sprawdzenie i instalację wymagań systemowych?,⬜ TAK / ⬜ NIE
+1.2,Czy zezwalasz na wykonanie backupu obecnego systemu?,⬜ TAK / ⬜ NIE
+2.1,Czy zezwalasz na utworzenie nowej struktury katalogów i przeniesienie plików?,⬜ TAK / ⬜ NIE
+2.2,Czy zezwalasz na wdrożenie nowego skryptu i pliku konfiguracyjnego?,⬜ TAK / ⬜ NIE
+2.3,Czy chcesz dostosować ustawienia w GRAZYNA_CONFIG.json?,⬜ TAK / ⬜ NIE
+3.1,Czy zezwalasz na integrację z systemem Grażyna?,⬜ TAK / ⬜ NIE
+3.2,Czy zezwalasz na integrację z OneDrive?,⬜ TAK / ⬜ NIE
+3.3,Czy zezwalasz na integrację z WicioGarage?,⬜ TAK / ⬜ NIE
+3.4,Czy zezwalasz na integrację z LeChat?,⬜ TAK / ⬜ NIE
+4.1,Czy zezwalasz na uruchomienie testu walidacji struktur?,⬜ TAK / ⬜ NIE
+4.2,Czy zezwalasz na uruchomienie testu automatycznej naprawy?,⬜ TAK / ⬜ NIE
+4.3,Czy zezwalasz na uruchomienie testu synchronizacji z OneDrive?,⬜ TAK / ⬜ NIE
+4.4,Czy zezwalasz na uruchomienie testu generowania raportu HTML?,⬜ TAK / ⬜ NIE
+4.5,Czy zezwalasz na uruchomienie testu obsługi poleceń głosowych?,⬜ TAK / ⬜ NIE
+5.1,Czy zezwalasz na utworzenie zadania harmonogramowego?,⬜ TAK / ⬜ NIE
+5.2,Czy zezwalasz na utworzenie usługi Windows?,⬜ TAK / ⬜ NIE
+5.3,Czy zezwalasz na wygenerowanie dokumentacji?,⬜ TAK / ⬜ NIE
+5.4,Czy zezwalasz na utworzenie skrótu na pulpicie?,⬜ TAK / ⬜ NIE

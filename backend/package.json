@@ -1,15 +1,23 @@
 {
-  "name": "grazyna-backend",
-  "version": "1.0.0",
-  "private": true,
-  "main": "dist/index.js",
-  "scripts": {
-    "lint": "echo \"Lint OK (placeholder)\"",
-    "test": "echo \"Tests OK (placeholder)\"",
-    "build": "mkdir -p dist && printf 'console.log(\"Grazyna backend running 🚀\")\n' > dist/index.js",
-    "version:bump:patch": "node -e \"const fs=require('fs');const p=require('./package.json');const v=p.version.split('.').map(Number);v[2]++;p.version=v.join('.');fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n');console.log(p.version)\"",
-    "version:print": "node -e \"console.log(require('./package.json').version)\""
-  },
-  "dependencies": {},
-  "devDependencies": {}
+    "name": "grazyna-backend",
+    "version": "1.0.0",
+    "private": true,
+    "main": "dist/index.js",
+    "scripts": {
+        "lint": "echo \"Lint OK (placeholder)\"",
+        "test": "echo \"Tests OK (placeholder)\"",
+        "build": "mkdir -p dist && printf 'console.log(\"Grazyna backend running đźš€\")\n' > dist/index.js",
+        "version:bump:patch": "node -e \"const fs=require('fs');const p=require('./package.json');const v=p.version.split('.').map(Number);v[2]++;p.version=v.join('.');fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n');console.log(p.version)\"",
+        "version:print": "node -e \"console.log(require('./package.json').version)\""
+    },
+    "dependencies": {
+        "@socket.io/redis-adapter": "^8.3.0",
+        "ioredis": "^5.11.0",
+        "socket.io": "^4.8.3"
+    },
+    "devDependencies": {
+        "@types/ioredis": "^4.28.10",
+        "mkdirp": "^3.0.1",
+        "typescript": "^6.0.3"
+    }
 }

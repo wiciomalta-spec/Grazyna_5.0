@@ -1,0 +1,323 @@
+// ============================================================
+// GRAŻYNA 5.0 — Schema Prisma dla PostgreSQL (Supabase)
+// ============================================================
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ════════════════════════════════════════════════════════
+// ENUMS (PostgreSQL obsługuje natywnie)
+// ════════════════════════════════════════════════════════
+
+enum Role {
+  ADMIN
+  MANAGER
+  OPERATOR
+  VIEWER
+}
+
+enum VehicleType {
+  STANDARD
+  HEAVY
+  LIGHT
+  DRONE
+  SPECIAL
+}
+
+enum VehicleStatus {
+  IDLE
+  ACTIVE
+  CHARGING
+  MAINTENANCE
+  OFFLINE
+  ERROR
+}
+
+enum MissionStatus {
+  PENDING
+  SCHEDULED
+  IN_PROGRESS
+  PAUSED
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum EventType {
+  SYSTEM
+  VEHICLE
+  MISSION
+  USER
+  SECURITY
+  MAINTENANCE
+}
+
+enum Severity {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+// ════════════════════════════════════════════════════════
+// UŻYTKOWNICY
+// ════════════════════════════════════════════════════════
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  username     String    @unique
+  passwordHash String
+  firstName    String?
+  lastName     String?
+  role         Role      @default(OPERATOR)
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions      Session[]
+  refreshTokens RefreshToken[]
+  assignments   VehicleAssignment[]
+  missions      Mission[]  @relation("MissionCreator")
+  events        Event[]
+
+  @@index([email])
+  @@index([username])
+  @@index([role])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+// ════════════════════════════════════════════════════════
+// POJAZDY
+// ════════════════════════════════════════════════════════
+
+model Vehicle {
+  id           String        @id @default(cuid())
+  name         String
+  licensePlate String        @unique
+  vin          String?       @unique
+  type         VehicleType   @default(STANDARD)
+  status       VehicleStatus @default(IDLE)
+  battery      Int           @default(100)
+  mileage      Float         @default(0)
+  fuelLevel    Float?
+  lat          Float?
+  lng          Float?
+  speed        Float?
+  heading      Float?
+  lastSeenAt   DateTime?
+  metadata     Json?         // PostgreSQL obsługuje Json natywnie!
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  assignments  VehicleAssignment[]
+  missions     Mission[]
+  telemetry    Telemetry[]
+  maintenance  MaintenanceRecord[]
+  events       Event[]
+
+  @@index([status])
+  @@index([type])
+  @@index([licensePlate])
+}
+
+model VehicleAssignment {
+  id        String    @id @default(cuid())
+  vehicleId String
+  userId    String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  notes     String?
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([userId])
+}
+
+// ════════════════════════════════════════════════════════
+// MISJE
+// ════════════════════════════════════════════════════════
+
+model Mission {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  vehicleId   String?
+  createdById String
+  status      MissionStatus @default(PENDING)
+  priority    Priority      @default(NORMAL)
+  startLat    Float?
+  startLng    Float?
+  endLat      Float?
+  endLng      Float?
+  waypoints   Json?         // PostgreSQL Json — tablice punktów GPS
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  distance    Float?
+  duration    Int?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+  createdBy User     @relation("MissionCreator", fields: [createdById], references: [id])
+  events    Event[]
+
+  @@index([status])
+  @@index([priority])
+  @@index([vehicleId])
+  @@index([createdById])
+}
+
+// ════════════════════════════════════════════════════════
+// TELEMETRIA
+// ════════════════════════════════════════════════════════
+
+model Telemetry {
+  id        String   @id @default(cuid())
+  vehicleId String
+  lat       Float?
+  lng       Float?
+  speed     Float?
+  heading   Float?
+  battery   Int?
+  altitude  Float?
+  rawData   Json?    // surowe dane z sensora
+  timestamp DateTime @default(now())
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([timestamp])
+}
+
+// ════════════════════════════════════════════════════════
+// SERWIS
+// ════════════════════════════════════════════════════════
+
+model MaintenanceRecord {
+  id          String    @id @default(cuid())
+  vehicleId   String
+  type        String
+  description String
+  cost        Float?
+  mileageAt   Float?
+  performedAt DateTime  @default(now())
+  nextDueAt   DateTime?
+  performedBy String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([type])
+}
+
+// ════════════════════════════════════════════════════════
+// ZDARZENIA
+// ════════════════════════════════════════════════════════
+
+model Event {
+  id        String    @id @default(cuid())
+  type      EventType
+  severity  Severity  @default(INFO)
+  message   String
+  metadata  Json?
+  vehicleId String?
+  missionId String?
+  userId    String?
+  createdAt DateTime  @default(now())
+
+  vehicle Vehicle? @relation(fields: [vehicleId], references: [id])
+  mission Mission? @relation(fields: [missionId], references: [id])
+  user    User?    @relation(fields: [userId], references: [id])
+
+  @@index([type])
+  @@index([severity])
+  @@index([vehicleId])
+  @@index([createdAt])
+}
+
+// ════════════════════════════════════════════════════════
+// ALERTY
+// ════════════════════════════════════════════════════════
+
+model Alert {
+  id         String    @id @default(cuid())
+  type       String
+  severity   Priority  @default(LOW)
+  message    String
+  vehicleId  String?
+  resolved   Boolean   @default(false)
+  resolvedAt DateTime?
+  resolvedBy String?
+  metadata   Json?
+  createdAt  DateTime  @default(now())
+
+  @@index([resolved])
+  @@index([severity])
+  @@index([vehicleId])
+  @@index([createdAt])
+}
+
+// ════════════════════════════════════════════════════════
+// SYSTEM CONFIG
+// ════════════════════════════════════════════════════════
+
+model SystemConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json     // PostgreSQL Json dla złożonych wartości
+  category  String   @default("general")
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+}

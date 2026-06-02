@@ -1,0 +1,4 @@
+"scripts": {
+  "build": "node -e \"require('fs').mkdirSync('dist',{recursive:true})\" && tsc",
+  "start": "node dist/cluster-entry.js"
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>GRAŻYNA 5.0 - Mega Panel Zarządzania</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --background-color: #f5f7fa;
+            --text-color: #333;
+            --card-background: #ffffff;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: var(--background-color); color: var(--text-color); }
+        header { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: 30px; text-align: center; border-radius: 8px; margin-bottom: 30px; }
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .nav-tab { background: var(--card-background); color: var(--primary-color); border: 1px solid var(--secondary-color); padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .nav-tab:hover { background: var(--secondary-color); color: white; }
+        .nav-tab.active { background: var(--secondary-color); color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .section { background: var(--card-background); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .section h2 { color: var(--primary-color); margin-top: 0; border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: var(--light-color); border-radius: 8px; padding: 20px; }
+        .btn { display: inline-block; background: var(--secondary-color); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; text-decoration: none; }
+        .btn:hover { background: var(--primary-color); }
+        .btn-success { background: var(--success-color); }
+        .btn-danger { background: var(--danger-color); }
+        .theme-selector { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
+        .theme-selector button { background: var(--secondary-color); color: white; border: none; padding: 10px; margin: 5px; border-radius: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border: 1px solid #dee2e6; }
+        th { background-color: var(--primary-color); color: white; }
+        footer { text-align: center; padding: 20px; color: #7f8c8d; font-size: 0.9em; }
+        .notification { position: fixed; top: 20px; right: 20px; background: #2ecc71; color: white; padding: 15px; border-radius: 8px; display: none; z-index: 1000; }
+    </style>
+</head>
+<body>
+    <header><h1>🚀 GRAŻYNA 5.0 - Mega Panel Zarządzania</h1></header>
+    <div class=\"container\">
+        <div class=\"nav-tabs\">
+            <div class=\"nav-tab active\" onclick=\"showTab('dashboard')\">📊 Dashboard</div>
+            <div class=\"nav-tab\" onclick=\"showTab('themes')\">🎨 Motywy</div>
+            <div class=\"nav-tab\" onclick=\"showTab('reports')\">📄 Raporty</div>
+            <div class=\"nav-tab\" onclick=\"showTab('validation')\">✅ Walidacja</div>
+            <div class=\"nav-tab\" onclick=\"showTab('automation')\">⚡ Automatyzacja</div>
+            <div class=\"nav-tab\" onclick=\"showTab('logs')\">📜 Logi</div>
+        </div>
+        <div id=\"dashboard\" class=\"tab-content active\">
+            <div class=\"section\">
+                <h2>📊 Dashboard</h2>
+                <div class=\"grid\">
+                    <div class=\"card\"><h3>📁 Pliki Kanoniczne</h3><p>15 plików w strukturze</p><span style=\"color: #2ecc71; font-weight: bold;\">✅ OK</span></div>
+                    <div class=\"card\"><h3>📊 Raporty</h3><p>7 wygenerowanych raportów</p><span style=\"color: #2ecc71; font-weight: bold;\">✅ OK</span></div>
+                    <div class=\"card\"><h3>🎨 Motywy</h3><p>7 dostępnych motywów</p><span style=\"color: #2ecc71; font-weight: bold;\">✅ OK</span></div>
+                </div>
+                <div class=\"section\">
+                    <h2>🔥 Szybkie Akcje</h2>
+                    <div>
+                        <button class=\"btn btn-success\" onclick=\"alert('Walidacja uruchomiona!')\">✅ Uruchom Walidację</button>
+                        <button class=\"btn btn-success\" onclick=\"alert('Raporty wygenerowane!')\">📄 Generuj Raporty</button>
+                        <button class=\"btn btn-success\" onclick=\"alert('Synchronizacja zakończona!')\">🔄 Synchronizuj z Grażyną</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id=\"themes\" class=\"tab-content\">
+            <div class=\"section\"><h2>🎨 Zarządzanie Motywami</h2><p>Tutaj zarządzisz motywami wizualnymi.</p></div>
+        </div>
+        <div id=\"reports\" class=\"tab-content\">
+            <div class=\"section\"><h2>📄 Raporty Systemowe</h2><p>Lista wygenerowanych raportów.</p></div>
+        </div>
+        <div id=\"validation\" class=\"tab-content\">
+            <div class=\"section\"><h2>✅ Walidacja Struktury</h2><p>Sprawdź stan plików kanonicznych.</p></div>
+        </div>
+        <div id=\"automation\" class=\"tab-content\">
+            <div class=\"section\"><h2>⚡ Automatyzacja</h2><p>Zarządzaj zadaniami harmonogramowymi.</p></div>
+        </div>
+        <div id=\"logs\" class=\"tab-content\">
+            <div class=\"section\"><h2>📜 Logi Systemowe</h2><p>Ostatnie logi z działania systemu.</p></div>
+        </div>
+    </div>
+    <div class=\"theme-selector\">
+        <button onclick=\"alert('Motyw Light aktywowany!')\">🌞 Light</button>
+        <button onclick=\"alert('Motyw Dark aktywowany!')\">🌙 Dark</button>
+    </div>
+    <footer><p>📌 GRAŻYNA 5.0 - Mega Panel Zarządzania | Wersja: 1.0</p></footer>
+    <script>
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+<script>
+// Funkcja do uruchamiania skryptów PowerShell
+function runPowerShellScript(scriptPath, args = "") {
+    // Użyj ActiveXObject do uruchomienia PowerShell
+    try {
+        const shell = new ActiveXObject("WScript.Shell");
+        const command = `pwsh.exe -File "${scriptPath}" ${args}`;
+        shell.Run(command, 1, false);
+        showNotification(`Uruchomiono: ${scriptPath}`);
+    } catch (e) {
+        showNotification("Błąd: " + e.message, "error");
+    }
+}
+
+// Funkcje dla przycisków
+function runValidation() {
+    runPowerShellScript("E:\\Grazyna_5.0\\GRAZYNA_STRUCTURE_CHECKER.ps1", "-RebuildThemes -GenerateHtmlReport");
+}
+
+function generateReports() {
+    runPowerShellScript("E:\\Grazyna_5.0\\GRAZYNA_STRUCTURE_CHECKER.ps1", "-GenerateHtmlReport");
+}
+
+function syncWithGrazyna() {
+    runPowerShellScript("E:\\Grazyna_5.0\\scripts\\SYNC_WITH_GRAZYNA.ps1");
+}
+
+function fixIssues() {
+    runPowerShellScript("E:\\Grazyna_5.0\\GRAZYNA_STRUCTURE_CHECKER.ps1", "-FixIssues -SelfHeal");
+}
+
+function runTaskNow() {
+    runPowerShellScript("schtasks", "/Run /TN \"GRAZYNA_FULL_AUTOMATION\"");
+}
+
+function startService() {
+    runPowerShellScript("net", "start GRAZYNA_MONITORING_SERVICE");
+}
+
+function stopService() {
+    runPowerShellScript("net", "stop GRAZYNA_MONITORING_SERVICE");
+}
+
+// Inicjalizacja
+document.addEventListener('DOMContentLoaded', () => {
+    // Zaktualizuj przyciski, aby używały nowych funkcji
+    const buttons = document.querySelectorAll('button[onclick*=\"alert\"]');
+    buttons.forEach(button => {
+        const text = button.textContent.trim();
+        if (text.includes("Uruchom Walidację")) {
+            button.onclick = runValidation;
+        } else if (text.includes("Generuj Raporty")) {
+            button.onclick = generateReports;
+        } else if (text.includes("Synchronizuj z Grażyną")) {
+            button.onclick = syncWithGrazyna;
+        } else if (text.includes("Uruchom Teraz")) {
+            button.onclick = runTaskNow;
+        } else if (text.includes("Uruchom Usługę")) {
+            button.onclick = startService;
+        } else if (text.includes("Zatrzymaj Usługę")) {
+            button.onclick = stopService;
+        }
+    });
+});
+</script></body>
+</html>
+

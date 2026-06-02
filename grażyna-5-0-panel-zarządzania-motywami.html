@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAŻYNA 5.0 - Panel Zarządzania Motywami</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --background-color: #f5f7fa;
+            --text-color: #333;
+            --card-background: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        
+        .section {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+        
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .theme-card {
+            background: var(--light-color);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-color: var(--secondary-color);
+        }
+        
+        .theme-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        .theme-preview {
+            width: 100%;
+            height: 100px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .theme-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: var(--primary-color);
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background: #27ae60;
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .color-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ddd;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        .new-theme-form {
+            background: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .theme-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .theme-list li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .theme-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .status-inactive {
+            background: var(--light-color);
+            color: var(--dark-color);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--dark-color);
+            font-size: 0.9em;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎨 GRAŻYNA 5.0 - Panel Zarządzania Motywami</h1>
+        <p>Zarządzaj motywami wizualnymi dla raportów i wizualizacji</p>
+    </header>
+    
+    <div class="container">
+        <!-- Sekcja: Dostępne motywy -->
+        <div class="section">
+            <h2>📌 Dostępne Motywy</h2>
+            <p>Wybierz motyw, aby go aktywować lub edytować.</p>
+            
+            <div class="themes-grid" id="themesGrid">
+                <!-- Motywy będą ładowane dynamicznie -->
+            </div>
+        </div>
+        
+        <!-- Sekcja: Dodaj nowy motyw -->
+        <div class="section">
+            <h2>➕ Dodaj Nowy Motyw</h2>
+            <p>Utwórz własny motyw z niestandardowymi kolorami.</p>
+            
+            <div class="new-theme-form">
+                <form id="newThemeForm">
+                    <div class="form-group">
+                        <label for="themeName">Nazwa Motywu:</label>
+                        <input type="text" id="themeName" placeholder="np. Purple, Green, MyTheme" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Kolory:</label>
+                        <div class="color-picker" id="colorPicker">
+                            <!-- Kolory będą dodawane dynamicznie -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">✅ Zapisz Motyw</button>
+                        <button type="button" class="btn" onclick="addColorField()">➕ Dodaj Kolor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Sekcja: Podgląd motywu -->
+        <div class="section">
+            <h2>👁️ Podgląd Motywu</h2>
+            <p>Podgląd aktualnie wybranego motywu.</p>
+            
+            <div id="themePreview" style="background: var(--light-color); padding: 20px; border-radius: 8px;">
+                <h3 style="color: var(--primary-color);">Przykładowy Nagłówek</h3>
+                <p style="color: var(--text-color);">To jest przykładowy tekst w motywie.</p>
+                <div style="background: var(--card-background); padding: 15px; border-radius: 5px; margin: 10px 0;">
+                    <p style="margin: 0; color: var(--text-color);">Przykładowa karta z treścią.</p>
+                </div>
+                <button class="btn btn-success" style="background: var(--success-color);">Przycisk Sukces</button>
+                <button class="btn btn-danger" style="background: var(--danger-color);">Przycisk Błąd</button>
+            </div>
+        </div>
+        
+        <!-- Sekcja: Eksport/Import -->
+        <div class="section">
+            <h2>📥 Eksport / Import Motywów</h2>
+            <p>Eksportuj lub importuj ustawienia motywów.</p>
+            
+            <div style="display: flex; gap: 10px; margin: 20px 0;">
+                <button class="btn btn-success" onclick="exportThemes()">📤 Eksportuj Motywy</button>
+                <button class="btn" onclick="document.getElementById('importFile').click()">📥 Importuj Motywy</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importThemes(event)">
+            </div>
+            
+            <div id="exportResult" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+    
+    <!-- Powiadomienia -->
+    <div class="notification" id="notification"></div>
+    
+    <footer>
+        <p>📌 Panel Zarządzania Motywami | GRAŻYNA 5.0 | Data: <span id="currentDate"></span></p>
+    </footer>
+    
+    <script>
+        // Aktualna data
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('pl-PL');
+        
+        // Motywy domyślne
+        let themes = {
+            Default: {
+                name: "Default",
+                colors: {
+                    PrimaryColor: "#2c3e50",
+                    SecondaryColor: "#3498db",
+                    SuccessColor: "#2ecc71",
+                    WarningColor: "#f39c12",
+                    DangerColor: "#e74c3c",
+                    LightColor: "#ecf0f1",
+                    DarkColor: "#34495e",
+                    BackgroundColor: "#f5f7fa",
+                    TextColor: "#333",
+                    CardBackground: "#ffffff"
+                },
+                isActive: true
+            },
+            Dark: {
+                name: "Dark",
+                colors: {
+                    PrimaryColor: "#3498db",
+                    SecondaryColor: "#2ecc71",
+                    SuccessColor: "#27ae60",
+                    WarningColor: "#f1c40f",
+                    DangerColor: "#e74c3c",
+                    LightColor: "#2c3e50",
+                    DarkColor: "#ecf0f1",
+                    BackgroundColor: "#1a1a1a",
+                    TextColor: "#ecf0f1",
+                    CardBackground: "#2c3e50"
+                },
+                isActive: false
+            },
+            HighContrast: {
+                name: "HighContrast",
+                colors: {
+                    PrimaryColor: "#000000",
+                    SecondaryColor: "#0066cc",
+                    SuccessColor: "#009900",
+                    WarningColor: "#cc6600",
+                    DangerColor: "#cc0000",
+                    LightColor: "#ffffff",
+                    DarkColor: "#000000",
+                    BackgroundColor: "#ffffff",
+                    TextColor: "#000000",
+                    CardBackground: "#ffffff"
+                },
+                isActive: false
+            },
+            Custom: {
+                name: "Custom",
+                colors: {
+                    PrimaryColor: "#8e44ad",
+                    SecondaryColor: "#9b59b6",
+                    SuccessColor: "#1abc9c",
+                    WarningColor: "#f39c12",
+                    DangerColor: "#e74c3c",
+                    LightColor: "#fdfdfd",
+                    DarkColor: "#2c3e50",
+                    BackgroundColor: "#f0f0f0",
+                    TextColor: "#2c3e50",
+                    CardBackground: "#ffffff"
+                },
+                isActive: false
+            }
+        };
+        
+        // Ładuj motywy z localStorage
+        function loadThemes() {
+            const savedThemes = localStorage.getItem('grazynaThemes');
+            if (savedThemes) {
+                themes = JSON.parse(savedThemes);
+            }
+            renderThemes();
+            renderColorPicker();
+        }
+        
+        // Renderuj motywy
+        function renderThemes() {
+            const themesGrid = document.getElementById('themesGrid');
+            themesGrid.innerHTML = '';
+            
+            for (const [key, theme] of Object.entries(themes)) {
+                const themeCard = document.createElement('div');
+                themeCard.className = 'theme-card';
+                themeCard.onclick = () => selectTheme(key);
+                
+                // Podgląd motywu
+                const previewColors = theme.colors;
+                const previewStyle = `
+                    background: linear-gradient(135deg, ${previewColors.PrimaryColor}, ${previewColors.SecondaryColor});
+                `;
+                
+                themeCard.innerHTML = `
+                    <h3>${theme.name}</h3>
+                    <div class="theme-preview" style="${previewStyle}">
+                        Podgląd
+                    </div>
+                    <div class="theme-actions">
+                        <button class="btn btn-success" onclick="event.stopPropagation(); applyTheme('${key}')">✅ Aktywuj</button>
+                        <button class="btn" onclick="event.stopPropagation(); editTheme('${key}')">✏️ Edytuj</button>
+                    </div>
+                    <p style="margin: 10px 0 0; font-size: 0.8em;">
+                        <span class="status ${theme.isActive ? 'status-active' : 'status-inactive'}">
+                            ${theme.isActive ? 'Aktywny' : 'Nieaktywny'}
+                        </span>
+                    </p>
+                `;
+                
+                themesGrid.appendChild(themeCard);
+            }
+        }
+        
+        // Wybierz motyw
+        function selectTheme(themeKey) {
+            // Deaktywuj wszystkie motywy
+            for (const key in themes) {
+                themes[key].isActive = false;
+            }
+            // Aktywuj wybrany motyw
+            themes[themeKey].isActive = true;
+            saveThemes();
+            renderThemes();
+            showNotification(`Aktywowano motyw: ${themes[themeKey].name}`);
+        }
+        
+        // Zastosuj motyw do podglądu
+        function applyTheme(themeKey) {
+            const theme = themes[themeKey];
+            const root = document.documentElement;
+            
+            for (const [key, value] of Object.entries(theme.colors)) {
+                root.style.setProperty(`--${key}`, value);
+            }
+            
+            selectTheme(themeKey);
+        }
+        
+        // Edytuj motyw
+        function editTheme(themeKey) {
+            const theme = themes[themeKey];
+            document.getElementById('themeName').value = theme.name;
+            
+            // Wypełnij pola kolorów
+            const colorPicker = document.getElementById('colorPicker');
+            colorPicker.innerHTML = '';
+            
+            for (const [colorName, colorValue] of Object.entries(theme.colors)) {
+                addColorField(colorName, colorValue);
+            }
+            
+            // Zmień tytuł sekcji
+            document.querySelector('.new-theme-form h2').textContent = `✏️ Edytuj Motyw: ${theme.name}`;
+            
+            // Zmień przycisk zapisu
+            const submitBtn = document.querySelector('.new-theme-form button[type="submit"]');
+            submitBtn.textContent = `✅ Zaktualizuj Motyw`;
+            submitBtn.onclick = () => updateTheme(themeKey);
+        }
+        
+        // Dodaj pole koloru
+        function addColorField(name = '', value = '#ffffff') {
+            const colorPicker = document.getElementById('colorPicker');
+            const colorId = `color_${Date.now()}`;
+            
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'form-group';
+            colorDiv.innerHTML = `
+                <label for="${colorId}">${name || 'Nowy Kolor'}:</label>
+                <input type="color" id="${colorId}" value="${value}">
+                <input type="text" class="color-name" value="${name}" placeholder="Nazwa koloru">
+                <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">❌ Usuń</button>
+            `;
+            
+            colorPicker.appendChild(colorDiv);
+        }
+        
+        // Zapisz nowy motyw
+        function saveNewTheme() {
+            const themeName = document.getElementById('themeName').value.trim();
+            if (!themeName) {
+                showNotification('Podaj nazwę motywu!', 'error');
+                return;
+            }
+            
+            const colorInputs = document.querySelectorAll('#colorPicker input[type="color"]');
+            const colorNames = document.querySelectorAll('#colorPicker .color-name');
+            
+            const colors = {};
+            for (let i = 0; i < colorInputs.length; i++) {
+                const name = colorNames[i].value.trim() || `Color${i + 1}`;
+                colors[name] = colorInputs[i].value;
+            }
+            
+            // Sprawdź, czy motyw już istnieje
+            if (themes[themeName]) {
+                showNotification(`Motyw "${themeName}" już istnieje!`, 'error');
+                return;
+            }
+            
+            // Dodaj nowy motyw
+            themes[themeName] = {
+                name: themeName,
+                colors: colors,
+                isActive: false
+            };
+            
+            saveThemes();
+            renderThemes();
+            showNotification(`Dodano nowy motyw: ${themeName}`);
+            
+            // Wyczyść formularz
+            document.getElementById('newThemeForm').reset();
+            document.getElementById('colorPicker').innerHTML = '';
+            document.querySelector('.new-theme-form h2').textContent = '➕ Dodaj Nowy Motyw';
+            document.querySelector('.new-theme-form button[type="submit"]').textContent = '✅ Zapisz Motyw';
+            document.querySelector('.new-theme-form button[type="submit"]').onclick = saveNewTheme;
+        }
+        
+        // Zaktualizuj motyw
+        function updateTheme(themeKey) {
+            const themeName = document.getElementById('themeName').value.trim();
+            if (!themeName) {
+                showNotification('Podaj nazwę motywu!', 'error');
+                return;
+            }
+            
+            const colorInputs = document.querySelectorAll('#colorPicker input[type="color"]');
+            const colorNames = document.querySelectorAll('#colorPicker .color-name');
+            
+            const colors = {};
+            for (let i = 0; i < colorInputs.length; i++) {
+                const name = colorNames[i].value.trim() || `Color${i + 1}`;
+                colors[name] = colorInputs[i].value;
+            }
+            
+            // Jeśli zmieniono nazwę, usuń stary motyw
+            if (themeKey !== themeName) {
+                delete themes[themeKey];
+            }
+            
+            // Zaktualizuj motyw
+            themes[themeName] = {
+                name: themeName,
+                colors: colors,
+                isActive: themes[themeKey] ? themes[themeKey].isActive : false
+            };
+            
+            saveThemes();
+            renderThemes();
+            showNotification(`Zaktualizowano motyw: ${themeName}`);
+            
+            // Wyczyść formularz
+            document.getElementById('newThemeForm').reset();
+            document.getElementById('colorPicker').innerHTML = '';
+            document.querySelector('.new-theme-form h2').textContent = '➕ Dodaj Nowy Motyw';
+            document.querySelector('.new-theme-form button[type="submit"]').textContent = '✅ Zapisz Motyw';
+            document.querySelector('.new-theme-form button[type="submit"]').onclick = saveNewTheme;
+        }
+        
+        // Zapisz motywy do localStorage
+        function saveThemes() {
+            localStorage.setItem('grazynaThemes', JSON.stringify(themes));
+        }
+        
+        // Renderuj selektor kolorów
+        function renderColorPicker() {
+            const colorPicker = document.getElementById('colorPicker');
+            colorPicker.innerHTML = '';
+            
+            // Dodaj domyślne kolory
+            const defaultColors = [
+                { name: 'PrimaryColor', value: '#2c3e50' },
+                { name: 'SecondaryColor', value: '#3498db' },
+                { name: 'SuccessColor', value: '#2ecc71' },
+                { name: 'WarningColor', value: '#f39c12' },
+                { name: 'DangerColor', value: '#e74c3c' },
+                { name: 'LightColor', value: '#ecf0f1' },
+                { name: 'DarkColor', value: '#34495e' },
+                { name: 'BackgroundColor', value: '#f5f7fa' },
+                { name: 'TextColor', value: '#333' },
+                { name: 'CardBackground', value: '#ffffff' }
+            ];
+            
+            defaultColors.forEach(color => {
+                addColorField(color.name, color.value);
+            });
+        }
+        
+        // Eksportuj motywy
+        function exportThemes() {
+            const data = JSON.stringify(themes, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'grazyna_themes_$(Get-Date -Format "yyyyMMdd_HHmmss").json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showNotification('Motywy wyeksportowane!');
+        }
+        
+        // Importuj motywy
+        function importThemes(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedThemes = JSON.parse(e.target.result);
+                    themes = { ...themes, ...importedThemes };
+                    saveThemes();
+                    renderThemes();
+                    showNotification('Motywy zaimportowane!');
+                } catch (error) {
+                    showNotification('Błąd podczas importu: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Pokazuj powiadomienie
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            notification.style.background = type === 'error' ? '#e74c3c' : '#2ecc71';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Inicjalizacja
+        document.addEventListener('DOMContentLoaded', () => {
+            loadThemes();
+            
+            // Obsługa formularza nowego motywu
+            document.getElementById('newThemeForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveNewTheme();
+            });
+            
+            // Dodaj pierwsze pole koloru
+            renderColorPicker();
+        });
+    </script>
+</body>
+</html>

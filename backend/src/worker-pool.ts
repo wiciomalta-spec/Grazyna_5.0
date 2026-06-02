@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // GRAŻYNA 5.0 — worker-pool.ts
 // WAŻNE: Worker ładuje .js (nie .ts) — tsx nie działa w workerach
 // ============================================================
@@ -10,9 +10,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
 // ── ŚCIEŻKA DO WORKERA (.js — nie .ts!) ──────────────────
-// W dev (tsx): __dirname = src/ → src/workers/tasks.worker.cjs
-// W prod (tsc): __dirname = dist/ → dist/workers/tasks.worker.cjs
-const WORKER_SCRIPT = path.join(__dirname, 'workers', 'tasks.worker.cjs');
+// W dev (tsx): __dirname = src/ → src/workers/tasks.worker.js
+// W prod (tsc): __dirname = dist/ → dist/workers/tasks.worker.js
+const WORKER_SCRIPT = path.join(__dirname, 'workers', 'tasks.worker.js');
 
 interface PendingTask {
   resolve: (v: any) => void;
@@ -159,5 +159,3 @@ export const analyzeMetrics  = (metrics: number[]) =>
 
 export const pingWorker      = () =>
   getWorkerPool().run('ping', {});
-
-

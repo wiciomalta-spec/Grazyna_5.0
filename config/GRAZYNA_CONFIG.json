@@ -1,0 +1,31 @@
+{
+  "ExcludeRegex": "\\\\\\\\node_modules\\\\\\\\|\\\\\\\\dist\\\\\\\\|\\\\\\\\.git\\\\\\\\|\\\\\\\\__pycache__\\\\\\\\|\\\\\\\\coverage\\\\\\\\|\\\\\\\\tmp\\\\\\\\|\\\\\\\\temp\\\\\\\\|\\\\\\\\logs\\\\\\\\",
+  "ReportSettings": {
+    "GenerateCsv": true,
+    "GenerateJson": true,
+    "OpenReportFolder": false,
+    "GenerateHtml": true
+  },
+  "ONEDRIVE_PATH": "D:\\\\OneDrive\\\\GRAZYNA",
+  "GRAZYNA_ARCHIVE": "E:\\\\GRAZYNA_ARCHIVE",
+  "GRAZYNA_ROOT": "E:\\\\Grazyna_5.0",
+  "AutoFix": {
+    "FixIssues": true,
+    "SyncWithOneDrive": false,
+    "SelfHeal": true
+  },
+  "WICIOGARAGE_PATH": "C:\\\\WicioGarage",
+  "BinarySignatures": {
+    "GRAZYNA_CORE.EXE": {
+      "MD5": "ABC123",
+      "SHA256": "DEF456",
+      "Version": "5.0.1"
+    },
+    "TUNER_PRO.EXE": {
+      "MD5": "XYZ789",
+      "SHA256": "UVW012",
+      "Version": "2.3.0"
+    }
+  },
+  "LECHAT_INTEGRATION": "C:\\\\LeChat\\\\integration"
+}

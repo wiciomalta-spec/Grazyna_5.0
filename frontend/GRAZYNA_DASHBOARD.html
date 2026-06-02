@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRAŻYNA 5.0 — Dashboard</title>
+<style>
+:root{--bg:#060b18;--bg2:#0a1020;--bg3:#0e1628;--card:#111827;--border:#1e2d4a;--border2:#2a3d6a;--cyan:#00e5ff;--purple:#a855f7;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--blue:#3b82f6;--text:#f1f5f9;--text2:#94a3b8;--text3:#475569;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(0,229,255,0.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(168,85,247,0.04) 0%,transparent 50%);pointer-events:none;}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(6,11,24,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:54px;}
+.logo{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-right{display:flex;align-items:center;gap:12px;}
+.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);position:relative;}
+.pulse::after{content:'';position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;border-radius:50%;border:2px solid var(--green);animation:pr 1.5s infinite;opacity:0;}
+@keyframes pr{0%{transform:scale(0.8);opacity:0.8;}100%{transform:scale(1.6);opacity:0;}}
+.clock{font-family:monospace;font-size:13px;color:var(--cyan);}
+
+/* LAYOUT */
+.main{padding:18px;max-width:1800px;margin:0 auto;position:relative;z-index:1;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px;}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:14px;}
+@media(max-width:1400px){.g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){.g4,.g3,.g2,.g21{grid-template-columns:1fr;}}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;transition:all 0.2s;}
+.card:hover{border-color:var(--border2);box-shadow:0 0 20px rgba(0,229,255,0.1);}
+
+/* STAT CARDS */
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;cursor:default;transition:all 0.25s;}
+.sc:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(0,0,0,0.4);}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:2px;}
+.sc-bar.c{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.sc-bar.p{background:linear-gradient(90deg,var(--purple),#ec4899);}
+.sc-bar.g{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.sc-bar.o{background:linear-gradient(90deg,var(--orange),#fbbf24);}
+.sc-bar.r{background:linear-gradient(90deg,var(--red),var(--orange));}
+.sc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:6px;}
+.sc-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:3px;font-family:monospace;transition:all 0.5s;}
+.sc-val.c{color:var(--cyan);text-shadow:0 0 15px rgba(0,229,255,0.4);}
+.sc-val.p{color:var(--purple);}
+.sc-val.g{color:var(--green);text-shadow:0 0 15px rgba(16,185,129,0.4);}
+.sc-val.o{color:var(--orange);}
+.sc-val.r{color:var(--red);}
+.sc-sub{font-size:10px;color:var(--text3);}
+.sc-ico{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:34px;opacity:0.07;}
+.sc-trend{position:absolute;right:12px;bottom:12px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.sc-trend.up{background:rgba(16,185,129,0.15);color:var(--green);}
+.sc-trend.dn{background:rgba(239,68,68,0.15);color:var(--red);}
+.sc-trend.warn{background:rgba(245,158,11,0.15);color:var(--orange);}
+
+/* BADGES */
+.b{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.b::before{content:'●';font-size:7px;}
+.b-ok{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
+.b-warn{background:rgba(245,158,11,0.12);color:var(--orange);border:1px solid rgba(245,158,11,0.25);}
+.b-err{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25);}
+.b-info{background:rgba(0,229,255,0.12);color:var(--cyan);border:1px solid rgba(0,229,255,0.25);}
+.b-purple{background:rgba(168,85,247,0.12);color:var(--purple);border:1px solid rgba(168,85,247,0.25);}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sh-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--text3);display:flex;align-items:center;gap:7px;}
+.sh-title::before{content:'';width:2px;height:12px;background:var(--cyan);border-radius:2px;display:block;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{padding:6px 10px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);text-align:left;font-weight:700;}
+.tbl td{padding:8px 10px;border-bottom:1px solid rgba(30,45,74,0.4);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,0.02);}
+.mono{font-family:monospace;font-size:11px;color:var(--cyan);}
+
+/* PROGRESS */
+.prg{margin-bottom:8px;}
+.prg-lbl{display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px;}
+.prg-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.prg-fill{height:100%;border-radius:2px;transition:width 1.5s ease;}
+.prg-fill.c{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.prg-fill.g{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.prg-fill.o{background:linear-gradient(90deg,var(--orange),#fbbf24);}
+.prg-fill.r{background:linear-gradient(90deg,var(--red),var(--orange));}
+
+/* FEED */
+.feed{max-height:220px;overflow-y:auto;}
+.feed::-webkit-scrollbar{width:3px;}.feed::-webkit-scrollbar-thumb{background:var(--border2);}
+.fi{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(30,45,74,0.3);font-size:11px;animation:fi 0.3s ease;}
+@keyframes fi{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:none;}}
+.fi:last-child{border-bottom:none;}
+.fd{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.fd.ok{background:var(--green);box-shadow:0 0 5px var(--green);}
+.fd.warn{background:var(--orange);box-shadow:0 0 5px var(--orange);}
+.fd.err{background:var(--red);box-shadow:0 0 5px var(--red);}
+.fd.info{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+.ft{font-family:monospace;font-size:9px;color:var(--text3);flex-shrink:0;margin-top:2px;}
+.fm{color:var(--text2);flex:1;}.fm strong{color:var(--text);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.btn-c{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#000;}
+.btn-c:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,229,255,0.4);}
+.btn-g{background:linear-gradient(135deg,var(--green),var(--cyan));color:#000;}
+.btn-g:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(16,185,129,0.4);}
+.btn-o{background:linear-gradient(135deg,var(--orange),#fbbf24);color:#000;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+.bgrp{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;}
+
+/* ALERT */
+.alert{padding:9px 12px;border-radius:7px;margin-bottom:8px;display:flex;align-items:flex-start;gap:8px;font-size:11px;}
+.alert-ok{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fcd34d;}
+.alert-err{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;}
+.alert-info{background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:#67e8f9;}
+
+/* CMD */
+.cmd{background:#020509;border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-family:monospace;font-size:11px;color:var(--green);display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.cmd-copy{background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:var(--cyan);padding:2px 7px;border-radius:4px;font-size:10px;cursor:pointer;transition:all 0.2s;}
+.cmd-copy:hover{background:rgba(0,229,255,0.2);}
+
+/* CHART */
+.chart-bars{display:flex;align-items:flex-end;gap:3px;height:70px;padding:0 4px;}
+.cbar{flex:1;border-radius:3px 3px 0 0;min-width:6px;background:linear-gradient(180deg,var(--cyan),rgba(0,229,255,0.2));transition:height 0.8s;cursor:pointer;}
+.cbar:hover{background:linear-gradient(180deg,#fff,var(--cyan));}
+.chart-labels{display:flex;gap:3px;padding:3px 4px 0;font-size:9px;color:var(--text3);}
+.chart-labels span{flex:1;text-align:center;}
+
+/* TIMELINE */
+.tl{position:relative;padding-left:16px;}
+.tl::before{content:'';position:absolute;left:4px;top:0;bottom:0;width:1px;background:var(--border2);}
+.tl-item{position:relative;margin-bottom:12px;}
+.tl-item::before{content:'';position:absolute;left:-14px;top:4px;width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);}
+.tl-item.ok::before{background:var(--green);box-shadow:0 0 6px var(--green);}
+.tl-item.warn::before{background:var(--orange);box-shadow:0 0 6px var(--orange);}
+.tl-hash{font-family:monospace;font-size:10px;color:var(--cyan);}
+.tl-msg{font-size:11px;color:var(--text);margin:2px 0;}
+.tl-date{font-size:10px;color:var(--text3);}
+
+/* CHIP */
+.chip{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;margin:2px;}
+.chip-ts{background:rgba(59,130,246,0.15);color:#93c5fd;}
+.chip-py{background:rgba(234,179,8,0.15);color:#fde68a;}
+.chip-node{background:rgba(16,185,129,0.15);color:#6ee7b7;}
+.chip-react{background:rgba(0,229,255,0.15);color:#67e8f9;}
+
+/* NOTIF */
+#notif{position:fixed;bottom:18px;right:18px;z-index:999;background:#162035;border:1px solid var(--green);color:var(--green);padding:9px 14px;border-radius:9px;font-size:11px;font-weight:700;transform:translateY(50px);opacity:0;transition:all 0.3s;}
+#notif.show{transform:translateY(0);opacity:1;}
+
+/* SEP */
+.sep{height:1px;background:var(--border);margin:12px 0;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="notif">📋 Skopiowano!</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="logo">⚡ GRAŻYNA 5.0</div>
+    <div style="font-size:10px;padding:2px 8px;border-radius:12px;background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(168,85,247,0.15));border:1px solid rgba(0,229,255,0.25);color:var(--cyan);">DASHBOARD</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;font-size:11px;">
+    <div class="pulse"></div>
+    <span style="color:var(--green);font-weight:700;margin-left:4px;" id="sys-status">ONLINE</span>
+    <span style="color:var(--text3)">|</span>
+    <span style="color:var(--text3)">Backend <span id="hdr-backend" style="color:var(--green)">:3001</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">Heap <span id="hdr-heap" style="color:var(--orange)">—</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">EL <span id="hdr-el" style="color:var(--green)">—</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">Node <span style="color:var(--purple)">v20.11</span></span>
+  </div>
+  <div class="hdr-right">
+    <span class="clock" id="clock">--:--:--</span>
+    <button class="btn btn-ghost" style="padding:3px 9px;font-size:10px;" onclick="fetchMetrics()">🔄</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- STAT CARDS -->
+  <div class="g4">
+    <div class="sc" onclick="openUrl('http://localhost:3001/health')">
+      <div class="sc-bar c"></div>
+      <div class="sc-lbl">Backend API</div>
+      <div class="sc-val c" id="sv-backend">:3001</div>
+      <div class="sc-sub" id="sv-backend-sub">Express • single process</div>
+      <div class="sc-ico">🔧</div>
+      <div class="sc-trend up" id="st-backend">▲ LIVE</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar o"></div>
+      <div class="sc-lbl">Heap Usage</div>
+      <div class="sc-val o" id="sv-heap">—%</div>
+      <div class="sc-sub" id="sv-heap-sub">— / — MB</div>
+      <div class="sc-ico">🧠</div>
+      <div class="sc-trend warn" id="st-heap">⚠ WYSOKI</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar g"></div>
+      <div class="sc-lbl">EL Lag</div>
+      <div class="sc-val g" id="sv-el">—ms</div>
+      <div class="sc-sub" id="sv-el-sub">max: —ms</div>
+      <div class="sc-ico">🔄</div>
+      <div class="sc-trend up" id="st-el">✅ OK</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar p"></div>
+      <div class="sc-lbl">Uptime Panel</div>
+      <div class="sc-val p" id="sv-uptime">00:00:00</div>
+      <div class="sc-sub">Panel aktywny</div>
+      <div class="sc-ico">⏱️</div>
+    </div>
+  </div>
+
+  <div class="g4">
+    <div class="sc">
+      <div class="sc-bar g"></div>
+      <div class="sc-lbl">RSS Memory</div>
+      <div class="sc-val g" id="sv-rss">—MB</div>
+      <div class="sc-sub">Resident Set Size</div>
+      <div class="sc-ico">💾</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar c"></div>
+      <div class="sc-lbl">GC Cycles</div>
+      <div class="sc-val c" id="sv-gc">—</div>
+      <div class="sc-sub" id="sv-gc-sub">minor / major</div>
+      <div class="sc-ico">🗑️</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar p"></div>
+      <div class="sc-lbl">k6 Best RPS</div>
+      <div class="sc-val p">394</div>
+      <div class="sc-sub">100 VUs, 0% errors</div>
+      <div class="sc-ico">⚡</div>
+      <div class="sc-trend up">▲ REKORD</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar g"></div>
+      <div class="sc-lbl">Git Commit</div>
+      <div class="sc-val g" id="sv-git">d185a7b</div>
+      <div class="sc-sub">main ≡ origin</div>
+      <div class="sc-ico">📦</div>
+      <div class="sc-trend up">▲ SYNC</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="g21">
+
+    <!-- LEFT: Live metrics + chart -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <!-- Live Chart -->
+      <div class="card">
+        <div class="sh">
+          <div class="sh-title">Live Metryki (z /metrics)</div>
+          <div style="display:flex;gap:6px;">
+            <div class="b b-ok" id="metrics-status">LIVE</div>
+            <button class="btn btn-ghost" style="padding:3px 8px;font-size:10px;" onclick="fetchMetrics()">🔄</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;margin-bottom:8px;font-size:10px;">
+          <span style="color:var(--cyan)">━ Heap %</span>
+          <span style="color:var(--orange)">━ EL Lag ms</span>
+          <span style="color:var(--green)">━ RSS/10 MB</span>
+        </div>
+        <div class="chart-bars" id="chart-bars"></div>
+        <div class="chart-labels" id="chart-labels"></div>
+        <div class="sep"></div>
+        <div style="display:flex;gap:16px;font-size:11px;color:var(--text3);">
+          <span>📈 RPS: <span style="color:var(--cyan)" id="rps-val">—</span></span>
+          <span>⚡ EL p99: <span style="color:var(--green)" id="p99-val">—</span>ms</span>
+          <span>🗑️ GC: <span style="color:var(--purple)" id="gc-val">—</span></span>
+        </div>
+      </div>
+
+      <!-- Endpoints -->
+      <div class="card">
+        <div class="sh"><div class="sh-title">Endpointy API</div><div class="b b-info">24 total</div></div>
+        <table class="tbl">
+          <thead><tr><th>Endpoint</th><th>Status</th><th>Czas</th></tr></thead>
+          <tbody id="ep-table">
+            <tr><td class="mono">/health</td><td><span class="b b-ok">200</span></td><td class="mono" style="color:var(--green)" id="ep-health">—</td></tr>
+            <tr><td class="mono">/api</td><td><span class="b b-ok">200</span></td><td class="mono" style="color:var(--green)" id="ep-api">—</td></tr>
+            <tr><td class="mono">/metrics</td><td><span class="b b-ok">200</span></td><td class="mono" style="color:var(--green)" id="ep-metrics">—</td></tr>
+            <tr><td class="mono">/api/system/heap</td><td><span class="b b-info" id="ep-heap-status">—</span></td><td class="mono" id="ep-heap">—</td></tr>
+            <tr><td class="mono">/api/system/ping</td><td><span class="b b-info" id="ep-ping-status">—</span></td><td class="mono" id="ep-ping">—</td></tr>
+            <tr><td class="mono">/api/vehicles</td><td><span class="b b-info" id="ep-veh-status">—</span></td><td class="mono" id="ep-veh">—</td></tr>
+            <tr><td class="mono">/api/alerts</td><td><span class="b b-info" id="ep-alerts-status">—</span></td><td class="mono" id="ep-alerts">—</td></tr>
+          </tbody>
+        </table>
+        <div class="bgrp">
+          <button class="btn btn-c" style="font-size:10px;" onclick="pingAllEndpoints()">🔄 Ping All</button>
+          <a class="btn btn-ghost" style="font-size:10px;" href="http://localhost:3001/api" target="_blank">🔗 /api</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Actions + Status -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="sh"><div class="sh-title">Szybkie Akcje</div></div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <button class="btn btn-g" onclick="copyPS('Start-Process cmd -ArgumentList \"/k\", \"cd /d E:\\\\Grazyna_5.0\\\\backend && E:\\\\Grazyna_5.0\\\\tools\\\\nodejs\\\\node.exe --max-old-space-size=512 --expose-gc node_modules\\\\tsx\\\\dist\\\\cli.mjs src\\\\express-server.ts\"')">▶ Start Backend (single)</button>
+          <button class="btn btn-c" onclick="openUrl('http://localhost:3001/health')">❤️ Health Check</button>
+          <button class="btn btn-c" onclick="openUrl('http://localhost:3001/metrics')">📊 Metrics</button>
+          <button class="btn btn-c" onclick="openUrl('http://localhost:3001/api/system/heap')">🧠 Heap Diag</button>
+          <button class="btn btn-o" onclick="forceGC()">🗑️ Force GC</button>
+          <button class="btn btn-ghost" onclick="copyPS('k6 run --vus 5 --duration 30s E:\\\\Grazyna_5.0\\\\GRAZYNA_K6_LOADTEST.js')">⚡ k6 Test</button>
+          <button class="btn btn-ghost" onclick="copyPS('& \"E:\\\\Grazyna_5.0\\\\GRAZYNA_CRASH_FIX.ps1\"')">🔧 Crash Fix</button>
+          <button class="btn btn-ghost" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git add -A && git commit -m \"update\" && git push origin main')">📦 Git Push</button>
+        </div>
+        <div id="action-feedback" style="font-size:11px;color:var(--green);margin-top:8px;display:none;">✅ Skopiowano!</div>
+      </div>
+
+      <!-- Crash Status -->
+      <div class="card">
+        <div class="sh"><div class="sh-title" style="color:var(--orange)">Crash Analysis</div></div>
+        <div class="alert alert-err">
+          <div>🔴</div>
+          <div><strong>Cluster crash po 26-29s</strong> — EADDRINUSE :4001 + brak uncaughtException handler</div>
+        </div>
+        <div class="alert alert-ok">
+          <div>✅</div>
+          <div><strong>Single process stabilny</strong> — 2.2h uptime bez crashu</div>
+        </div>
+        <div class="alert alert-warn">
+          <div>⚠️</div>
+          <div><strong>node.exe hardlink</strong> — uruchom GRAZYNA_FIX_NODELINK.ps1 jako Admin</div>
+        </div>
+        <div class="bgrp">
+          <button class="btn btn-ghost" style="font-size:10px;" onclick="copyPS('& \"E:\\\\Grazyna_5.0\\\\GRAZYNA_FIX_NODELINK.ps1\"')">🔧 Fix Nodelink</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="g3">
+
+    <!-- k6 Results -->
+    <div class="card">
+      <div class="sh"><div class="sh-title">k6 Load Test Wyniki</div><div class="b b-ok">REKORD</div></div>
+      <table class="tbl">
+        <thead><tr><th>Scenariusz</th><th>VUs</th><th>RPS</th><th>p95</th><th>Errors</th></tr></thead>
+        <tbody>
+          <tr><td>Smoke</td><td class="mono">5</td><td class="mono" style="color:var(--green)">313</td><td class="mono" style="color:var(--green)">2.25ms</td><td><span class="b b-ok">0%</span></td></tr>
+          <tr><td>Stress</td><td class="mono">100</td><td class="mono" style="color:var(--green)">394</td><td class="mono" style="color:var(--green)">~2ms</td><td><span class="b b-ok">0%</span></td></tr>
+          <tr><td>Cluster crash</td><td class="mono">10</td><td class="mono" style="color:var(--red)">—</td><td class="mono" style="color:var(--red)">—</td><td><span class="b b-err">100%</span></td></tr>
+          <tr><td>Single proc</td><td class="mono">10</td><td class="mono" style="color:var(--cyan)" id="k6-rps">TBD</td><td class="mono" style="color:var(--cyan)" id="k6-p95">TBD</td><td><span class="b b-info" id="k6-err">TBD</span></td></tr>
+        </tbody>
+      </table>
+      <div class="sep"></div>
+      <div style="font-size:10px;color:var(--text3);">
+        Bottleneck: bcrypt login (~100ms) → Worker Thread<br>
+        /health, /api, /metrics: &lt;5ms p95
+      </div>
+    </div>
+
+    <!-- Git Timeline -->
+    <div class="card">
+      <div class="sh"><div class="sh-title">Git Historia</div><div class="b b-ok">CLEAN</div></div>
+      <div class="tl">
+        <div class="tl-item ok"><div class="tl-hash">d185a7b</div><div class="tl-msg">fix: k6 healthDuration duplicate</div><div class="tl-date">2026-06-01</div></div>
+        <div class="tl-item ok"><div class="tl-hash">7d13ea8</div><div class="tl-msg">chore: sync all local files (k8s, chaos, circuit-breaker)</div><div class="tl-date">2026-06-01</div></div>
+        <div class="tl-item ok"><div class="tl-hash">26f9bdb</div><div class="tl-msg">feat: k6 runner + Supabase migration plan</div><div class="tl-date">2026-05-31</div></div>
+        <div class="tl-item"><div class="tl-hash">315524e</div><div class="tl-msg">feat: k6 load test + fix misnamed file</div><div class="tl-date">2026-05-31</div></div>
+        <div class="tl-item"><div class="tl-hash">675dc6b</div><div class="tl-msg">docs: Sentinel, Blue-Green, IsoForest cold-start</div><div class="tl-date">2026-05-31</div></div>
+        <div class="tl-item"><div class="tl-hash">1e6f825</div><div class="tl-msg">feat: full integration - schema, workers, auth</div><div class="tl-date">2026-05-31</div></div>
+        <div class="tl-item"><div class="tl-hash">3bea9b2</div><div class="tl-msg">fix: cleanup __init__.py, database.js, metrics.ts</div><div class="tl-date">2026-05-29</div></div>
+      </div>
+    </div>
+
+    <!-- Postęp projektu -->
+    <div class="card">
+      <div class="sh"><div class="sh-title">Postęp Projektu</div></div>
+      <div class="prg"><div class="prg-lbl"><span>Backend API (24 endpointy)</span><span style="color:var(--cyan)">88%</span></div><div class="prg-bar"><div class="prg-fill c" style="width:0%" data-w="88%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Frontend React</span><span style="color:var(--green)">75%</span></div><div class="prg-bar"><div class="prg-fill g" style="width:0%" data-w="75%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>ML Monitoring</span><span style="color:var(--purple)">85%</span></div><div class="prg-bar"><div class="prg-fill" style="width:0%;background:linear-gradient(90deg,var(--purple),#ec4899);" data-w="85%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>CI/CD Pipeline</span><span style="color:var(--orange)">70%</span></div><div class="prg-bar"><div class="prg-fill o" style="width:0%" data-w="70%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Kubernetes (k8s/)</span><span style="color:var(--cyan)">40%</span></div><div class="prg-bar"><div class="prg-fill c" style="width:0%" data-w="40%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Testy (k6 + Vitest)</span><span style="color:var(--green)">35%</span></div><div class="prg-bar"><div class="prg-fill g" style="width:0%" data-w="35%"></div></div></div>
+      <div class="prg"><div class="prg-lbl"><span>Produkcja (Hetzner)</span><span style="color:var(--orange)">20%</span></div><div class="prg-bar"><div class="prg-fill o" style="width:0%" data-w="20%"></div></div></div>
+      <div class="sep"></div>
+      <div style="font-size:11px;color:var(--text3);">Ogólny postęp: <span style="color:var(--cyan);font-weight:700;">~59%</span></div>
+      <div class="sep"></div>
+      <div class="sh-title" style="margin-bottom:8px;">Stack</div>
+      <div>
+        <span class="chip chip-ts">TypeScript 5.3</span>
+        <span class="chip chip-node">Node.js 20.11</span>
+        <span class="chip chip-react">React 18.2</span>
+        <span class="chip chip-node">Express 4.18</span>
+        <span class="chip chip-node">Prisma 5.9</span>
+        <span class="chip chip-node">Socket.io 4.6</span>
+        <span class="chip chip-py">Python 3.10</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANELE -->
+  <div class="card">
+    <div class="sh"><div class="sh-title">Dostępne Panele</div><div class="b b-info">3 panele</div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;">
+        <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:4px;">⚡ MEGA PANEL</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">9 zakładek: Dashboard, API, Monitoring, Architektura, Pliki, Środowisko, Git, Komendy, Instalacja</div>
+        <button class="btn btn-c" style="width:100%;justify-content:center;" onclick="openUrl('GRAZYNA_MEGA_PANEL.html')">Otwórz</button>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;">
+        <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:4px;">📡 LIVE PANEL</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Live monitoring z WebSocket, metryki real-time, IsoForest vs EWMA, CI/CD, Fix Backend</div>
+        <button class="btn btn-p" style="width:100%;justify-content:center;" onclick="openUrl('GRAZYNA_LIVE_PANEL.html')">Otwórz</button>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;">
+        <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px;">📊 DASHBOARD (ten)</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Aktualny dashboard z live metrykami, k6 wynikami, crash analysis, git historią</div>
+        <button class="btn btn-g" style="width:100%;justify-content:center;" onclick="openUrl('GRAZYNA_DASHBOARD.html')">Aktywny</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ── CLOCK ──────────────────────────────────────────────────
+let startTime = Date.now();
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const up = Math.floor((Date.now()-startTime)/1000);
+  const h=Math.floor(up/3600),m=Math.floor((up%3600)/60),s=up%60;
+  const el = document.getElementById('sv-uptime');
+  if(el) el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+setInterval(updateClock,1000); updateClock();
+
+// ── NOTIFY ─────────────────────────────────────────────────
+function notify(msg='📋 Skopiowano!') {
+  const n=document.getElementById('notif');
+  n.textContent=msg; n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),2000);
+}
+function copyPS(cmd) {
+  navigator.clipboard.writeText(cmd).catch(()=>{
+    const t=document.createElement('textarea');t.value=cmd;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+  });
+  notify('📋 Skopiowano!');
+  const fb=document.getElementById('action-feedback');
+  if(fb){fb.style.display='block';setTimeout(()=>fb.style.display='none',2000);}
+}
+function openUrl(u) { window.open(u,'_blank'); }
+
+// ── PROGRESS ANIMATE ───────────────────────────────────────
+function animateProgress() {
+  document.querySelectorAll('.prg-fill[data-w]').forEach(el=>{
+    el.style.width='0%';
+    setTimeout(()=>el.style.width=el.dataset.w,100);
+  });
+}
+setTimeout(animateProgress,300);
+
+// ── CHART DATA ─────────────────────────────────────────────
+const chartData = { heap:[], el:[], rss:[], times:[] };
+const MAX_PTS = 20;
+
+function addChartPoint(heap,el,rss) {
+  const now = new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  chartData.heap.push(heap); chartData.el.push(Math.min(el,100)); chartData.rss.push(rss/10);
+  chartData.times.push(now);
+  if(chartData.heap.length>MAX_PTS){chartData.heap.shift();chartData.el.shift();chartData.rss.shift();chartData.times.shift();}
+  renderChart();
+}
+
+function renderChart() {
+  const bars=document.getElementById('chart-bars');
+  const labels=document.getElementById('chart-labels');
+  if(!bars||!labels) return;
+  const n=chartData.heap.length; if(n<2) return;
+  const max=Math.max(...chartData.heap,1);
+  bars.innerHTML=''; labels.innerHTML='';
+  chartData.heap.forEach((v,i)=>{
+    const pct=Math.round(v/max*100);
+    const elPct=Math.round(chartData.el[i]/100*100);
+    bars.innerHTML+=`<div class="cbar" style="height:${pct}%" title="Heap:${v}% EL:${chartData.el[i]}ms @${chartData.times[i]}"></div>`;
+    if(i%4===0) labels.innerHTML+=`<span>${chartData.times[i]}</span>`;
+    else labels.innerHTML+=`<span></span>`;
+  });
+}
+
+// ── FETCH METRICS ──────────────────────────────────────────
+async function fetchMetrics() {
+  try {
+    const t0=Date.now();
+    const r=await fetch('http://localhost:3001/metrics',{signal:AbortSignal.timeout(4000)});
+    const text=await r.text();
+    const ms=Date.now()-t0;
+
+    function pm(pat){const m=text.match(new RegExp(pat+'\\s+([\\d.]+)'));return m?parseFloat(m[1]):0;}
+
+    const heapUsed=pm('nodejs_heap_size_used_bytes');
+    const heapTotal=pm('nodejs_heap_size_total_bytes');
+    const rss=pm('process_resident_memory_bytes');
+    const elLag=pm('nodejs_eventloop_lag_seconds');
+    const elMax=pm('nodejs_eventloop_lag_max_seconds');
+    const elP99=pm('nodejs_eventloop_lag_p99_seconds');
+    const gcMinor=pm('nodejs_gc_duration_seconds_count\\{[^}]*kind="minor"[^}]*\\}');
+    const gcMajor=pm('nodejs_gc_duration_seconds_count\\{[^}]*kind="major"[^}]*\\}');
+
+    const heapPct=heapTotal>0?Math.round(heapUsed/heapTotal*100):0;
+    const rssMB=Math.round(rss/1024/1024*10)/10;
+    const elMs=Math.round(elLag*1000*100)/100;
+    const elMaxMs=Math.round(elMax*1000*10)/10;
+    const elP99Ms=Math.round(elP99*1000*10)/10;
+
+    // Update header
+    document.getElementById('hdr-heap').textContent=heapPct+'%';
+    document.getElementById('hdr-heap').style.color=heapPct>90?'var(--red)':heapPct>80?'var(--orange)':'var(--green)';
+    document.getElementById('hdr-el').textContent=elMs+'ms';
+    document.getElementById('hdr-backend').textContent=':3001 ✓';
+
+    // Update stat cards
+    document.getElementById('sv-heap').textContent=heapPct+'%';
+    document.getElementById('sv-heap-sub').textContent=`${Math.round(heapUsed/1024/1024*10)/10} / ${Math.round(heapTotal/1024/1024*10)/10} MB`;
+    document.getElementById('sv-el').textContent=elMs+'ms';
+    document.getElementById('sv-el-sub').textContent=`max: ${elMaxMs}ms`;
+    document.getElementById('sv-rss').textContent=rssMB+'MB';
+    document.getElementById('sv-gc').textContent=`${Math.round(gcMinor)}×`;
+    document.getElementById('sv-gc-sub').textContent=`minor×${Math.round(gcMinor)} major×${Math.round(gcMajor)}`;
+
+    // Update chart
+    addChartPoint(heapPct,elMs,rssMB);
+
+    // Update bottom stats
+    document.getElementById('p99-val').textContent=elP99Ms;
+    document.getElementById('gc-val').textContent=`${Math.round(gcMinor)}m/${Math.round(gcMajor)}M`;
+
+    // Update endpoint table
+    document.getElementById('ep-metrics').textContent=ms+'ms';
+
+    document.getElementById('metrics-status').textContent='LIVE';
+    document.getElementById('metrics-status').className='b b-ok';
+
+    // Trend indicators
+    const heapTrend=document.getElementById('st-heap');
+    if(heapPct>93){heapTrend.textContent='🔴 KRYT';heapTrend.className='sc-trend dn';}
+    else if(heapPct>85){heapTrend.textContent='⚠ WYSOKI';heapTrend.className='sc-trend warn';}
+    else{heapTrend.textContent='✅ OK';heapTrend.className='sc-trend up';}
+
+  } catch(e) {
+    document.getElementById('hdr-backend').textContent=':3001 ✗';
+    document.getElementById('hdr-backend').style.color='var(--red)';
+    document.getElementById('sys-status').textContent='OFFLINE';
+    document.getElementById('metrics-status').textContent='OFFLINE';
+    document.getElementById('metrics-status').className='b b-err';
+  }
+}
+
+// ── PING ALL ENDPOINTS ─────────────────────────────────────
+async function pingAllEndpoints() {
+  const eps = [
+    {url:'http://localhost:3001/health',      id:'ep-health',      sid:''},
+    {url:'http://localhost:3001/api',         id:'ep-api',         sid:''},
+    {url:'http://localhost:3001/api/system/heap', id:'ep-heap',    sid:'ep-heap-status'},
+    {url:'http://localhost:3001/api/system/ping', id:'ep-ping',    sid:'ep-ping-status'},
+    {url:'http://localhost:3001/api/vehicles',    id:'ep-veh',     sid:'ep-veh-status'},
+    {url:'http://localhost:3001/api/alerts',      id:'ep-alerts',  sid:'ep-alerts-status'},
+  ];
+  for(const ep of eps) {
+    try {
+      const t0=Date.now();
+      await fetch(ep.url,{signal:AbortSignal.timeout(3000)});
+      const ms=Date.now()-t0;
+      const el=document.getElementById(ep.id);
+      if(el) el.textContent=ms+'ms';
+      if(ep.sid){const s=document.getElementById(ep.sid);if(s){s.textContent='200';s.className='b b-ok';}}
+    } catch {
+      const el=document.getElementById(ep.id);
+      if(el) el.textContent='ERR';
+      if(ep.sid){const s=document.getElementById(ep.sid);if(s){s.textContent='ERR';s.className='b b-err';}}
+    }
+  }
+  notify('✅ Ping zakończony!');
+}
+
+// ── FORCE GC ───────────────────────────────────────────────
+async function forceGC() {
+  try {
+    const r=await fetch('http://localhost:3001/api/system/gc',{method:'POST',signal:AbortSignal.timeout(5000)});
+    const d=await r.json();
+    notify(d.success?`🗑️ GC: zwolnił ${d.freed_mb}MB`:'⚠️ GC niedostępny');
+  } catch { notify('❌ Backend niedostępny'); }
+}
+
+// ── AUTO REFRESH ───────────────────────────────────────────
+fetchMetrics();
+setInterval(fetchMetrics, 10000);
+setTimeout(pingAllEndpoints, 2000);
+
+// ── INIT CHART ─────────────────────────────────────────────
+for(let i=0;i<10;i++) addChartPoint(93+Math.random()*2, 2+Math.random()*3, 66+Math.random()*2);
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+[
+    {
+        "Canonical":  "GRAZYNA_ANALIZA_RAPORT.md",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\GRAZYNA_ANALIZA_RAPORT.md",
+        "Dest":  "E:\\Grazyna_5.0\\docs\\analysis\\GRAZYNA_ANALIZA_RAPORT.md",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_HETZNER_READY.md",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\GRAZYNA_HETZNER_READY.md",
+        "Dest":  "E:\\Grazyna_5.0\\docs\\deployment\\GRAZYNA_HETZNER_READY.md",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_DB_ANALYSIS.md",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\README.md",
+        "Dest":  "E:\\Grazyna_5.0\\docs\\architecture\\GRAZYNA_DB_ANALYSIS.md",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_AUTH_JWT_VS_SESSIONS.md",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\install.ps1",
+        "Dest":  "E:\\Grazyna_5.0\\docs\\architecture\\GRAZYNA_AUTH_JWT_VS_SESSIONS.md",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_ML_VS_REGRESSION.md",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\checker_v2.ps1",
+        "Dest":  "E:\\Grazyna_5.0\\docs\\architecture\\GRAZYNA_ML_VS_REGRESSION.md",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_EXPRESS_VS_FASTIFY.md",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\katalog.txt",
+        "Dest":  "E:\\Grazyna_5.0\\docs\\architecture\\GRAZYNA_EXPRESS_VS_FASTIFY.md",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_FASTIFY_MIGRATION.md",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\GRAZYNA_FASTIFY_MIGRATION.md",
+        "Dest":  "E:\\Grazyna_5.0\\docs\\architecture\\GRAZYNA_FASTIFY_MIGRATION.md",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_BACKEND_FIX.ts",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\backend\\GRAZYNA_BACKEND_FIX.ts",
+        "Dest":  "E:\\Grazyna_5.0\\backend\\src\\system\\GRAZYNA_BACKEND_FIX.ts",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_WORKER_THREADS.ts",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\backend\\src\\workers\\tasks.worker.ts",
+        "Dest":  "E:\\Grazyna_5.0\\backend\\src\\services\\GRAZYNA_WORKER_THREADS.ts",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_LARGE_OBJECT_DIAG.ts",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\GRAZYNA_TREE.txt",
+        "Dest":  "E:\\Grazyna_5.0\\backend\\src\\utils\\GRAZYNA_LARGE_OBJECT_DIAG.ts",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_OOM_PREDICTOR.ps1",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\GRAZYNA_OOM_PREDICTOR.ps1",
+        "Dest":  "E:\\Grazyna_5.0\\scripts\\monitoring\\GRAZYNA_OOM_PREDICTOR.ps1",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "GRAZYNA_PREDICT_MONITOR.ps1",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\scripts\\GRAZYNA_PREDICT_MONITOR.ps1",
+        "Dest":  "E:\\Grazyna_5.0\\scripts\\monitoring\\GRAZYNA_PREDICT_MONITOR.ps1",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "watchdog-ai.ps1",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\backend\\watchdog-ai.ps1",
+        "Dest":  "E:\\Grazyna_5.0\\scripts\\monitoring\\watchdog-ai.ps1",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "docker-compose.prod.yml",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\docker-compose.prod.yml",
+        "Dest":  "E:\\Grazyna_5.0\\infra\\docker-compose.prod.yml",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    },
+    {
+        "Canonical":  "ecosystem.config.js",
+        "Status":  "MISSING",
+        "Source":  "",
+        "Dest":  "E:\\Grazyna_5.0\\infra\\ecosystem.config.js",
+        "Note":  "Nie znaleziono po nazwie/aliasie/wzorcu treĹ›ci"
+    },
+    {
+        "Canonical":  "deploy-prod.yml",
+        "Status":  "MOVED",
+        "Source":  "E:\\Grazyna_5.0\\backend\\.github\\workflows\\deploy.yml",
+        "Dest":  "E:\\Grazyna_5.0\\.github\\workflows\\deploy-prod.yml",
+        "Note":  "Przeniesiono/ujednolicono nazwÄ™"
+    }
+]

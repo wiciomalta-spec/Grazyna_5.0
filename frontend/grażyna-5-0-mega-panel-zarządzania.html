@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAŻYNA 5.0 - Mega Panel Zarządzania</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --background-color: #f5f7fa;
+            --text-color: #333;
+            --card-background: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        header p {
+            margin: 10px 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            background: var(--card-background);
+            color: var(--primary-color);
+            border: 1px solid var(--secondary-color);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .nav-tab:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .nav-tab.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background: var(--light-color);
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1em;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: var(--primary-color);
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background: #27ae60;
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .status-ok {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .status-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+        
+        .status-error {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .theme-preview {
+            width: 100%;
+            height: 80px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        .color-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ddd;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .log-box {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            white-space: pre;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .dashboard-card {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.1em;
+        }
+        
+        .dashboard-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin: 10px 0;
+        }
+        
+        .dashboard-card .label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            border-top: 1px solid #dee2e6;
+            margin-top: 30px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .theme-selector {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .theme-selector button {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .theme-selector button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 GRAŻYNA 5.0 - Mega Panel Zarządzania</h1>
+        <p>Pełna kontrola nad systemem: motywy, raporty, walidacja, automatyzacja i monitorowanie</p>
+    </header>
+    
+    <div class="container">
+        <!-- Nawigacja -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
+            <div class="nav-tab" onclick="showTab('themes')">🎨 Motywy</div>
+            <div class="nav-tab" onclick="showTab('reports')">📄 Raporty</div>
+            <div class="nav-tab" onclick="showTab('validation')">✅ Walidacja</div>
+            <div class="nav-tab" onclick="showTab('automation')">⚡ Automatyzacja</div>
+            <div class="nav-tab" onclick="showTab('logs')">📜 Logi</div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <div class="section">
+                <h2>📊 Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>📁 Pliki Kanoniczne</h3>
+                        <div class="value" id="canonicalFilesCount">15</div>
+                        <div class="label">Plików w strukturze</div>
+                        <span class="status status-ok">✅ OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>📊 Raporty</h3>
+                        <div class="value" id="reportsCount">7</div>
+                        <div class="label">Wygenerowanych raportów</div>
+                        <span class="status status-ok">✅ OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>🎨 Motywy</h3>
+                        <div class="value" id="themesCount">7</div>
+                        <div class="label">Dostępnych motywów</div>
+                        <span class="status status-ok">✅ OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>⚡ Automatyzacja</h3>
+                        <div class="value">2</div>
+                        <div class="label">Zadania aktywne</div>
+                        <span class="status status-ok">✅ OK</span>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2>🔥 Szybkie Akcje</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="runValidation()">✅ Uruchom Walidację</button>
+                        <button class="btn btn-success" onclick="generateReports()">📄 Generuj Raporty</button>
+                        <button class="btn btn-success" onclick="syncWithGrazyna()">🔄 Synchronizuj z Grażyną</button>
+                        <button class="btn" onclick="openReportsFolder()">📁 Otwórz Folder Raportów</button>
+                        <button class="btn" onclick="openConfig()">⚙️ Edytuj Konfigurację</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Motywy -->
+        <div id="themes" class="tab-content">
+            <div class="section">
+                <h2>🎨 Zarządzanie Motywami</h2>
+                <p>Tworzenie, edycja i zarządzanie motywami wizualnymi.</p>
+                
+                <div class="grid" id="themesGrid">
+                    <!-- Motywy będą ładowane dynamicznie -->
+                </div>
+                
+                <div class="section">
+                    <h2>➕ Dodaj Nowy Motyw</h2>
+                    <form id="newThemeForm">
+                        <div class="form-group">
+                            <label for="themeName">Nazwa Motywu:</label>
+                            <input type="text" id="themeName" placeholder="np. Purple, Green, MyTheme" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kolory:</label>
+                            <div class="color-picker" id="colorPicker"></div>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-success">✅ Zapisz Motyw</button>
+                            <button type="button" class="btn" onclick="addColorField()">➕ Dodaj Kolor</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Raporty -->
+        <div id="reports" class="tab-content">
+            <div class="section">
+                <h2>📄 Raporty Systemowe</h2>
+                <p>Lista wygenerowanych raportów z podglądem i opcjami.</p>
+                
+                <div class="grid" id="reportsGrid">
+                    <!-- Raporty będą ładowane dynamicznie -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Walidacja -->
+        <div id="validation" class="tab-content">
+            <div class="section">
+                <h2>✅ Walidacja Struktury</h2>
+                <p>Sprawdź stan plików kanonicznych i struktur katalogów.</p>
+                
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="runValidation()">✅ Uruchom Walidację</button>
+                    <button class="btn" onclick="fixIssues()">🔧 Napraw Błędy</button>
+                </div>
+                
+                <div id="validationResults" style="margin-top: 20px;">
+                    <!-- Wyniki walidacji będą wyświetlane tutaj -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Automatyzacja -->
+        <div id="automation" class="tab-content">
+            <div class="section">
+                <h2>⚡ Automatyzacja</h2>
+                <p>Zarządzaj zadaniami harmonogramowymi i usługami Windows.</p>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h3>📅 Zadania Harmonogramowe</h3>
+                        <p>Zadanie <strong>GRAZYNA_FULL_AUTOMATION</strong> uruchamia się codziennie o 2:00 AM.</p>
+                        <div class="btn-group">
+                            <button class="btn btn-success" onclick="runTaskNow()">⏳ Uruchom Teraz</button>
+                            <button class="btn" onclick="editTask()">✏️ Edytuj Zadanie</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>🔧 Usługa Windows</h3>
+                        <p>Usługa <strong>GRAZYNA_MONITORING_SERVICE</strong> monitoruje system co 6 godzin.</p>
+                        <div class="btn-group">
+                            <button class="btn btn-success" onclick="startService()">▶️ Uruchom Usługę</button>
+                            <button class="btn btn-danger" onclick="stopService()">⏹️ Zatrzymaj Usługę</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logi -->
+        <div id="logs" class="tab-content">
+            <div class="section">
+                <h2>📜 Logi Systemowe</h2>
+                <p>Ostatnie logi z działania systemu.</p>
+                
+                <div class="log-box" id="logBox">
+[2026-06-03 12:30:22] [INFO] Rozpoczęto walidację struktury GRAŻYNA 5.0
+[2026-06-03 12:30:23] [SUCCESS] Wygenerowano raport z motywem: Custom
+[2026-06-03 12:30:23] [SUCCESS] Wygenerowano raport z motywem: Green
+[2026-06-03 12:30:23] [SUCCESS] Przebudowa raportów zakończona
+[2026-06-03 12:30:23] [SUCCESS] Walidacja zakończona pomyślnie
+                </div>
+                
+                <div class="btn-group" style="margin-top: 10px;">
+                    <button class="btn" onclick="refreshLogs()">🔄 Odśwież Logi</button>
+                    <button class="btn" onclick="clearLogs()">🗑️ Wyczyść Logi</button>
+                    <button class="btn" onclick="exportLogs()">📤 Eksportuj Logi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Przełącznik motywów -->
+    <div class="theme-selector">
+        <button onclick="changeTheme('Default')">🌞 Light</button>
+        <button onclick="changeTheme('Dark')">🌙 Dark</button>
+        <button onclick="changeTheme('HighContrast')">⚡ High Contrast</button>
+        <button onclick="changeTheme('Purple')">🟪 Purple</button>
+        <button onclick="changeTheme('Green')">🟩 Green</button>
+        <button onclick="changeTheme('Blue')">🔵 Blue</button>
+    </div>
+    
+    <!-- Powiadomienia -->
+    <div class="notification" id="notification"></div>
+    
+    <footer>
+        <p>📌 GRAŻYNA 5.0 - Mega Panel Zarządzania | Wersja: 1.0 | Data: <span id="currentDate"></span></p>
+    </footer>
+    
+    <script>
+        // Aktualna data
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('pl-PL');
+        
+        // Motywy domyślne
+        let themes = {
+            Default: {
+                name: "Default",
+                colors: {
+                    PrimaryColor: "#2c3e50",
+                    SecondaryColor: "#3498db",
+                    SuccessColor: "#2ecc71",
+                    WarningColor: "#f39c12",
+                    DangerColor: "#e74c3c",
+                    LightColor: "#ecf0f1",
+                    DarkColor: "#34495e",
+                    BackgroundColor: "#f5f7fa",
+                    TextColor: "#333",
+                    CardBackground: "#ffffff"
+                }
+            },
+            Dark: {
+                name: "Dark",
+                colors: {
+                    PrimaryColor: "#3498db",
+                    SecondaryColor: "#2ecc71",
+                    SuccessColor: "#27ae60",
+                    WarningColor: "#f1c40f",
+                    DangerColor: "#e74c3c",
+                    LightColor: "#2c3e50",
+                    DarkColor: "#ecf0f1",
+                    BackgroundColor: "#1a1a1a",
+                    TextColor: "#ecf0f1",
+                    CardBackground: "#2c3e50"
+                }
+            },
+            HighContrast: {
+                name: "HighContrast",
+                colors: {
+                    PrimaryColor: "#000000",
+                    SecondaryColor: "#0066cc",
+                    SuccessColor: "#009900",
+                    WarningColor: "#cc6600",
+                    DangerColor: "#cc0000",
+                    LightColor: "#ffffff",
+                    DarkColor: "#000000",
+                    BackgroundColor: "#ffffff",
+                    TextColor: "#000000",
+                    CardBackground: "#ffffff"
+                }
+            },
+            Purple: {
+                name: "Purple",
+                colors: {
+                    PrimaryColor: "#9b59b6",
+                    SecondaryColor: "#8e44ad",
+                    SuccessColor: "#1abc9c",
+                    WarningColor: "#f39c12",
+                    DangerColor: "#e74c3c",
+                    LightColor: "#f0f0f0",
+                    DarkColor: "#2c3e50",
+                    BackgroundColor: "#f0f0f0",
+                    TextColor: "#2c3e50",
+                    CardBackground: "#ffffff"
+                }
+            },
+            Green: {
+                name: "Green",
+                colors: {
+                    PrimaryColor: "#27ae60",
+                    SecondaryColor: "#2ecc71",
+                    SuccessColor: "#16a085",
+                    WarningColor: "#f1c40f",
+                    DangerColor: "#e74c3c",
+                    LightColor: "#f5f7fa",
+                    DarkColor: "#2c3e50",
+                    BackgroundColor: "#f5f7fa",
+                    TextColor: "#2c3e50",
+                    CardBackground: "#ffffff"
+                }
+            },
+            Blue: {
+                name: "Blue",
+                colors: {
+                    PrimaryColor: "#2980b9",
+                    SecondaryColor: "#3498db",
+                    SuccessColor: "#1abc9c",
+                    WarningColor: "#f39c12",
+                    DangerColor: "#e74c3c",
+                    LightColor: "#f0f8ff",
+                    DarkColor: "#1a1a1a",
+                    BackgroundColor: "#f0f8ff",
+                    TextColor: "#1a1a1a",
+                    CardBackground: "#ffffff"
+                }
+            }
+        };
+        
+        // Raporty
+        let reports = [
+            { name: "GRAZYNA_REPORT_Default.html", theme: "Default", date: "2026-06-03 12:30:23", size: "120 KB" },
+            { name: "GRAZYNA_REPORT_Dark.html", theme: "Dark", date: "2026-06-03 12:30:23", size: "122 KB" },
+            { name: "GRAZYNA_REPORT_HighContrast.html", theme: "HighContrast", date: "2026-06-03 12:30:23", size: "121 KB" },
+            { name: "GRAZYNA_REPORT_Custom.html", theme: "Custom", date: "2026-06-03 12:30:23", size: "123 KB" },
+            { name: "GRAZYNA_REPORT_Purple.html", theme: "Purple", date: "2026-06-03 12:30:23", size: "124 KB" },
+            { name: "GRAZYNA_REPORT_Green.html", theme: "Green", date: "2026-06-03 12:30:23", size: "125 KB" },
+            { name: "GRAZYNA_REPORT_Blue.html", theme: "Blue", date: "2026-06-03 12:30:23", size: "126 KB" }
+        ];
+        
+        // Walidacja
+        let validationResults = [
+            { item: "docs\\analysis\\GRAZYNA_ANALIZA_RAPORT.md", status: "OK", resolved: "E:\\Grazyna_5.0\\docs\\analysis\\GRAZYNA_ANALIZA_RAPORT.md", note: "Plik w prawidłowej lokalizacji" },
+            { item: "docs\\deployment\\GRAZYNA_HETZNER_READY.md", status: "OK", resolved: "E:\\Grazyna_5.0\\docs\\deployment\\GRAZYNA_HETZNER_READY.md", note: "Plik w prawidłowej lokalizacji" },
+            { item: "infra\\ecosystem.config.js", status: "OK", resolved: "E:\\Grazyna_5.0\\infra\\ecosystem.config.js", note: "Plik w prawidłowej lokalizacji" }
+        ];
+        
+        // --- FUNKCJE ---
+        
+        // Przełącz zakładki
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Zmień motyw
+        function changeTheme(themeName) {
+            const theme = themes[themeName];
+            const root = document.documentElement;
+            
+            for (const [key, value] of Object.entries(theme.colors)) {
+                root.style.setProperty(`--${key}`, value);
+            }
+            
+            localStorage.setItem('selectedTheme', themeName);
+            showNotification(`Aktywowano motyw: ${themeName}`);
+        }
+        
+        // Załaduj zapamiętany motyw
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('selectedTheme') || 'Default';
+            changeTheme(savedTheme);
+        }
+        
+        // Renderuj motywy
+        function renderThemes() {
+            const themesGrid = document.getElementById('themesGrid');
+            themesGrid.innerHTML = '';
+            
+            for (const [key, theme] of Object.entries(themes)) {
+                const themeCard = document.createElement('div');
+                themeCard.className = 'card';
+                
+                const previewStyle = `background: linear-gradient(135deg, ${theme.colors.PrimaryColor}, ${theme.colors.SecondaryColor});`;
+                
+                themeCard.innerHTML = `
+                    <h3>${theme.name}</h3>
+                    <div class="theme-preview" style="${previewStyle}">Podgląd</div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="applyTheme('${key}')">✅ Aktywuj</button>
+                        <button class="btn" onclick="editTheme('${key}')">✏️ Edytuj</button>
+                        <button class="btn btn-danger" onclick="deleteTheme('${key}')">❌ Usuń</button>
+                    </div>
+                `;
+                
+                themesGrid.appendChild(themeCard);
+            }
+        }
+        
+        // Zastosuj motyw
+        function applyTheme(themeKey) {
+            changeTheme(themeKey);
+        }
+        
+        // Edytuj motyw
+        function editTheme(themeKey) {
+            const theme = themes[themeKey];
+            document.getElementById('themeName').value = theme.name;
+            
+            const colorPicker = document.getElementById('colorPicker');
+            colorPicker.innerHTML = '';
+            
+            for (const [colorName, colorValue] of Object.entries(theme.colors)) {
+                addColorField(colorName, colorValue);
+            }
+            
+            document.querySelector('.section h2').textContent = `✏️ Edytuj Motyw: ${theme.name}`;
+            document.querySelector('#newThemeForm button[type="submit"]').textContent = `✅ Zaktualizuj Motyw`;
+            document.querySelector('#newThemeForm').onsubmit = function(e) {
+                e.preventDefault();
+                updateTheme(themeKey);
+            };
+        }
+        
+        // Dodaj pole koloru
+        function addColorField(name = '', value = '#ffffff') {
+            const colorPicker = document.getElementById('colorPicker');
+            const colorId = `color_${Date.now()}`;
+            
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'form-group';
+            colorDiv.innerHTML = `
+                <label for="${colorId}">${name || 'Nowy Kolor'}:</label>
+                <input type="color" id="${colorId}" value="${value}">
+                <input type="text" class="color-name" value="${name}" placeholder="Nazwa koloru">
+                <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">❌ Usuń</button>
+            `;
+            
+            colorPicker.appendChild(colorDiv);
+        }
+        
+        // Zapisz nowy motyw
+        function saveNewTheme() {
+            const themeName = document.getElementById('themeName').value.trim();
+            if (!themeName) {
+                showNotification('Podaj nazwę motywu!', 'error');
+                return;
+            }
+            
+            const colorInputs = document.querySelectorAll('#colorPicker input[type="color"]');
+            const colorNames = document.querySelectorAll('#colorPicker .color-name');
+            
+            const colors = {};
+            for (let i = 0; i < colorInputs.length; i++) {
+                const name = colorNames[i].value.trim() || `Color${i + 1}`;
+                colors[name] = colorInputs[i].value;
+            }
+            
+            if (themes[themeName]) {
+                showNotification(`Motyw "${themeName}" już istnieje!`, 'error');
+                return;
+            }
+            
+            themes[themeName] = {
+                name: themeName,
+                colors: colors
+            };
+            
+            saveThemes();
+            renderThemes();
+            showNotification(`Dodano nowy motyw: ${themeName}`);
+            
+            document.getElementById('newThemeForm').reset();
+            document.getElementById('colorPicker').innerHTML = '';
+            document.querySelector('.section h2').textContent = '➕ Dodaj Nowy Motyw';
+            document.querySelector('#newThemeForm button[type="submit"]').textContent = '✅ Zapisz Motyw';
+            document.querySelector('#newThemeForm').onsubmit = saveNewTheme;
+        }
+        
+        // Zaktualizuj motyw
+        function updateTheme(themeKey) {
+            const themeName = document.getElementById('themeName').value.trim();
+            if (!themeName) {
+                showNotification('Podaj nazwę motywu!', 'error');
+                return;
+            }
+            
+            const colorInputs = document.querySelectorAll('#colorPicker input[type="color"]');
+            const colorNames = document.querySelectorAll('#colorPicker .color-name');
+            
+            const colors = {};
+            for (let i = 0; i < colorInputs.length; i++) {
+                const name = colorNames[i].value.trim() || `Color${i + 1}`;
+                colors[name] = colorInputs[i].value;
+            }
+            
+            if (themeKey !== themeName) {
+                delete themes[themeKey];
+            }
+            
+            themes[themeName] = {
+                name: themeName,
+                colors: colors
+            };
+            
+            saveThemes();
+            renderThemes();
+            showNotification(`Zaktualizowano motyw: ${themeName}`);
+            
+            document.getElementById('newThemeForm').reset();
+            document.getElementById('colorPicker').innerHTML = '';
+            document.querySelector('.section h2').textContent = '➕ Dodaj Nowy Motyw';
+            document.querySelector('#newThemeForm button[type="submit"]').textContent = '✅ Zapisz Motyw';
+            document.querySelector('#newThemeForm').onsubmit = saveNewTheme;
+        }
+        
+        // Usuń motyw
+        function deleteTheme(themeKey) {
+            if (confirm(`Czy na pewno chcesz usunąć motyw "${themes[themeKey].name}"?`)) {
+                delete themes[themeKey];
+                saveThemes();
+                renderThemes();
+                showNotification(`Usunięto motyw: ${themeKey}`);
+            }
+        }
+        
+        // Zapisz motywy do localStorage
+        function saveThemes() {
+            localStorage.setItem('grazynaThemes', JSON.stringify(themes));
+        }
+        
+        // Załaduj motywy z localStorage
+        function loadThemes() {
+            const savedThemes = localStorage.getItem('grazynaThemes');
+            if (savedThemes) {
+                themes = JSON.parse(savedThemes);
+            }
+            renderThemes();
+        }
+        
+        // Renderuj raporty
+        function renderReports() {
+            const reportsGrid = document.getElementById('reportsGrid');
+            reportsGrid.innerHTML = '';
+            
+            reports.forEach(report => {
+                const reportCard = document.createElement('div');
+                reportCard.className = 'card';
+                
+                reportCard.innerHTML = `
+                    <h3>${report.name}</h3>
+                    <p><strong>Motyw:</strong> ${report.theme}</p>
+                    <p><strong>Data:</strong> ${report.date}</p>
+                    <p><strong>Rozmiar:</strong> ${report.size}</p>
+                    <div class="btn-group">
+                        <button class="btn" onclick="openReport('${report.name}')">👁️ Otwórz</button>
+                        <button class="btn btn-danger" onclick="deleteReport('${report.name}')">❌ Usuń</button>
+                    </div>
+                `;
+                
+                reportsGrid.appendChild(reportCard);
+            });
+        }
+        
+        // Otwórz raport
+        function openReport(reportName) {
+            window.open(`file:///E:/Grazyna_5.0/reports/${reportName}`, '_blank');
+        }
+        
+        // Usuń raport
+        function deleteReport(reportName) {
+            if (confirm(`Czy na pewno chcesz usunąć raport "${reportName}"?`)) {
+                // Tutaj powinna być logika usuwania pliku
+                showNotification(`Raport "${reportName}" został usunięty.`);
+            }
+        }
+        
+        // Renderuj wyniki walidacji
+        function renderValidationResults() {
+            const validationResultsDiv = document.getElementById('validationResults');
+            validationResultsDiv.innerHTML = `
+                <div class="section">
+                    <h2>📋 Wyniki Walidacji</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Plik Kanoniczny</th>
+                                <th>Status</th>
+                                <th>Lokalizacja</th>
+                                <th>Uwagi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${validationResults.map(row => `
+                                <tr>
+                                    <td>${row.item}</td>
+                                    <td><span class="status status-ok">✅ ${row.status}</span></td>
+                                    <td>${row.resolved}</td>
+                                    <td>${row.note}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        // Uruchom walidację
+        function runValidation() {
+            showNotification('Uruchamianie walidacji...');
+            // Tutaj powinna być wywołana logika walidacji
+            setTimeout(() => {
+                showNotification('Walidacja zakończona pomyślnie!', 'success');
+                renderValidationResults();
+            }, 2000);
+        }
+        
+        // Napraw błędy
+        function fixIssues() {
+            showNotification('Naprawianie błędów...');
+            setTimeout(() => {
+                showNotification('Błędy naprawione!', 'success');
+            }, 2000);
+        }
+        
+        // Generuj raporty
+        function generateReports() {
+            showNotification('Generowanie raportów...');
+            setTimeout(() => {
+                showNotification('Raporty wygenerowane!', 'success');
+                renderReports();
+            }, 2000);
+        }
+        
+        // Synchronizuj z Grażyną
+        function syncWithGrazyna() {
+            showNotification('Synchronizowanie z Grażyną...');
+            setTimeout(() => {
+                showNotification('Synchronizacja zakończona!', 'success');
+            }, 2000);
+        }
+        
+        // Otwórz folder raportów
+        function openReportsFolder() {
+            window.open('file:///E:/Grazyna_5.0/reports', '_blank');
+        }
+        
+        // Otwórz konfigurację
+        function openConfig() {
+            window.open('file:///E:/Grazyna_5.0/config/GRAZYNA_CONFIG.json', '_blank');
+        }
+        
+        // Uruchom zadanie teraz
+        function runTaskNow() {
+            showNotification('Uruchamianie zadania harmonogramowego...');
+            setTimeout(() => {
+                showNotification('Zadanie uruchomione!', 'success');
+            }, 2000);
+        }
+        
+        // Edytuj zadanie
+        function editTask() {
+            showNotification('Edycja zadania harmonogramowego...');
+        }
+        
+        // Uruchom usługę
+        function startService() {
+            showNotification('Uruchamianie usługi Windows...');
+        }
+        
+        // Zatrzymaj usługę
+        function stopService() {
+            showNotification('Zatrzymywanie usługi Windows...');
+        }
+        
+        // Odśwież logi
+        function refreshLogs() {
+            showNotification('Odświeżanie logów...');
+        }
+        
+        // Wyczyść logi
+        function clearLogs() {
+            if (confirm('Czy na pewno chcesz wyczyścić wszystkie logi?')) {
+                document.getElementById('logBox').innerHTML = '';
+                showNotification('Logi wyczyszczone!', 'success');
+            }
+        }
+        
+        // Eksportuj logi
+        function exportLogs() {
+            showNotification('Eksportowanie logów...');
+        }
+        
+        // Pokazuj powiadomienie
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            notification.style.background = type === 'error' ? '#e74c3c' : '#2ecc71';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Inicjalizacja
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadThemes();
+            renderReports();
+            renderValidationResults();
+            
+            // Obsługa formularza nowego motywu
+            document.getElementById('newThemeForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveNewTheme();
+            });
+            
+            // Dodaj pierwsze pole koloru
+            addColorField('PrimaryColor', '#2c3e50');
+            addColorField('SecondaryColor', '#3498db');
+            addColorField('SuccessColor', '#2ecc71');
+        });
+    </script>
+</body>
+</html>

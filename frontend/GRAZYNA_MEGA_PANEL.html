@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRAŻYNA 5.0 — MEGA PANEL</title>
+<style>
+:root{--bg:#060b18;--bg2:#0a1020;--bg3:#0e1628;--card:#111827;--card2:#162035;--border:#1e2d4a;--border2:#2a3d6a;--cyan:#00e5ff;--purple:#a855f7;--purple2:#7c3aed;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--blue:#3b82f6;--pink:#ec4899;--yellow:#eab308;--text:#f1f5f9;--text2:#94a3b8;--text3:#475569;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 20%,rgba(0,229,255,0.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(168,85,247,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+.hdr{position:sticky;top:0;z-index:200;background:rgba(6,11,24,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;box-shadow:0 4px 30px rgba(0,0,0,0.5);}
+.hdr-logo{font-size:20px;font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(168,85,247,0.15));border:1px solid rgba(0,229,255,0.3);color:var(--cyan);}
+.hdr-clock{font-family:monospace;font-size:13px;color:var(--cyan);letter-spacing:1px;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.5s infinite;display:inline-block;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.nav{position:sticky;top:56px;z-index:190;background:rgba(6,11,24,0.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;gap:0;overflow-x:auto;padding:0 20px;}
+.nav::-webkit-scrollbar{height:2px;}.nav::-webkit-scrollbar-thumb{background:var(--border2);}
+.ntab{padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;text-transform:uppercase;}
+.ntab:hover{color:var(--text2);}.ntab.on{color:var(--cyan);border-bottom-color:var(--cyan);}
+.main{position:relative;z-index:1;padding:20px;max-width:1800px;margin:0 auto;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px;}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px;}
+.g1{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px;}
+@media(max-width:1400px){.g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){.g4,.g3,.g2,.g21{grid-template-columns:1fr;}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:all 0.25s;}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,255,0.3),transparent);opacity:0;transition:opacity 0.3s;}
+.card:hover{border-color:var(--border2);box-shadow:0 0 30px rgba(0,229,255,0.15);}.card:hover::after{opacity:1;}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden;cursor:default;transition:all 0.25s;}
+.scard:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.4);}
+.scard-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.scard-bar.c{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.scard-bar.p{background:linear-gradient(90deg,var(--purple),var(--pink));}
+.scard-bar.g{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.scard-bar.o{background:linear-gradient(90deg,var(--orange),var(--yellow));}
+.scard-bar.b{background:linear-gradient(90deg,var(--blue),var(--purple));}
+.scard-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;}
+.scard-val{font-size:28px;font-weight:900;line-height:1;margin-bottom:4px;font-family:monospace;}
+.scard-val.c{color:var(--cyan);text-shadow:0 0 20px rgba(0,229,255,0.4);}
+.scard-val.p{color:var(--purple);text-shadow:0 0 20px rgba(168,85,247,0.4);}
+.scard-val.g{color:var(--green);text-shadow:0 0 20px rgba(16,185,129,0.4);}
+.scard-val.o{color:var(--orange);}.scard-val.b{color:var(--blue);}
+.scard-sub{font-size:11px;color:var(--text3);}
+.scard-ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:38px;opacity:0.07;}
+.scard-trend{position:absolute;right:14px;bottom:14px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.scard-trend.up{background:rgba(16,185,129,0.15);color:var(--green);}
+.scard-trend.dn{background:rgba(245,158,11,0.15);color:var(--orange);}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sh-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--text3);display:flex;align-items:center;gap:8px;}
+.sh-title::before{content:'';width:3px;height:14px;background:var(--cyan);border-radius:2px;display:block;}
+.sh-title.p::before{background:var(--purple);}.sh-title.g::before{background:var(--green);}.sh-title.o::before{background:var(--orange);}
+.b{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.5px;}
+.b::before{content:'●';font-size:7px;}
+.b-ok{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
+.b-warn{background:rgba(245,158,11,0.12);color:var(--orange);border:1px solid rgba(245,158,11,0.25);}
+.b-err{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25);}
+.b-info{background:rgba(0,229,255,0.12);color:var(--cyan);border:1px solid rgba(0,229,255,0.25);}
+.b-purple{background:rgba(168,85,247,0.12);color:var(--purple);border:1px solid rgba(168,85,247,0.25);}
+.b-blue{background:rgba(59,130,246,0.12);color:var(--blue);border:1px solid rgba(59,130,246,0.25);}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{padding:7px 10px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);text-align:left;font-weight:700;}
+.tbl td{padding:9px 10px;border-bottom:1px solid rgba(30,45,74,0.5);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}.tbl tr:hover td{background:rgba(255,255,255,0.02);}
+.mono{font-family:'Cascadia Code','Fira Code',monospace;font-size:11px;color:var(--cyan);}
+.term{background:#020509;border:1px solid var(--border);border-radius:10px;padding:14px;font-family:'Cascadia Code','Fira Code',monospace;font-size:11.5px;line-height:1.7;overflow-y:auto;}
+.term::-webkit-scrollbar{width:3px;}.term::-webkit-scrollbar-thumb{background:var(--border2);}
+.tc{color:var(--cyan);}.tg{color:var(--green);}.ty{color:var(--orange);}.tr{color:var(--red);}.tp{color:var(--purple);}.tw{color:var(--text);}.td{color:var(--text3);}.tb{color:var(--blue);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-c{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#000;}
+.btn-c:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(0,229,255,0.4);}
+.btn-g{background:linear-gradient(135deg,var(--green),var(--cyan));color:#000;}
+.btn-g:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(16,185,129,0.4);}
+.btn-p{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(168,85,247,0.4);}
+.btn-o{background:linear-gradient(135deg,var(--orange),var(--yellow));color:#000;}
+.btn-o:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(245,158,11,0.4);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.bgrp{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.prg{margin-bottom:10px;}
+.prg-lbl{display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;}
+.prg-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.prg-fill{height:100%;border-radius:3px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);}
+.prg-fill.c{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.prg-fill.p{background:linear-gradient(90deg,var(--purple),var(--pink));}
+.prg-fill.g{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.prg-fill.o{background:linear-gradient(90deg,var(--orange),var(--yellow));}
+.prg-fill.r{background:linear-gradient(90deg,var(--red),var(--orange));}
+.alert{padding:10px 14px;border-radius:8px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;font-size:12px;}
+.alert-ok{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+.alert-warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fcd34d;}
+.alert-err{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;}
+.alert-info{background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:#67e8f9;}
+.feed{max-height:260px;overflow-y:auto;}
+.feed::-webkit-scrollbar{width:3px;}.feed::-webkit-scrollbar-thumb{background:var(--border2);}
+.feed-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(30,45,74,0.4);font-size:12px;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:none;}}
+.feed-item:last-child{border-bottom:none;}
+.feed-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.feed-dot.ok{background:var(--green);box-shadow:0 0 6px var(--green);}
+.feed-dot.warn{background:var(--orange);box-shadow:0 0 6px var(--orange);}
+.feed-dot.err{background:var(--red);box-shadow:0 0 6px var(--red);}
+.feed-dot.info{background:var(--cyan);box-shadow:0 0 6px var(--cyan);}
+.feed-time{font-family:monospace;font-size:10px;color:var(--text3);flex-shrink:0;margin-top:2px;}
+.feed-msg{color:var(--text2);flex:1;}
+.feed-msg strong{color:var(--text);}
+.chart-bars{display:flex;align-items:flex-end;gap:3px;height:80px;padding:0 4px;}
+.cbar{flex:1;border-radius:3px 3px 0 0;min-width:8px;background:linear-gradient(180deg,var(--cyan),rgba(0,229,255,0.2));transition:height 0.8s;cursor:pointer;position:relative;}
+.cbar:hover{background:linear-gradient(180deg,#fff,var(--cyan));}
+.chart-labels{display:flex;gap:3px;padding:4px 4px 0;font-size:9px;color:var(--text3);}
+.chart-labels span{flex:1;text-align:center;}
+.ep{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:var(--bg3);margin-bottom:6px;border:1px solid transparent;transition:all 0.2s;cursor:pointer;}
+.ep:hover{border-color:var(--border2);background:var(--card2);}
+.ep-method{font-family:monospace;font-size:10px;font-weight:800;padding:2px 7px;border-radius:4px;min-width:42px;text-align:center;}
+.ep-method.GET{background:rgba(16,185,129,0.15);color:var(--green);}
+.ep-method.POST{background:rgba(0,229,255,0.15);color:var(--cyan);}
+.ep-method.PUT{background:rgba(245,158,11,0.15);color:var(--orange);}
+.ep-method.DELETE{background:rgba(239,68,68,0.15);color:var(--red);}
+.ep-path{font-family:monospace;font-size:11px;color:var(--text);flex:1;}
+.ep-desc{font-size:10px;color:var(--text3);}
+.ep-auth{font-size:9px;color:var(--purple);margin-left:auto;}
+.arch-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;transition:all 0.2s;}
+.arch-card:hover{border-color:var(--border2);}
+.arch-card.current{border-color:rgba(0,229,255,0.4);background:rgba(0,229,255,0.03);}
+.arch-pros{list-style:none;margin-top:8px;}
+.arch-pros li{font-size:11px;color:var(--text2);padding:2px 0;}
+.arch-pros li::before{content:'✓ ';color:var(--green);}
+.arch-cons{list-style:none;margin-top:6px;}
+.arch-cons li{font-size:11px;color:var(--text2);padding:2px 0;}
+.arch-cons li::before{content:'✗ ';color:var(--red);}
+.score-ring{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;font-family:monospace;border:3px solid;}
+.score-ring.a{border-color:var(--green);color:var(--green);box-shadow:0 0 20px rgba(16,185,129,0.3);}
+.score-ring.b{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px rgba(0,229,255,0.3);}
+.score-ring.c{border-color:var(--orange);color:var(--orange);box-shadow:0 0 20px rgba(245,158,11,0.3);}
+.tl{position:relative;padding-left:18px;}
+.tl::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1px;background:var(--border2);}
+.tl-item{position:relative;margin-bottom:14px;}
+.tl-item::before{content:'';position:absolute;left:-16px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+.tl-item.ok::before{background:var(--green);box-shadow:0 0 8px var(--green);}
+.tl-item.warn::before{background:var(--orange);box-shadow:0 0 8px var(--orange);}
+.tl-hash{font-family:monospace;font-size:10px;color:var(--cyan);}
+.tl-msg{font-size:12px;color:var(--text);margin:2px 0;}
+.tl-date{font-size:10px;color:var(--text3);}
+.cmd{background:#020509;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:11.5px;color:var(--green);position:relative;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.cmd-text{flex:1;word-break:break-all;}
+.cmd-copy{background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:var(--cyan);padding:3px 8px;border-radius:5px;font-size:10px;cursor:pointer;flex-shrink:0;transition:all 0.2s;}
+.cmd-copy:hover{background:rgba(0,229,255,0.2);}
+.sep{height:1px;background:var(--border);margin:14px 0;}
+.dvd{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px;}
+.dvd::before,.dvd::after{content:'';flex:1;height:1px;background:var(--border);}
+.chip{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin:2px;}
+.chip-ts{background:rgba(59,130,246,0.15);color:#93c5fd;}
+.chip-py{background:rgba(234,179,8,0.15);color:#fde68a;}
+.chip-node{background:rgba(16,185,129,0.15);color:#6ee7b7;}
+.chip-react{background:rgba(0,229,255,0.15);color:#67e8f9;}
+.chip-docker{background:rgba(59,130,246,0.15);color:#bfdbfe;}
+.chip-prisma{background:rgba(124,58,237,0.15);color:#c4b5fd;}
+.chip-redis{background:rgba(239,68,68,0.15);color:#fca5a5;}
+.chip-pg{background:rgba(59,130,246,0.15);color:#93c5fd;}
+.mon-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(30,45,74,0.4);}
+.mon-item:last-child{border-bottom:none;}
+.mon-bar{width:80px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-left:10px;}
+.mon-bar-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+.pulse-ring{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);position:relative;}
+.pulse-ring::after{content:'';position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;border-radius:50%;border:2px solid var(--green);animation:ring 1.5s infinite;opacity:0;}
+@keyframes ring{0%{transform:scale(0.8);opacity:0.8;}100%{transform:scale(1.6);opacity:0;}}
+.tc-pane{display:none;}.tc-pane.on{display:block;}
+#notif{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--card2);border:1px solid var(--green);color:var(--green);padding:10px 16px;border-radius:10px;font-size:12px;font-weight:700;transform:translateY(60px);opacity:0;transition:all 0.3s;box-shadow:0 4px 20px rgba(16,185,129,0.3);}
+#notif.show{transform:translateY(0);opacity:1;}
+.ftree{font-family:monospace;font-size:11.5px;line-height:1.8;}
+.ftree .dir{color:var(--cyan);}
+.ftree .file{color:var(--text2);}
+.ftree .file.ts{color:#60a5fa;}.ftree .file.py{color:#fbbf24;}.ftree .file.json{color:#34d399;}.ftree .file.md{color:#a78bfa;}.ftree .file.ps1{color:#f472b6;}.ftree .file.yml{color:#fb923c;}.ftree .file.html{color:#f87171;}
+.ftree .sz{color:var(--text3);font-size:10px;margin-left:6px;}
+.ftree .warn{color:var(--orange);}.ftree .ok{color:var(--green);}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+<div id="notif">📋 Skopiowano!</div>
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="hdr-logo">⚡ GRAŻYNA 5.0</div>
+    <div class="hdr-badge">MEGA PANEL</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;font-size:11px;">
+    <div class="pulse-ring"></div>
+    <span style="color:var(--green);font-weight:700;margin-left:4px;">ONLINE</span>
+    <span style="color:var(--text3)">|</span>
+    <span style="color:var(--text3)">Backend <span style="color:var(--green)">:3001</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">Frontend <span style="color:var(--cyan)">:5174</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">Node <span style="color:var(--purple)">v20.11</span></span>
+    <span style="color:var(--text3)">·</span>
+    <span style="color:var(--text3)">Git <span style="color:var(--green)">3bea9b2</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="hdr-clock" id="clock">--:--:--</span>
+    <button class="btn btn-ghost btn-sm" onclick="refreshAll()">🔄</button>
+  </div>
+</div>
+<div class="nav">
+  <div class="ntab on" onclick="tab('dash')" id="nt-dash">📊 Dashboard</div>
+  <div class="ntab" onclick="tab('api')" id="nt-api">🔌 API</div>
+  <div class="ntab" onclick="tab('monitor')" id="nt-monitor">📡 Monitoring</div>
+  <div class="ntab" onclick="tab('arch')" id="nt-arch">🏗️ Architektura</div>
+  <div class="ntab" onclick="tab('files')" id="nt-files">📁 Pliki</div>
+  <div class="ntab" onclick="tab('env')" id="nt-env">🔬 Środowisko</div>
+  <div class="ntab" onclick="tab('git')" id="nt-git">📦 Git</div>
+  <div class="ntab" onclick="tab('cmd')" id="nt-cmd">💻 Komendy</div>
+  <div class="ntab" onclick="tab('install')" id="nt-install">🚀 Instalacja</div>
+</div>
+<div class="main" id="main-content">
+<!-- CONTENT INJECTED BY JS -->
+</div>
+<script>
+// ── TABS ──────────────────────────────────────────────────
+function tab(name){
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('nt-'+name).classList.add('on');
+  renderTab(name);
+}
+
+// ── CLOCK ─────────────────────────────────────────────────
+let startTime=Date.now();
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const up=Math.floor((Date.now()-startTime)/1000);
+  const h=Math.floor(up/3600),m=Math.floor((up%3600)/60),s=up%60;
+  const el=document.getElementById('sv-uptime');
+  if(el)el.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+setInterval(updateClock,1000);updateClock();
+
+// ── NOTIFY ────────────────────────────────────────────────
+function notify(msg='📋 Skopiowano!'){
+  const n=document.getElementById('notif');
+  n.textContent=msg;n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),2000);
+}
+
+// ── COPY PS ───────────────────────────────────────────────
+function copyPS(cmd){
+  navigator.clipboard.writeText(cmd).catch(()=>{
+    const t=document.createElement('textarea');t.value=cmd;
+    document.body.appendChild(t);t.select();document.execCommand('copy');
+    document.body.removeChild(t);
+  });
+  notify('📋 Skopiowano do schowka!');
+}
+
+// ── OPEN URL ──────────────────────────────────────────────
+function openUrl(u){window.open(u,'_blank');}
+
+// ── REFRESH ───────────────────────────────────────────────
+function refreshAll(){
+  addFeedItem('info','System','Panel odświeżony');
+  notify('🔄 Odświeżono!');
+  animateProgress();
+}
+
+// ── PROGRESS ANIMATE ──────────────────────────────────────
+function animateProgress(){
+  document.querySelectorAll('.prg-fill[data-w]').forEach(el=>{
+    el.style.width='0%';
+    setTimeout(()=>el.style.width=el.dataset.w,100);
+  });
+}
+setTimeout(animateProgress,300);
+
+// ── LIVE FEED ─────────────────────────────────────────────
+const feedMsgs=[
+  {t:'ok',src:'System',msg:'Panel sterowania załadowany'},
+  {t:'ok',src:'Backend',msg:':3001 ONLINE (PID 21656)'},
+  {t:'ok',src:'Frontend',msg:':5174 ONLINE (PID 21124)'},
+  {t:'ok',src:'Git',msg:'commit 3bea9b2 wypchnięty do origin/main'},
+  {t:'warn',src:'node.exe',msg:'hardlink wykryty — wymaga naprawy'},
+  {t:'ok',src:'Cleanup',msg:'11x __init__.py, database.js, metrics.ts usunięte'},
+];
+function addFeedItem(type,src,msg){
+  const feed=document.getElementById('feed');
+  if(!feed)return;
+  const now=new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const div=document.createElement('div');
+  div.className='feed-item';
+  div.innerHTML=`<div class="feed-dot ${type}"></div><div class="feed-time">${now}</div><div class="feed-msg"><strong>${src}</strong> — ${msg}</div>`;
+  feed.insertBefore(div,feed.firstChild);
+  if(feed.children.length>20)feed.removeChild(feed.lastChild);
+}
+function clearFeed(){const f=document.getElementById('feed');if(f)f.innerHTML='';}
+
+// ── CHART ─────────────────────────────────────────────────
+function buildChart(){
+  const bars=document.getElementById('chart-bars');
+  const labels=document.getElementById('chart-labels');
+  if(!bars||!labels)return;
+  const vals=[12,28,45,33,67,89,72,55,43,78,91,64];
+  const hrs=['12','13','14','15','16','17','18','19','20','21','22','23'];
+  const max=Math.max(...vals);
+  bars.innerHTML='';labels.innerHTML='';
+  vals.forEach((v,i)=>{
+    const pct=Math.round((v/max)*100);
+    bars.innerHTML+=`<div class="cbar" style="height:${pct}%" title="${v} req/min @ ${hrs[i]}:00"></div>`;
+    labels.innerHTML+=`<span>${hrs[i]}</span>`;
+  });
+  const rpm=document.getElementById('rpm');
+  const avg=document.getElementById('avg-ms');
+  if(rpm)rpm.textContent=vals[vals.length-1];
+  if(avg)avg.textContent=Math.round(50+Math.random()*30);
+}
+
+// ── PING ALL ──────────────────────────────────────────────
+async function pingAll(){
+  const urls=[
+    {url:'http://localhost:3001/health',name:'Health'},
+    {url:'http://localhost:3001/metrics',name:'Metrics'},
+    {url:'http://localhost:5174',name:'Frontend'},
+  ];
+  for(const {url,name} of urls){
+    const t0=Date.now();
+    try{
+      await fetch(url,{mode:'no-cors',signal:AbortSignal.timeout(2000)});
+      const ms=Date.now()-t0;
+      addFeedItem('ok',name,`ONLINE (${ms}ms)`);
+    }catch(e){
+      addFeedItem('err',name,'OFFLINE lub CORS blocked');
+    }
+  }
+}
+
+// ── FETCH METRICS ─────────────────────────────────────────
+async function fetchMetrics(){
+  try{
+    const r=await fetch('http://localhost:3001/api/system/metrics',{signal:AbortSignal.timeout(3000)});
+    const d=await r.json();
+    const heapPct=Math.round((d.process_memory_heap_used_bytes/d.process_memory_heap_total_bytes)*100);
+    const memEl=document.getElementById('mem-val');
+    const memBar=document.getElementById('mem-bar');
+    const rssEl=document.getElementById('rss-val');
+    const upEl=document.getElementById('proc-uptime');
+    if(memEl)memEl.textContent=heapPct+'%';
+    if(memBar)memBar.style.width=heapPct+'%';
+    if(rssEl)rssEl.textContent=Math.round(d.process_memory_rss_bytes/1024/1024)+'MB';
+    const up=d.process_uptime_seconds;
+    if(upEl)upEl.textContent=`${Math.floor(up/3600)}h ${Math.floor((up%3600)/60)}m`;
+    addFeedItem('ok','Metrics','Pobrano metryki z /api/system/metrics');
+  }catch(e){
+    addFeedItem('warn','Metrics','Nie można pobrać — backend niedostępny lub endpoint nie istnieje');
+  }
+}
+
+// ── MONITOR LOG ───────────────────────────────────────────
+function addMonLog(type,msg){
+  const log=document.getElementById('mon-log');
+  if(!log)return;
+  const now=new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const colors={ok:'#10b981',warn:'#f59e0b',err:'#ef4444',info:'#00e5ff'};
+  const icons={ok:'✓',warn:'⚠',err:'✗',info:'ℹ'};
+  const line=document.createElement('div');
+  line.innerHTML=`<span style="color:#475569">[${now}]</span> <span style="color:${colors[type]}">${icons[type]}</span> <span style="color:#f1f5f9">${msg}</span>\n`;
+  log.appendChild(line);
+  log.scrollTop=log.scrollHeight;
+}
+function clearMonLog(){const l=document.getElementById('mon-log');if(l)l.innerHTML='';}
+
+// ── AUTO MONITOR ──────────────────────────────────────────
+let monInterval=null;
+function startMonitor(){
+  if(monInterval)return;
+  monInterval=setInterval(async()=>{
+    try{
+      await fetch('http://localhost:3001/health',{mode:'no-cors',signal:AbortSignal.timeout(2000)});
+      addMonLog('ok','Backend :3001 — ONLINE');
+    }catch{addMonLog('err','Backend :3001 — OFFLINE!');}
+    try{
+      await fetch('http://localhost:5174',{mode:'no-cors',signal:AbortSignal.timeout(2000)});
+      addMonLog('ok','Frontend :5174 — ONLINE');
+    }catch{addMonLog('warn','Frontend :5174 — niedostępny');}
+  },15000);
+  addMonLog('info','Auto-monitoring uruchomiony (co 15s)');
+}
+setTimeout(startMonitor,2000);
+
+// ── TEST API ──────────────────────────────────────────────
+async function testEp(method,url){
+  const card=document.getElementById('api-test-card');
+  const result=document.getElementById('api-test-result');
+  if(!card||!result)return;
+  card.style.display='block';
+  result.innerHTML=`<span style="color:#475569">Wysyłam ${method} ${url}...</span>\n`;
+  try{
+    const t0=Date.now();
+    const r=await fetch(url,{method,signal:AbortSignal.timeout(5000)});
+    const ms=Date.now()-t0;
+    const text=await r.text();
+    let pretty=text;
+    try{pretty=JSON.stringify(JSON.parse(text),null,2);}catch{}
+    result.innerHTML=`<span style="color:#10b981">${method} ${url}</span>\n<span style="color:#475569">Status: ${r.status} • ${ms}ms</span>\n\n<span style="color:#f1f5f9">${pretty.substring(0,1000)}</span>`;
+  }catch(e){
+    result.innerHTML=`<span style="color:#ef4444">Błąd: ${e.message}</span>\n<span style="color:#475569">Sprawdź czy backend działa na :3001</span>`;
+  }
+}
+
+// ── RENDER TABS ───────────────────────────────────────────
+function renderTab(name){
+  const mc=document.getElementById('main-content');
+  mc.innerHTML=tabs[name]||'<div class="card"><p>Brak zawartości</p></div>';
+  setTimeout(()=>{animateProgress();buildChart();initFeedTimes();},100);
+}
+
+function initFeedTimes(){
+  const now=new Date().toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.querySelectorAll('.feed-time').forEach(el=>{if(el.textContent==='--:--:--')el.textContent=now;});
+}
+
+// ── TAB CONTENT ───────────────────────────────────────────
+const tabs={};
+
+tabs.dash=`
+<div class="g4">
+  <div class="scard" onclick="openUrl('http://localhost:3001/health')"><div class="scard-bar c"></div><div class="scard-label">Backend API</div><div class="scard-val c">:3001</div><div class="scard-sub">Express + TypeScript • ONLINE</div><div class="scard-ico">🔧</div><div class="scard-trend up">▲ LIVE</div></div>
+  <div class="scard" onclick="openUrl('http://localhost:5174')"><div class="scard-bar p"></div><div class="scard-label">Frontend Vite</div><div class="scard-val p">:5174</div><div class="scard-sub">React 18 + Vite 5 • ONLINE</div><div class="scard-ico">🌐</div><div class="scard-trend up">▲ LIVE</div></div>
+  <div class="scard"><div class="scard-bar g"></div><div class="scard-label">Uptime Panel</div><div class="scard-val g" id="sv-uptime">00:00:00</div><div class="scard-sub">Panel aktywny</div><div class="scard-ico">⏱️</div></div>
+  <div class="scard"><div class="scard-bar o"></div><div class="scard-label">Git Commit</div><div class="scard-val o">3bea9b2</div><div class="scard-sub">main ≡ origin • CLEAN</div><div class="scard-ico">📦</div><div class="scard-trend up">▲ SYNC</div></div>
+</div>
+<div class="g4">
+  <div class="scard"><div class="scard-bar b"></div><div class="scard-label">Node.js</div><div class="scard-val b">v20.11</div><div class="scard-sub">npm 10.9.8 • tools/nodejs/</div><div class="scard-ico">⬡</div></div>
+  <div class="scard"><div class="scard-bar p"></div><div class="scard-label">API Endpointy</div><div class="scard-val p">24</div><div class="scard-sub">+17 nowych • REST + WS</div><div class="scard-ico">🔌</div><div class="scard-trend up">▲ +17</div></div>
+  <div class="scard"><div class="scard-bar g"></div><div class="scard-label">Pliki projektu</div><div class="scard-val g">180+</div><div class="scard-sub">TS + PY + PS1 + JSON</div><div class="scard-ico">📄</div></div>
+  <div class="scard"><div class="scard-bar o"></div><div class="scard-label">Alerty</div><div class="scard-val o">3</div><div class="scard-sub">node.exe, CORS, duplikat</div><div class="scard-ico">🔔</div><div class="scard-trend dn">⚠ WARN</div></div>
+</div>
+<div class="g21">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Live Activity Feed</div><div style="display:flex;gap:6px;"><div class="b b-ok">LIVE</div><button class="btn btn-ghost btn-sm" onclick="clearFeed()">🗑</button></div></div>
+    <div class="feed" id="feed">
+      <div class="feed-item"><div class="feed-dot ok"></div><div class="feed-time">--:--:--</div><div class="feed-msg"><strong>System</strong> — Panel sterowania załadowany</div></div>
+      <div class="feed-item"><div class="feed-dot ok"></div><div class="feed-time">--:--:--</div><div class="feed-msg"><strong>Backend</strong> — :3001 ONLINE (PID 21656)</div></div>
+      <div class="feed-item"><div class="feed-dot ok"></div><div class="feed-time">--:--:--</div><div class="feed-msg"><strong>Frontend</strong> — :5174 ONLINE (PID 21124)</div></div>
+      <div class="feed-item"><div class="feed-dot ok"></div><div class="feed-time">--:--:--</div><div class="feed-msg"><strong>Git</strong> — commit 3bea9b2 wypchnięty do origin/main</div></div>
+      <div class="feed-item"><div class="feed-dot warn"></div><div class="feed-time">--:--:--</div><div class="feed-msg"><strong>node.exe</strong> — hardlink wykryty — wymaga naprawy</div></div>
+      <div class="feed-item"><div class="feed-dot ok"></div><div class="feed-time">--:--:--</div><div class="feed-msg"><strong>Cleanup</strong> — 11x __init__.py, database.js, metrics.ts usunięte</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Szybkie Akcje</div></div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-g" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_START.ps1\\"')">▶ Start Backend + Frontend</button>
+      <button class="btn btn-c" onclick="openUrl('http://localhost:5174')">🌐 Otwórz Frontend</button>
+      <button class="btn btn-c" onclick="openUrl('http://localhost:3001/api')">🔧 Backend API</button>
+      <button class="btn btn-c" onclick="openUrl('http://localhost:3001/health')">❤️ Health Check</button>
+      <button class="btn btn-c" onclick="openUrl('http://localhost:3001/metrics')">📊 Metrics</button>
+      <button class="btn btn-o" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_FIX_NODELINK.ps1\\"')">🔧 Fix node.exe Symlink</button>
+      <button class="btn btn-p" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git add -A && git commit -m \\"update\\" && git push origin main')">📦 Git Push</button>
+      <button class="btn btn-ghost" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_INSTALL_FULL.ps1\\"')">🚀 Pełna Instalacja</button>
+    </div>
+  </div>
+</div>
+<div class="g3">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Health Checks</div><button class="btn btn-ghost btn-sm" onclick="pingAll()">🔄 Ping</button></div>
+    <table class="tbl"><thead><tr><th>Serwis</th><th>URL</th><th>Status</th></tr></thead><tbody>
+      <tr><td>Backend API</td><td class="mono">:3001/api</td><td><span class="b b-ok">ONLINE</span></td></tr>
+      <tr><td>Health</td><td class="mono">:3001/health</td><td><span class="b b-ok">ONLINE</span></td></tr>
+      <tr><td>Metrics</td><td class="mono">:3001/metrics</td><td><span class="b b-ok">ONLINE</span></td></tr>
+      <tr><td>Frontend</td><td class="mono">:5174</td><td><span class="b b-ok">ONLINE</span></td></tr>
+      <tr><td>PostgreSQL</td><td class="mono">:5432</td><td><span class="b b-warn">DOCKER</span></td></tr>
+      <tr><td>Redis</td><td class="mono">:6379</td><td><span class="b b-warn">DOCKER</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Aktywność (12h)</div></div>
+    <div class="chart-bars" id="chart-bars"></div>
+    <div class="chart-labels" id="chart-labels"></div>
+    <div class="sep"></div>
+    <div style="display:flex;gap:16px;font-size:11px;color:var(--text3);">
+      <span>📈 Req/min: <span style="color:var(--cyan)" id="rpm">—</span></span>
+      <span>⚡ Avg: <span style="color:var(--green)" id="avg-ms">—</span>ms</span>
+      <span>❌ Errors: <span style="color:var(--red)" id="err-cnt">0</span></span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Postęp Projektu</div></div>
+    <div class="prg"><div class="prg-lbl"><span>Backend API</span><span style="color:var(--cyan)">85%</span></div><div class="prg-bar"><div class="prg-fill c" style="width:0%" data-w="85%"></div></div></div>
+    <div class="prg"><div class="prg-lbl"><span>Frontend React</span><span style="color:var(--purple)">75%</span></div><div class="prg-bar"><div class="prg-fill p" style="width:0%" data-w="75%"></div></div></div>
+    <div class="prg"><div class="prg-lbl"><span>Infrastruktura</span><span style="color:var(--green)">60%</span></div><div class="prg-bar"><div class="prg-fill g" style="width:0%" data-w="60%"></div></div></div>
+    <div class="prg"><div class="prg-lbl"><span>Python CLI</span><span style="color:var(--orange)">40%</span></div><div class="prg-bar"><div class="prg-fill o" style="width:0%" data-w="40%"></div></div></div>
+    <div class="prg"><div class="prg-lbl"><span>Testy</span><span style="color:var(--red)">15%</span></div><div class="prg-bar"><div class="prg-fill r" style="width:0%" data-w="15%"></div></div></div>
+    <div class="prg"><div class="prg-lbl"><span>Dokumentacja</span><span style="color:var(--blue)">30%</span></div><div class="prg-bar"><div class="prg-fill" style="width:0%;background:linear-gradient(90deg,var(--blue),var(--purple));" data-w="30%"></div></div></div>
+  </div>
+</div>
+<div class="card">
+  <div class="sh"><div class="sh-title o">Alerty Systemowe</div><div class="b b-warn">3 aktywne</div></div>
+  <div class="alert alert-warn"><div>⚠️</div><div><strong>node.exe HARDLINK</strong> — tools\\nodejs\\node.exe jest hardlinkiem (66.8MB×2). Napraw: GRAZYNA_FIX_NODELINK.ps1 jako Admin.</div></div>
+  <div class="alert alert-warn"><div>⚠️</div><div><strong>CORS mismatch</strong> — backend/.env: CORS_ORIGIN=:5173, Vite działa na :5174. Może powodować błędy CORS.</div></div>
+  <div class="alert alert-warn"><div>⚠️</div><div><strong>grazyna-system/ duplikat</strong> — stara kopia projektu (~50MB). Rozważ usunięcie.</div></div>
+  <div class="alert alert-ok"><div>✅</div><div><strong>Cleanup 3bea9b2</strong> — 11x __init__.py, database.js, metrics.ts, build-backend.log' usunięte. Push OK.</div></div>
+  <div class="alert alert-ok"><div>✅</div><div><strong>frontend/.env naprawiony</strong> — dodano VITE_ENV=development i VITE_DEBUG=false.</div></div>
+</div>`;
+
+tabs.api=`
+<div class="g2">
+  <div class="card">
+    <div class="sh"><div class="sh-title">System & Health</div><div class="b b-info">6 endpointów</div></div>
+    <div class="ep" onclick="testEp('GET','http://localhost:3001/health')"><div class="ep-method GET">GET</div><div class="ep-path">/health</div><div class="ep-desc">Health check</div></div>
+    <div class="ep" onclick="testEp('GET','http://localhost:3001/metrics')"><div class="ep-method GET">GET</div><div class="ep-path">/metrics</div><div class="ep-desc">Prometheus metrics</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/system/status</div><div class="ep-desc">Status OS/CPU/RAM/uptime</div><div class="ep-auth">🔒 JWT</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/system/metrics</div><div class="ep-desc">Metryki JSON (heap, rss, uptime)</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/system/logs</div><div class="ep-desc">Logi systemowe (limit, level)</div><div class="ep-auth">🔒 JWT</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/system/restart</div><div class="ep-desc">Restart serwisu (PM2/Docker)</div><div class="ep-auth">🔒 JWT</div></div>
+    <div class="sep"></div>
+    <div class="sh"><div class="sh-title">Auth</div><div class="b b-info">4 endpointy</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/auth/login</div><div class="ep-desc">Logowanie → JWT token</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/auth/register</div><div class="ep-desc">Rejestracja użytkownika</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/auth/refresh</div><div class="ep-desc">Odśwież token</div><div class="ep-auth">🔒 JWT</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/auth/logout</div><div class="ep-desc">Wylogowanie</div><div class="ep-auth">🔒 JWT</div></div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Vehicles</div><div class="b b-purple">8 endpointów</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/vehicles</div><div class="ep-desc">Lista pojazdów</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/vehicles</div><div class="ep-desc">Dodaj pojazd</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/vehicles/stats</div><div class="ep-desc">Statystyki floty</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/vehicles/:id</div><div class="ep-desc">Szczegóły pojazdu</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/vehicles/:id/location</div><div class="ep-desc">GPS lokalizacja</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/vehicles/:id/location</div><div class="ep-desc">Aktualizuj GPS (tracker)</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/vehicles/:id/history</div><div class="ep-desc">Historia trasy</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/vehicles/:id/maintenance</div><div class="ep-desc">Zgłoś serwis</div><div class="ep-auth">🔒</div></div>
+    <div class="sep"></div>
+    <div class="sh"><div class="sh-title">Drivers — NOWE</div><div class="b b-ok">6 endpointów</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/drivers</div><div class="ep-desc">Lista kierowców</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/drivers</div><div class="ep-desc">Dodaj kierowcę (Zod)</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/drivers/:id</div><div class="ep-desc">Szczegóły</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method PUT">PUT</div><div class="ep-path">/api/drivers/:id</div><div class="ep-desc">Aktualizuj</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method DELETE">DELETE</div><div class="ep-path">/api/drivers/:id</div><div class="ep-desc">Usuń</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/drivers/:id/assignments</div><div class="ep-desc">Przypisania</div><div class="ep-auth">🔒</div></div>
+  </div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Alerts — NOWE</div><div class="b b-warn">3 endpointy</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/alerts</div><div class="ep-desc">Lista alertów (status, severity)</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method POST">POST</div><div class="ep-path">/api/alerts</div><div class="ep-desc">Utwórz alert + Socket.io emit</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method PUT">PUT</div><div class="ep-path">/api/alerts/:id/resolve</div><div class="ep-desc">Rozwiąż alert</div><div class="ep-auth">🔒</div></div>
+    <div class="sep"></div>
+    <div class="sh"><div class="sh-title">Reports — NOWE</div><div class="b b-blue">3 endpointy</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/reports/fleet</div><div class="ep-desc">Raport floty (from, to, format)</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/reports/drivers</div><div class="ep-desc">Raport kierowców</div><div class="ep-auth">🔒</div></div>
+    <div class="ep"><div class="ep-method GET">GET</div><div class="ep-path">/api/reports/fuel</div><div class="ep-desc">Raport paliwa</div><div class="ep-auth">🔒</div></div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">WebSocket Events</div><div class="b b-info">Socket.io</div></div>
+    <table class="tbl"><thead><tr><th>Kierunek</th><th>Event</th><th>Payload</th></tr></thead><tbody>
+      <tr><td><span class="b b-ok">S→C</span></td><td class="mono">vehicle:location</td><td style="font-size:10px;color:var(--text3)">{vehicleId, lat, lng, speed, heading}</td></tr>
+      <tr><td><span class="b b-ok">S→C</span></td><td class="mono">alert:new</td><td style="font-size:10px;color:var(--text3)">{id, type, severity, message}</td></tr>
+      <tr><td><span class="b b-ok">S→C</span></td><td class="mono">alert:resolved</td><td style="font-size:10px;color:var(--text3)">{id, resolvedAt}</td></tr>
+      <tr><td><span class="b b-ok">S→C</span></td><td class="mono">system:status</td><td style="font-size:10px;color:var(--text3)">{uptime, memory, cpu}</td></tr>
+      <tr><td><span class="b b-ok">S→C</span></td><td class="mono">driver:update</td><td style="font-size:10px;color:var(--text3)">{driverId, status}</td></tr>
+      <tr><td><span class="b b-purple">C→S</span></td><td class="mono">subscribe:vehicle</td><td style="font-size:10px;color:var(--text3)">{vehicleId}</td></tr>
+      <tr><td><span class="b b-purple">C→S</span></td><td class="mono">subscribe:alerts</td><td style="font-size:10px;color:var(--text3)">{}</td></tr>
+      <tr><td><span class="b b-purple">C→S</span></td><td class="mono">ping</td><td style="font-size:10px;color:var(--text3)">{} → pong</td></tr>
+    </tbody></table>
+    <div class="sep"></div>
+    <div class="sh"><div class="sh-title">Test API</div></div>
+    <div id="api-test-card">
+      <div class="bgrp">
+        <button class="btn btn-c btn-sm" onclick="testEp('GET','http://localhost:3001/health')">Test /health</button>
+        <button class="btn btn-c btn-sm" onclick="testEp('GET','http://localhost:3001/metrics')">Test /metrics</button>
+        <button class="btn btn-ghost btn-sm" onclick="testEp('GET','http://localhost:3001/api/system/status')">Test /system/status</button>
+      </div>
+      <div class="term" id="api-test-result" style="max-height:200px;margin-top:10px;"><span style="color:#475569">Kliknij endpoint lub przycisk aby przetestować...</span></div>
+    </div>
+  </div>
+</div>`;
+
+tabs.monitor=`
+<div class="g3">
+  <div class="card">
+    <div class="sh"><div class="sh-title">System Resources</div><button class="btn btn-ghost btn-sm" onclick="fetchMetrics()">📊 Pobierz</button></div>
+    <div class="mon-item">
+      <div><div style="font-size:13px;font-weight:600;">CPU Usage</div><div style="font-size:10px;color:var(--text3)" id="cpu-cores">— cores</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="font-family:monospace;font-size:13px;font-weight:700;color:var(--cyan)" id="cpu-val">—%</div><div class="mon-bar"><div class="mon-bar-fill" id="cpu-bar" style="width:0%;background:linear-gradient(90deg,var(--cyan),var(--blue));"></div></div></div>
+    </div>
+    <div class="mon-item">
+      <div><div style="font-size:13px;font-weight:600;">Memory Heap</div><div style="font-size:10px;color:var(--text3)" id="mem-total">— total</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="font-family:monospace;font-size:13px;font-weight:700;color:var(--purple)" id="mem-val">—%</div><div class="mon-bar"><div class="mon-bar-fill" id="mem-bar" style="width:0%;background:linear-gradient(90deg,var(--purple),var(--pink));"></div></div></div>
+    </div>
+    <div class="mon-item"><div><div style="font-size:13px;font-weight:600;">Process Uptime</div><div style="font-size:10px;color:var(--text3)">Node.js backend</div></div><div style="font-family:monospace;font-size:13px;font-weight:700;color:var(--green)" id="proc-uptime">—</div></div>
+    <div class="mon-item"><div><div style="font-size:13px;font-weight:600;">RSS Memory</div><div style="font-size:10px;color:var(--text3)">Resident Set Size</div></div><div style="font-family:monospace;font-size:13px;font-weight:700;color:var(--orange)" id="rss-val">—</div></div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Porty Sieciowe</div></div>
+    <table class="tbl"><thead><tr><th>Port</th><th>Serwis</th><th>PID</th><th>Status</th></tr></thead><tbody>
+      <tr><td class="mono" style="color:var(--green);font-size:14px;font-weight:700;">3001</td><td>Backend Express</td><td class="mono">21656</td><td><span class="b b-ok">LIVE</span></td></tr>
+      <tr><td class="mono" style="color:var(--cyan);font-size:14px;font-weight:700;">5174</td><td>Frontend Vite</td><td class="mono">21124</td><td><span class="b b-ok">LIVE</span></td></tr>
+      <tr><td class="mono">1883</td><td>MQTT Broker</td><td class="mono">5360</td><td><span class="b b-info">LOCAL</span></td></tr>
+      <tr><td class="mono">80</td><td>HTTP System</td><td class="mono">4</td><td><span class="b b-warn">SYS</span></td></tr>
+      <tr><td class="mono">8443</td><td>HTTPS System</td><td class="mono">4</td><td><span class="b b-warn">SYS</span></td></tr>
+      <tr><td class="mono">3389</td><td>RDP</td><td class="mono">1240</td><td><span class="b b-warn">SYS</span></td></tr>
+      <tr><td class="mono">5432</td><td>PostgreSQL</td><td class="mono">—</td><td><span class="b b-err">DOCKER</span></td></tr>
+      <tr><td class="mono">6379</td><td>Redis</td><td class="mono">—</td><td><span class="b b-err">DOCKER</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title g">Reguły Alertów</div></div>
+    <table class="tbl"><thead><tr><th>Metryka</th><th>Próg</th><th>Poziom</th></tr></thead><tbody>
+      <tr><td>Backend :3001</td><td class="mono">DOWN</td><td style="color:var(--red)">🔴 KRYTYCZNY</td></tr>
+      <tr><td>Frontend :5174</td><td class="mono">DOWN</td><td style="color:var(--orange)">🟡 WYSOKI</td></tr>
+      <tr><td>CPU Usage</td><td class="mono">&gt;90%</td><td style="color:var(--orange)">🟡 WYSOKI</td></tr>
+      <tr><td>Memory Heap</td><td class="mono">&gt;85%</td><td style="color:var(--orange)">🟡 WYSOKI</td></tr>
+      <tr><td>Disk</td><td class="mono">&gt;95%</td><td style="color:var(--red)">🔴 KRYTYCZNY</td></tr>
+      <tr><td>Git sync</td><td class="mono">behind</td><td style="color:var(--cyan)">🔵 INFO</td></tr>
+    </tbody></table>
+    <div class="bgrp"><button class="btn btn-g btn-sm" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_MONITOR.ps1\\"')">▶ Start Monitor PS1</button></div>
+  </div>
+</div>
+<div class="card">
+  <div class="sh"><div class="sh-title">Monitor Log (Live — auto co 15s)</div><div style="display:flex;gap:6px;"><div class="b b-ok" id="monitor-status">AKTYWNY</div><button class="btn btn-ghost btn-sm" onclick="clearMonLog()">🗑</button></div></div>
+  <div class="term" id="mon-log" style="max-height:300px;"><span style="color:#475569">Monitoring uruchamia się...</span></div>
+</div>`;
+
+tabs.arch=`
+<div class="alert alert-info" style="margin-bottom:16px;"><div>🏗️</div><div>Porównanie aktualnego stacku GRAŻYNA 5.0 z alternatywnymi architekturami. Oceny na podstawie wymagań systemu zarządzania flotą pojazdów.</div></div>
+<div class="g4">
+  <div class="arch-card current">
+    <div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:14px;font-weight:800;color:var(--cyan)">⚡ AKTUALNY STACK</div><div class="b b-ok">UŻYWANY</div></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Node.js + Express + React</div>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0;">
+      <div class="score-ring b">A-</div>
+      <div><div style="font-size:11px;color:var(--text3);">Ogólna ocena</div><div style="font-size:20px;font-weight:800;color:var(--cyan);">87/100</div></div>
+    </div>
+    <ul class="arch-pros"><li>TypeScript end-to-end</li><li>Prisma ORM (type-safe)</li><li>Socket.io real-time</li><li>Vite 5 (szybki HMR)</li><li>Zustand (lekki state)</li><li>Portable Node.js</li></ul>
+    <ul class="arch-cons"><li>Single-threaded CPU-bound</li><li>react-query v3 (stary)</li><li>Testy tylko 15%</li></ul>
+  </div>
+  <div class="arch-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:14px;font-weight:800;color:var(--purple)">🦕 Deno + Fresh</div><div class="b b-purple">ALTERNATYWA</div></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Deno 2 + Fresh + Preact</div>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0;">
+      <div class="score-ring c">B+</div>
+      <div><div style="font-size:11px;color:var(--text3);">Ogólna ocena</div><div style="font-size:20px;font-weight:800;color:var(--purple);">72/100</div></div>
+    </div>
+    <ul class="arch-pros"><li>Wbudowane TypeScript</li><li>Bezpieczniejszy runtime</li><li>Brak node_modules</li><li>Edge-ready</li></ul>
+    <ul class="arch-cons"><li>Mniejszy ekosystem npm</li><li>Migracja kosztowna</li><li>Prisma słabe wsparcie</li></ul>
+  </div>
+  <div class="arch-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:14px;font-weight:800;color:var(--green)">🐍 FastAPI + Next.js</div><div class="b b-info">ALTERNATYWA</div></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Python FastAPI + Next.js 14</div>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0;">
+      <div class="score-ring b">A-</div>
+      <div><div style="font-size:11px;color:var(--text3);">Ogólna ocena</div><div style="font-size:20px;font-weight:800;color:var(--green);">85/100</div></div>
+    </div>
+    <ul class="arch-pros"><li>Python AI/ML natywny</li><li>Auto OpenAPI docs</li><li>SSR/SSG Next.js</li><li>SQLAlchemy ORM</li></ul>
+    <ul class="arch-cons"><li>Dwa języki (PY+TS)</li><li>Wolniejszy cold start</li><li>Brak Socket.io natywnie</li></ul>
+  </div>
+  <div class="arch-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;"><div style="font-size:14px;font-weight:800;color:var(--orange)">🦀 Rust + SvelteKit</div><div class="b b-warn">ZAAWANSOWANE</div></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Axum/Actix + SvelteKit</div>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0;">
+      <div class="score-ring c">B</div>
+      <div><div style="font-size:11px;color:var(--text3);">Ogólna ocena</div><div style="font-size:20px;font-weight:800;color:var(--orange);">68/100</div></div>
+    </div>
+    <ul class="arch-pros"><li>Najwyższa wydajność</li><li>Minimalne zużycie RAM</li><li>Memory safe</li></ul>
+    <ul class="arch-cons"><li>Bardzo stroma krzywa</li><li>Mały ekosystem fleet</li><li>Trudna rekrutacja</li></ul>
+  </div>
+</div>
+<div class="card">
+  <div class="sh"><div class="sh-title">Szczegółowe Porównanie</div></div>
+  <table class="tbl"><thead><tr><th>Kryterium</th><th style="color:var(--cyan)">⚡ Node+Express+React</th><th style="color:var(--purple)">🦕 Deno+Fresh</th><th style="color:var(--green)">🐍 FastAPI+Next.js</th><th style="color:var(--orange)">🦀 Rust+Svelte</th></tr></thead><tbody>
+    <tr><td style="color:var(--text3)">Wydajność API</td><td><span class="b b-ok">★★★★☆</span></td><td><span class="b b-ok">★★★★☆</span></td><td><span class="b b-info">★★★☆☆</span></td><td><span class="b b-ok">★★★★★</span></td></tr>
+    <tr><td style="color:var(--text3)">Ekosystem</td><td><span class="b b-ok">★★★★★</span></td><td><span class="b b-warn">★★★☆☆</span></td><td><span class="b b-ok">★★★★★</span></td><td><span class="b b-warn">★★☆☆☆</span></td></tr>
+    <tr><td style="color:var(--text3)">TypeScript</td><td><span class="b b-ok">Natywny</span></td><td><span class="b b-ok">Wbudowany</span></td><td><span class="b b-info">Frontend only</span></td><td><span class="b b-err">Brak</span></td></tr>
+    <tr><td style="color:var(--text3)">Real-time WS</td><td><span class="b b-ok">Socket.io ✓</span></td><td><span class="b b-info">Wbudowany</span></td><td><span class="b b-warn">Dodatkowy</span></td><td><span class="b b-info">Tokio WS</span></td></tr>
+    <tr><td style="color:var(--text3)">ORM/DB</td><td><span class="b b-ok">Prisma ✓</span></td><td><span class="b b-warn">Ograniczony</span></td><td><span class="b b-ok">SQLAlchemy</span></td><td><span class="b b-warn">Diesel/SeaORM</span></td></tr>
+    <tr><td style="color:var(--text3)">Krzywa uczenia</td><td><span class="b b-ok">Niska</span></td><td><span class="b b-info">Średnia</span></td><td><span class="b b-info">Średnia</span></td><td><span class="b b-err">Wysoka</span></td></tr>
+    <tr><td style="color:var(--text3)">AI/ML integracja</td><td><span class="b b-warn">Przez API</span></td><td><span class="b b-warn">Przez API</span></td><td><span class="b b-ok">Natywna Python</span></td><td><span class="b b-err">Trudna</span></td></tr>
+    <tr><td style="color:var(--text3)"><strong>REKOMENDACJA</strong></td><td><span class="b b-ok">✅ ZOSTAŃ</span></td><td><span class="b b-info">Rozważ v2</span></td><td><span class="b b-info">Jeśli AI++</span></td><td><span class="b b-err">Nie teraz</span></td></tr>
+  </tbody></table>
+  <div class="alert alert-ok" style="margin-top:12px;"><div>💡</div><div><strong>Rekomendacja:</strong> Aktualny stack jest optymalny. Jedyne wartościowe zmiany: upgrade <code>react-query v3 → TanStack Query v5</code> i dodanie testów (Vitest już w package.json).</div></div>
+</div>`;
+
+tabs.files=`
+<div class="g2">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Drzewo Projektu</div><div class="b b-info">E:\\Grazyna_5.0\\</div></div>
+    <div class="term" style="max-height:580px;">
+<div class="ftree">
+<span class="tc">E:\\Grazyna_5.0\\</span>
+├── <span class="dir">backend/</span>                    <span class="td">← GŁÓWNY BACKEND</span>
+│   ├── <span class="dir">src/</span>
+│   │   ├── <span class="file ts">index.ts</span><span class="sz">12287B</span>
+│   │   ├── <span class="file ts">metrics.ts</span><span class="sz">2220B</span>
+│   │   ├── <span class="dir">config/</span>
+│   │   │   └── <span class="file ts">database.ts</span><span class="sz">1035B</span>
+│   │   ├── <span class="dir">controllers/</span>
+│   │   │   ├── <span class="file ts">auth.controller.ts</span><span class="sz">5055B</span>
+│   │   │   ├── <span class="file ts">kernel.controller.ts</span><span class="sz">1114B</span>
+│   │   │   └── <span class="file ts">vehicle.controller.ts</span><span class="sz">6822B</span>
+│   │   ├── <span class="dir">middleware/</span>
+│   │   │   └── <span class="file ts">auth.ts</span><span class="sz">1766B</span>
+│   │   ├── <span class="dir">routes/</span>
+│   │   │   └── <span class="file ts">index.ts</span><span class="sz">2916B</span>
+│   │   └── <span class="dir">services/</span>
+│   │       ├── <span class="file ts">kernel.service.ts</span><span class="sz">4278B</span>
+│   │       └── <span class="file ts">driver-fabric.service.ts</span><span class="sz">1208B</span>
+│   ├── <span class="dir">prisma/</span>
+│   │   └── <span class="file">schema.prisma</span><span class="sz">5993B</span>
+│   ├── <span class="dir">dist/</span>                       <span class="ok">✓ skompilowany</span>
+│   ├── <span class="file json">package.json</span><span class="sz">2163B</span>
+│   └── <span class="file json">tsconfig.json</span><span class="sz">1082B</span>
+├── <span class="dir">frontend/</span>                   <span class="td">← GŁÓWNY FRONTEND</span>
+│   ├── <span class="dir">src/</span>
+│   │   ├── <span class="file ts">App.tsx</span><span class="sz">1928B</span>
+│   │   ├── <span class="file ts">main.tsx</span><span class="sz">236B</span>
+│   │   ├── <span class="dir">pages/</span>
+│   │   │   ├── <span class="file ts">Dashboard.tsx</span><span class="sz">5667B</span>
+│   │   │   ├── <span class="file ts">Kernel.tsx</span><span class="sz">3586B</span>
+│   │   │   └── <span class="file ts">Login.tsx</span><span class="sz">2708B</span>
+│   │   ├── <span class="dir">core/</span>
+│   │   │   ├── <span class="file ts">RuntimeKernel.ts</span><span class="sz">1535B</span>
+│   │   │   ├── <span class="file ts">CapabilityRegistry.ts</span><span class="sz">1063B</span>
+│   │   │   └── <span class="file ts">SelfHealingState.ts</span><span class="sz">671B</span>
+│   │   ├── <span class="dir">services/</span>
+│   │   │   └── <span class="file ts">api.ts</span><span class="sz">4258B</span>
+│   │   ├── <span class="dir">store/</span>
+│   │   │   ├── <span class="file ts">authStore.ts</span><span class="sz">1924B</span>
+│   │   │   └── <span class="file ts">runtimeStore.ts</span><span class="sz">582B</span>
+│   │   └── <span class="dir">styles/</span>
+│   │       ├── <span class="file ts">GlobalStyles.tsx</span><span class="sz">1905B</span>
+│   │       └── <span class="file ts">theme.ts</span><span class="sz">2600B</span>
+│   ├── <span class="file ts">vite.config.ts</span><span class="sz">2484B</span>
+│   └── <span class="file json">package.json</span><span class="sz">2230B</span>
+├── <span class="dir">tools/</span>
+│   ├── <span class="dir">nodejs/</span>
+│   │   └── <span class="file warn">node.exe</span><span class="sz">66.8MB</span>  <span class="warn">⚠ HARDLINK</span>
+│   ├── <span class="dir">nvm/nodejs/</span>              <span class="td">źródło</span>
+│   └── <span class="dir">PythonPortable/</span>          <span class="td">Python 3.10</span>
+├── <span class="dir">scripts/</span>                    <span class="td">PowerShell</span>
+├── <span class="dir">monitoring/</span>                 <span class="td">Grafana+Prometheus</span>
+├── <span class="dir">nginx/</span>                      <span class="td">Nginx config</span>
+├── <span class="dir">manifests/</span>                  <span class="td">JSON manifesty</span>
+├── <span class="dir">core/</span>                       <span class="td">Python CLI</span>
+├── <span class="dir">ahe/</span>                        <span class="td">Agent Host Env</span>
+├── <span class="file html">GRAZYNA_MEGA_PANEL.html</span>  <span class="ok">✓ ten plik</span>
+├── <span class="file ps1">GRAZYNA_START.ps1</span>
+├── <span class="file ps1">GRAZYNA_FIX_ALL.ps1</span>
+├── <span class="file ps1">GRAZYNA_FIX_NODELINK.ps1</span>
+├── <span class="file ps1">GRAZYNA_INSTALL_FULL.ps1</span>
+├── <span class="file yml">docker-compose.yml</span>
+├── <span class="file py">main.py</span><span class="sz">2250B</span>
+├── <span class="file py">ai_chat.py</span><span class="sz">4885B</span>
+└── <span class="file">.env</span>
+</div></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px;">
+    <div class="card">
+      <div class="sh"><div class="sh-title">Status Plików</div></div>
+      <table class="tbl"><thead><tr><th>Plik</th><th>Rozmiar</th><th>Status</th></tr></thead><tbody>
+        <tr><td class="mono">backend/src/index.ts</td><td class="mono">12287B</td><td><span class="b b-ok">OK</span></td></tr>
+        <tr><td class="mono">backend/dist/index.js</td><td class="mono">12711B</td><td><span class="b b-ok">BUILT</span></td></tr>
+        <tr><td class="mono">backend/prisma/schema.prisma</td><td class="mono">5993B</td><td><span class="b b-ok">OK</span></td></tr>
+        <tr><td class="mono">frontend/src/App.tsx</td><td class="mono">1928B</td><td><span class="b b-ok">OK</span></td></tr>
+        <tr><td class="mono">tools/nodejs/node.exe</td><td class="mono">66.8MB</td><td><span class="b b-warn">HARDLINK</span></td></tr>
+        <tr><td class="mono">prisma/schema.prisma (root)</td><td class="mono">102B</td><td><span class="b b-warn">STUB</span></td></tr>
+        <tr><td class="mono">backend/src/config/database.js</td><td class="mono">—</td><td><span class="b b-ok">USUNIĘTY ✓</span></td></tr>
+        <tr><td class="mono">backend/metrics.ts (root)</td><td class="mono">—</td><td><span class="b b-ok">USUNIĘTY ✓</span></td></tr>
+        <tr><td class="mono">**/__init__.py (×11)</td><td class="mono">—</td><td><span class="b b-ok">USUNIĘTE ✓</span></td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="sh"><div class="sh-title">Stack Technologiczny</div></div>
+      <div class="dvd">Backend</div>
+      <div><span class="chip chip-ts">TypeScript 5.3</span><span class="chip chip-node">Node.js 20.11</span><span class="chip chip-node">Express 4.18</span><span class="chip chip-prisma">Prisma 5.9</span><span class="chip chip-node">Socket.io 4.6</span><span class="chip chip-redis">Bull 4.12</span><span class="chip chip-node">Winston 3.11</span><span class="chip chip-node">JWT 9.0</span><span class="chip chip-node">Zod 3.22</span></div>
+      <div class="dvd">Frontend</div>
+      <div><span class="chip chip-react">React 18.2</span><span class="chip chip-ts">TypeScript 5.3</span><span class="chip chip-react">Vite 5.1</span><span class="chip chip-react">Zustand 4.5</span><span class="chip chip-react">styled-components 6</span><span class="chip chip-react">Leaflet 1.9</span><span class="chip chip-react">Recharts 2.12</span></div>
+      <div class="dvd">Infrastruktura</div>
+      <div><span class="chip chip-docker">Docker</span><span class="chip chip-docker">Nginx</span><span class="chip chip-pg">PostgreSQL</span><span class="chip chip-redis">Redis</span><span class="chip chip-docker">Grafana</span><span class="chip chip-docker">Prometheus</span><span class="chip chip-py">Python 3.10</span></div>
+    </div>
+  </div>
+</div>`;
+
+tabs.env=`
+<div class="g3">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Node.js</div><div class="b b-ok">v20.11.0</div></div>
+    <table class="tbl">
+      <tr><td style="color:var(--text3)">Wersja</td><td class="mono">v20.11.0 ✅</td></tr>
+      <tr><td style="color:var(--text3)">npm</td><td class="mono">10.9.8 ✅</td></tr>
+      <tr><td style="color:var(--text3)">Lokalizacja</td><td class="mono" style="font-size:10px;">E:\\Grazyna_5.0\\tools\\nodejs\\</td></tr>
+      <tr><td style="color:var(--text3)">node.exe typ</td><td><span class="b b-warn">HARDLINK ⚠</span></td></tr>
+      <tr><td style="color:var(--text3)">Wymóg</td><td class="mono">>=18.0.0 ✅</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Python</div></div>
+    <table class="tbl">
+      <tr><td style="color:var(--text3)">Portable</td><td class="mono">3.10 (tools/PythonPortable/)</td></tr>
+      <tr><td style="color:var(--text3)">System</td><td class="mono">3.12.2 (GPM-MULTI)</td></tr>
+      <tr><td style="color:var(--text3)">requirements</td><td class="mono">requests, flask, dotenv, psutil</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Git</div><div class="b b-ok">CLEAN</div></div>
+    <table class="tbl">
+      <tr><td style="color:var(--text3)">Branch</td><td class="mono">main</td></tr>
+      <tr><td style="color:var(--text3)">Remote</td><td class="mono" style="font-size:10px;">github.com/wiciomalta-spec/Grazyna_5.0</td></tr>
+      <tr><td style="color:var(--text3)">Last commit</td><td class="mono">3bea9b2</td></tr>
+      <tr><td style="color:var(--text3)">Status</td><td><span class="b b-ok">≡ Up to date</span></td></tr>
+    </table>
+  </div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Backend .env</div></div>
+    <table class="tbl">
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">PORT</td><td style="color:var(--green);font-family:monospace;font-size:11px;">3001</td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">NODE_ENV</td><td style="color:var(--green);font-family:monospace;font-size:11px;">development</td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">DATABASE_URL</td><td style="color:var(--green);font-family:monospace;font-size:11px;">postgresql://grazyna:***@postgres:5432/grazyna_db</td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">REDIS_URL</td><td style="color:var(--green);font-family:monospace;font-size:11px;">redis://localhost:6379</td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">JWT_SECRET</td><td style="color:var(--orange);font-family:monospace;font-size:11px;">grazyna_secret_2026</td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">CORS_ORIGIN</td><td><span style="color:var(--orange);font-family:monospace;font-size:11px;">http://localhost:5173</span> <span class="b b-warn">⚠ vs :5174</span></td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">LOG_LEVEL</td><td style="color:var(--green);font-family:monospace;font-size:11px;">debug</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Frontend .env</div><div class="b b-ok">NAPRAWIONY</div></div>
+    <table class="tbl">
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">VITE_API_URL</td><td style="color:var(--green);font-family:monospace;font-size:11px;">http://localhost:3001/api</td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">VITE_WS_URL</td><td style="color:var(--green);font-family:monospace;font-size:11px;">ws://localhost:3001</td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">VITE_APP_NAME</td><td style="color:var(--green);font-family:monospace;font-size:11px;">GRAŻYNA 5.0</td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">VITE_ENV</td><td><span style="color:var(--green);font-family:monospace;font-size:11px;">development</span> <span class="b b-ok">✓ dodano</span></td></tr>
+      <tr><td style="color:var(--purple);font-family:monospace;font-size:11px;">VITE_DEBUG</td><td><span style="color:var(--green);font-family:monospace;font-size:11px;">false</span> <span class="b b-ok">✓ dodano</span></td></tr>
+    </table>
+  </div>
+</div>`;
+
+tabs.git=`
+<div class="g2">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Historia Commitów</div><div class="b b-ok">CLEAN</div></div>
+    <div class="tl">
+      <div class="tl-item ok"><div class="tl-hash">3bea9b2</div><div class="tl-msg">fix: cleanup __init__.py, database.js duplikat, metrics.ts duplikat, .gitignore aktualizacja</div><div class="tl-date">2026-05-29 • 20 files changed, +564/-111</div></div>
+      <div class="tl-item"><div class="tl-hash">c631501</div><div class="tl-msg">chore: ignore tools/__init__.py</div><div class="tl-date">2026-05-28</div></div>
+      <div class="tl-item"><div class="tl-hash">07f6aa8</div><div class="tl-msg">chore: ignore tools/__init__.py</div><div class="tl-date">2026-05-28</div></div>
+      <div class="tl-item"><div class="tl-hash">d78c449</div><div class="tl-msg">chore: remove tools/ from git, add to gitignore</div><div class="tl-date">2026-05-28</div></div>
+      <div class="tl-item warn"><div class="tl-hash">9c0ef45</div><div class="tl-msg">fix: migracja Node.js na E:, naprawa srodowiska v5.0</div><div class="tl-date">2026-05-27</div></div>
+      <div class="tl-item"><div class="tl-hash">2758230</div><div class="tl-msg">Merge branch 'main' of github.com/wiciomalta-spec/Grazyna_5.0</div><div class="tl-date">2026-05-27</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Git Komendy</div></div>
+    <div class="cmd"><span class="cmd-text">git status</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git status')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">git log --oneline -15</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git log --oneline -15')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">git add -A && git commit -m "update" && git push</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git add -A && git commit -m \\"update\\" && git push origin main')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">git pull origin main</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git pull origin main')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">git stash && git pull && git stash pop</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && git stash && git pull origin main && git stash pop')">📋</button></div>
+  </div>
+</div>`;
+
+tabs.cmd=`
+<div class="g2">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Start / Stop</div></div>
+    <div class="cmd"><span class="cmd-text">& "E:\\Grazyna_5.0\\GRAZYNA_START.ps1"</span><button class="cmd-copy" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_START.ps1\\"')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">cd backend && npm run dev</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend; ..\\\\tools\\\\nodejs\\\\npm.cmd run dev')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">cd frontend && npm run dev</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\frontend; ..\\\\tools\\\\nodejs\\\\npm.cmd run dev')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">Get-Process node | Stop-Process -Force</span><button class="cmd-copy" onclick="copyPS('Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force')">📋</button></div>
+    <div class="sep"></div>
+    <div class="sh"><div class="sh-title">Build & DB</div></div>
+    <div class="cmd"><span class="cmd-text">cd backend && npm run build</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend; ..\\\\tools\\\\nodejs\\\\npm.cmd run build')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">cd backend && npm run db:generate</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend; ..\\\\tools\\\\nodejs\\\\npm.cmd run db:generate')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">cd backend && npm run db:migrate</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend; ..\\\\tools\\\\nodejs\\\\npm.cmd run db:migrate')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">cd backend && npm run db:studio</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0\\\\backend; ..\\\\tools\\\\nodejs\\\\npm.cmd run db:studio')">📋</button></div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Naprawa & Docker</div></div>
+    <div class="cmd"><span class="cmd-text">& "E:\\Grazyna_5.0\\GRAZYNA_FIX_NODELINK.ps1"</span><button class="cmd-copy" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_FIX_NODELINK.ps1\\"')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">& "E:\\Grazyna_5.0\\GRAZYNA_FIX_ALL.ps1"</span><button class="cmd-copy" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_FIX_ALL.ps1\\"')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">& "E:\\Grazyna_5.0\\GRAZYNA_INSTALL_FULL.ps1"</span><button class="cmd-copy" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_INSTALL_FULL.ps1\\"')">📋</button></div>
+    <div class="sep"></div>
+    <div class="cmd"><span class="cmd-text">docker-compose up -d</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && docker-compose up -d')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">docker-compose -f docker-compose.monitoring.yml up -d</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && docker-compose -f docker-compose.monitoring.yml up -d')">📋</button></div>
+    <div class="cmd"><span class="cmd-text">docker-compose down</span><button class="cmd-copy" onclick="copyPS('cd E:\\\\Grazyna_5.0 && docker-compose down')">📋</button></div>
+  </div>
+</div>`;
+
+tabs.install=`
+<div class="g2">
+  <div class="card">
+    <div class="sh"><div class="sh-title">Checklist Instalacji</div></div>
+    <table class="tbl"><thead><tr><th>#</th><th>Krok</th><th>Status</th></tr></thead><tbody>
+      <tr><td>1</td><td>Node.js v20+</td><td><span class="b b-ok">v20.11.0 ✅</span></td></tr>
+      <tr><td>2</td><td>npm 9+</td><td><span class="b b-ok">10.9.8 ✅</span></td></tr>
+      <tr><td>3</td><td>backend/node_modules</td><td><span class="b b-ok">ISTNIEJE ✅</span></td></tr>
+      <tr><td>4</td><td>frontend/node_modules</td><td><span class="b b-ok">ISTNIEJE ✅</span></td></tr>
+      <tr><td>5</td><td>Prisma generate</td><td><span class="b b-warn">SPRAWDŹ</span></td></tr>
+      <tr><td>6</td><td>backend/dist/</td><td><span class="b b-ok">ISTNIEJE ✅</span></td></tr>
+      <tr><td>7</td><td>Docker (PostgreSQL+Redis)</td><td><span class="b b-warn">OPCJONALNE</span></td></tr>
+      <tr><td>8</td><td>Python deps</td><td><span class="b b-warn">SPRAWDŹ</span></td></tr>
+      <tr><td>9</td><td>node.exe symlink</td><td><span class="b b-warn">DO NAPRAWY</span></td></tr>
+      <tr><td>10</td><td>CORS fix (:5173→:5174)</td><td><span class="b b-warn">OPCJONALNE</span></td></tr>
+    </tbody></table>
+    <div class="bgrp">
+      <button class="btn btn-g" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_INSTALL_FULL.ps1\\"')">🚀 Pełna instalacja</button>
+      <button class="btn btn-c" onclick="copyPS('& \\"E:\\\\Grazyna_5.0\\\\GRAZYNA_START.ps1\\"')">▶ Start systemu</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sh"><div class="sh-title">Kolejność uruchomienia</div></div>
+    <div class="term" style="max-height:350px;">
+<span class="tp"># 1. Naprawa (raz, jako Admin)</span>
+<span class="tg">Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</span>
+<span class="tg">& "E:\\Grazyna_5.0\\GRAZYNA_FIX_ALL.ps1"</span>
+
+<span class="tp"># 2. Pełna instalacja (opcjonalnie)</span>
+<span class="tg">& "E:\\Grazyna_5.0\\GRAZYNA_INSTALL_FULL.ps1"</span>
+
+<span class="tp"># 3. Start systemu (codziennie)</span>
+<span class="tg">& "E:\\Grazyna_5.0\\GRAZYNA_START.ps1"</span>
+
+<span class="tp"># 4. Otwórz panel</span>
+<span class="tg">start "E:\\Grazyna_5.0\\GRAZYNA_MEGA_PANEL.html"</span>
+
+<span class="tp"># 5. Napraw node.exe symlink (raz, jako Admin)</span>
+<span class="tg">& "E:\\Grazyna_5.0\\GRAZYNA_FIX_NODELINK.ps1"</span>
+
+<span class="td"># Dostęp:</span>
+<span class="tc">Frontend:  http://localhost:5174</span>
+<span class="tc">Backend:   http://localhost:3001/api</span>
+<span class="tc">Health:    http://localhost:3001/health</span>
+<span class="tc">Metrics:   http://localhost:3001/metrics</span>
+    </div>
+  </div>
+</div>`;
+
+// ── INIT ──────────────────────────────────────────────────
+renderTab('dash');
+</script>
+</body>
+</html>

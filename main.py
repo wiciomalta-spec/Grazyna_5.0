@@ -21,7 +21,7 @@ import time
 # LOG
 # =========================
 def log(msg: str):
-    ts = time.strftime("[%Y-%m-%d %H:%M:%S]")
+#     ts = time.strftime("[%Y-%m-%d %H:%M:%S]")
     print(f"{ts} {msg}")
 
 # =========================
@@ -55,27 +55,44 @@ def execute_action(action: str):
 # =========================
 # CLI ENTRYPOINT
 # =========================
+
+
+
+# ===== CLI ACTION EXECUTION =====
+def execute_action(action):
+    import subprocess, sys, os
+
+    actions = {
+        "open_terminal": lambda: subprocess.Popen(["powershell.exe"]),
+        "restart_system": lambda: os.execv(sys.executable, [sys.executable] + sys.argv),
+        "open_gpt": lambda: print("[ACTION] GPT opened"),
+        "open_data_analysis": lambda: print("[ACTION] Analysis opened"),
+        "disable_voice": lambda: print("[ACTION] Voice OFF"),
+        "enable_voice": lambda: print("[ACTION] Voice ON"),
+    }
+
+    if action in actions:
+        actions[action]()
+    else:
+        print(f"[WARN] Unknown action: {action}")
+
+
+# ===== FINAL CLI ENTRYPOINT =====
 if __name__ == "__main__":
 
     print("🚀 GRAŻYNA CLI MODE AKTYWNY")
 
     while True:
         try:
-            cmd = input("🧠 Komenda: ").strip().lower()
+            cmd = input("🧠 Komenda: ").strip()
 
             if not cmd:
                 continue
 
-            # normalizacja (usuwanie "grazyna")
-            cmd = cmd.replace("grazyna", "").strip()
-
             suggestions = autocomplete_engine.suggest(cmd)
-            meta = intent_parser.resolve(cmd, return_meta=True)
-
-            action = meta.get("action")
+            action = intent_parser.resolve(cmd)
 
             print("💡 Sugestie:", suggestions)
-            print(f"🔍 match: {meta.get('match')} | score: {meta.get('score')}")
 
             if action:
                 print("⚡ Akcja:", action)
