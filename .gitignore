@@ -119,3 +119,4 @@ _cache/
 
 _reports_fixroot/
 frontend/release/win-unpacked/resources/app.asar
+frontend/release/win-unpacked/
