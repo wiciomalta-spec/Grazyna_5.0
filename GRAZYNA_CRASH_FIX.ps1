@@ -18,7 +18,7 @@ function L($level, $msg) {
 
 Write-Host ""
 Write-Host "╔══════════════════════════════════════════════════════════╗" -ForegroundColor Red
-Write-Host "║   GRAŻYNA 5.0 — FIX CRASH + ROZBUDOWA BACKENDU        ║" -ForegroundColor Red
+Write-Host "║   GRAŻYNA 5.0 — FIX CRASH + ROZBUDOWA BACKENDU           ║" -ForegroundColor Red
 Write-Host "╚══════════════════════════════════════════════════════════╝" -ForegroundColor Red
 Write-Host ""
 
@@ -286,7 +286,7 @@ L "OK" "Zmiany wypchnięte do GitHub"
 
 Write-Host ""
 Write-Host "╔══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║   ✅ FIX + ROZBUDOWA ZAKOŃCZONE                        ║" -ForegroundColor Green
+Write-Host "║   ✅ FIX + ROZBUDOWA ZAKOŃCZONE                          ║" -ForegroundColor Green
 Write-Host "╚══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Nowe endpointy:" -ForegroundColor Cyan

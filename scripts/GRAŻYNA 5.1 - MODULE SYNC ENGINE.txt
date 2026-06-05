@@ -1,0 +1,217 @@
+=====================================================================
+GRAŻYNA 5.1 - MODULE SYNC ENGINE
+DODAJ NA KOŃCU Install-GrazynaTileSystem.ps1
+=====================================================================
+
+$ScriptsRoot = "E:\Grazyna_5.0\scripts"
+
+if(!(Test-Path $ScriptsRoot))
+{
+Write-Warning "Nie znaleziono katalogu scripts."
+return
+}
+
+$PluginRoot = Join-Path $ScriptsRoot "plugins"
+$IntegrationRoot = Join-Path $ScriptsRoot "integration"
+
+New-Item -ItemType Directory -Path $PluginRoot -Force | Out-Null
+New-Item -ItemType Directory -Path $IntegrationRoot -Force | Out-Null
+
+$SyncReport = @()
+
+function Get-ModuleScore
+{
+param(
+[string]$File
+)
+
+try
+{
+    $Content = Get-Content $File -Raw -ErrorAction Stop
+
+    $FunctionCount =
+        ([regex]::Matches($Content,"function\s+")).Count
+
+    $ClassCount =
+        ([regex]::Matches($Content,"class\s+")).Count
+
+    $ImportCount =
+        ([regex]::Matches($Content,"import\s+")).Count
+
+    return (
+        ($FunctionCount * 2) +
+        ($ClassCount * 3) +
+        ($ImportCount)
+    )
+}
+catch
+{
+    return 0
+}
+
+}
+
+$Supported = @(
+".py",
+".ps1",
+".json",
+".yaml",
+".yml",
+".js",
+"*.ts"
+)
+
+$ExistingModules = @()
+
+foreach($Pattern in $Supported)
+{
+$ExistingModules += Get-ChildItem $ScriptsRoot
+-Recurse -File
+-Filter $Pattern `
+-ErrorAction SilentlyContinue
+}
+
+foreach($Module in $ExistingModules)
+{
+$ModuleName = $Module.BaseName
+
+$ModuleScore = Get-ModuleScore $Module.FullName
+
+$SyncReport += @{
+    module = $ModuleName
+    path = $Module.FullName
+    score = $ModuleScore
+    action = "registered"
+}
+
+}
+
+$SyncReport |
+ConvertTo-Json -Depth 50 |
+Set-Content `
+"$IntegrationRoot\module_inventory.json"
+
+$Grouped =
+$ExistingModules |
+Group-Object BaseName
+
+foreach($Group in $Grouped)
+{
+if($Group.Count -gt 1)
+{
+$BestModule =
+$Group.Group |
+Sort-Object {
+
+            Get-ModuleScore $_.FullName
+
+        } -Descending |
+        Select-Object -First 1
+
+    foreach($Item in $Group.Group)
+    {
+        if($Item.FullName -ne $BestModule.FullName)
+        {
+            $PluginFolder =
+                Join-Path `
+                $PluginRoot `
+                $Item.BaseName
+
+            New-Item `
+                -ItemType Directory `
+                -Path $PluginFolder `
+                -Force | Out-Null
+
+            Copy-Item `
+                $Item.FullName `
+                $PluginFolder `
+                -Force
+
+            $SyncReport += @{
+                module = $Item.BaseName
+                action = "pluginized"
+                primary = $BestModule.FullName
+                secondary = $Item.FullName
+            }
+        }
+    }
+}
+
+}
+
+$Configs =
+Get-ChildItem $ScriptsRoot
+-Recurse -Include *.json
+-File `
+-ErrorAction SilentlyContinue
+
+$MergedConfig = @{}
+
+foreach($Config in $Configs)
+{
+try
+{
+$Data =
+Get-Content $Config.FullName
+-Raw |
+ConvertFrom-Json
+
+    foreach($Property in $Data.PSObject.Properties)
+    {
+        $MergedConfig[$Property.Name] =
+        $Property.Value
+    }
+}
+catch
+{
+}
+
+}
+
+$MergedConfig |
+ConvertTo-Json -Depth 50 |
+Set-Content `
+"$IntegrationRoot\merged_config.json"
+
+$HealthStatus = @{
+generated = (Get-Date)
+modules = $ExistingModules.Count
+grouped_modules = $Grouped.Count
+configs = $Configs.Count
+}
+
+$HealthStatus |
+ConvertTo-Json |
+Set-Content `
+"$IntegrationRoot\health_status.json"
+
+$RollbackFile =
+Join-Path $ScriptsRoot
+"rollback-sync.ps1"
+
+@"
+Get-ChildItem '$ScriptsRoot'
+-Recurse `
+-Filter *.bak |
+ForEach-Object {
+
+Copy-Item $.FullName ($.FullName -replace '.bak$','') `
+-Force
+
+}
+"@ |
+Set-Content $RollbackFile
+-Encoding UTF8
+
+$SyncReport |
+ConvertTo-Json -Depth 50 |
+Set-Content `
+"$IntegrationRoot\sync_report.json"
+
+Write-Host ""
+Write-Host "===================================" -ForegroundColor Green
+Write-Host " GRAŻYNA MODULE SYNC COMPLETED"
+Write-Host "===================================" -ForegroundColor Green
+Write-Host "Modules: $($ExistingModules.Count)"
+Write-Host "Configs: $($Configs.Count)"
+Write-Host ""

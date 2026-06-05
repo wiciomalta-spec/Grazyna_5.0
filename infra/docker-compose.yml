@@ -1,0 +1,88 @@
+version 3.9
+
+services
+  postgres
+    image postgres15-alpine
+    restart unless-stopped
+    environment
+      POSTGRES_DB ${POSTGRES_DB-grazyna_db}
+      POSTGRES_USER ${POSTGRES_USER-grazyna}
+      POSTGRES_PASSWORD ${POSTGRES_PASSWORD-grazyna123}
+      PGDATA varlibpostgresqldatapgdata
+    volumes
+      - postgres_datavarlibpostgresqldata
+    healthcheck
+      test [CMD-SHELL, pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}]
+      interval 10s
+      timeout 5s
+      retries 5
+
+  redis
+    image redis7-alpine
+    restart unless-stopped
+    command [redis-server, --appendonly, yes]
+    volumes
+      - redis_datadata
+    healthcheck
+      test [CMD, redis-cli, ping]
+      interval 10s
+      timeout 5s
+      retries 5
+
+  backend
+    build
+      context .backend
+      dockerfile Dockerfile
+    image grazyna-backendlatest
+    restart unless-stopped
+    env_file
+      - .backend.env
+    depends_on
+      - postgres
+      - redis
+    ports
+      - 30013001
+    volumes
+      - backend-dataappdata
+    environment
+      NODE_ENV production
+      REDIS_URL ${REDIS_URL-redisredis6379}
+      DATABASE_URL ${DATABASE_URL-postgresqlgrazynagrazyna123@postgres5432grazyna_db}
+      PRISMA_CLIENT_ENGINE_TYPE library
+    healthcheck
+      test [CMD-SHELL, wget --no-verbose --tries=1 --spider httplocalhost3001health  exit 1]
+      interval 30s
+      timeout 10s
+      retries 3
+
+  nginx
+    image nginxalpine
+    restart unless-stopped
+    ports
+      - 808080
+    volumes
+      - .nginxconf.detcnginxconf.dro
+    depends_on
+      - backend
+
+  prometheus
+    image promprometheuslatest
+    restart unless-stopped
+    ports
+      - 90909090
+    volumes
+      - .monitoringprometheusetcprometheusro
+
+  grafana
+    image grafanagrafanalatest
+    restart unless-stopped
+    ports
+      - 30003000
+    volumes
+      - grafana_datavarlibgrafana
+
+volumes
+  postgres_data
+  redis_data
+  backend-data
+  grafana_data

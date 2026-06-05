@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMY – 1:1 z ULTIMATE
+enum UserRole { ADMIN MANAGER OPERATOR VIEWER }
+enum VehicleType { STANDARD HEAVY LIGHT DRONE SPECIAL }
+enum VehicleStatus { IDLE ACTIVE CHARGING MAINTENANCE OFFLINE ERROR }
+enum MissionStatus { PENDING SCHEDULED IN_PROGRESS PAUSED COMPLETED CANCELLED FAILED }
+enum MissionPriority { LOW NORMAL HIGH CRITICAL }
+enum EventType { SYSTEM VEHICLE MISSION USER SECURITY MAINTENANCE }
+enum EventSeverity { DEBUG INFO WARNING ERROR CRITICAL }
+enum AlertSeverity { LOW MEDIUM HIGH CRITICAL }
+enum AlertType { SPEED GEOFENCE MAINTENANCE FUEL SYSTEM CUSTOM }
+
+// MODELE – identyczne jak w `schema.ultimate.prisma` (bez HYBRID)
+/// … wklejasz dokładnie te same modele co w ULTIMATE …

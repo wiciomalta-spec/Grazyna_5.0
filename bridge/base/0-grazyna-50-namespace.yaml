@@ -1,0 +1,8 @@
+#! 0-grazyna-50-namespace.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: grazyna-50
+    labels:
+        com.docker.compose.project: grazyna_50

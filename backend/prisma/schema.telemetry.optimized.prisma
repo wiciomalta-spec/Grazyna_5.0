@@ -1,0 +1,7 @@
+model Telemetry {
+  ...
+  @@index([vehicleId, timestamp])
+  @@index([timestamp])
+  @@index([vehicleId, timestamp], map: "idx_telemetry_vehicle_ts")
+  @@index([lat, lng], map: "idx_telemetry_geo")
+}

@@ -1,5 +1,5 @@
 // ============================================================
-// GRAŻYNA 5.0 — Schema Prisma dla PostgreSQL (Supabase)
+// GRAZYNA_5.0 — Schema Prisma dla PostgreSQL (Supabase)
 // ============================================================
 
 generator client {

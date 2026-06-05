@@ -1,0 +1,11 @@
+enum UserRole {
+  ADMIN
+  MANAGER
+  OPERATOR
+  VIEWER
+}
+
+model User {
+  role UserRole @default(OPERATOR)
+  ...
+}

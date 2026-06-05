@@ -1,0 +1,204 @@
+=====================================================================
+GRAŻYNA 5.1 - SAFE INTEGRATION EXTENSION
+DODAJ NA KOŃCU ISTNIEJĄCEGO SKRYPTU
+=====================================================================
+
+$IntegrationFolder = Join-Path $RootPath "integration"
+
+if (!(Test-Path $IntegrationFolder))
+{
+New-Item -ItemType Directory
+-Path $IntegrationFolder `
+-Force | Out-Null
+}
+
+Start-Transcript -Path "$RootPath\logs\integration.log"
+-Append `
+-Force
+
+function Save-FileSafe
+{
+param(
+[string]$Path,
+[string]$Content
+)
+
+$Parent = Split-Path $Path -Parent
+
+if(!(Test-Path $Parent))
+{
+    New-Item `
+        -ItemType Directory `
+        -Path $Parent `
+        -Force | Out-Null
+}
+
+if(Test-Path $Path)
+{
+    Copy-Item `
+        $Path `
+        "$Path.bak" `
+        -Force
+}
+
+$Content |
+Set-Content `
+    $Path `
+    -Encoding UTF8
+
+}
+
+$EnvironmentInfo = @{
+computer = $env
+user = $env
+powershell = $PSVersionTable.PSVersion.ToString()
+timestamp = (Get-Date)
+}
+
+try
+{
+$EnvironmentInfo.os =
+(Get-CimInstance Win32_OperatingSystem).Caption
+}
+catch
+{
+}
+
+$EnvironmentInfo |
+ConvertTo-Json -Depth 20 |
+Set-Content `
+"$RootPath\logs\health_status.json"
+
+$SupportedExtensions = @(
+".py",
+".ps1",
+".bat",
+".cmd",
+".exe",
+".json",
+".yaml",
+".yml",
+".sql",
+".js",
+".ts",
+".tsx",
+".jsx",
+".md",
+".txt"
+)
+
+$Modules = @()
+
+Get-ChildItem $RootPath
+-Recurse -File
+-ErrorAction SilentlyContinue |
+ForEach-Object {
+
+if($SupportedExtensions -contains $_.Extension.ToLower())
+{
+    $Modules += @{
+        name = $_.BaseName
+        extension = $_.Extension
+        file = $_.FullName
+        size = $_.Length
+        modified = $_.LastWriteTime
+    }
+}
+
+}
+
+$Modules |
+ConvertTo-Json -Depth 20 |
+Set-Content `
+"$IntegrationFolder\module_registry.json"
+
+$Tiles = @()
+
+foreach($Module in $Modules)
+{
+$Tiles += @{
+title = $Module.name
+path = $Module.file
+type = $Module.extension
+enabled = $true
+generated = $true
+}
+}
+
+$Tiles |
+ConvertTo-Json -Depth 20 |
+Set-Content `
+"$IntegrationFolder\tile_registry.json"
+
+$DependencyGraph = @{
+generated = (Get-Date)
+modules = $Modules.Count
+}
+
+$DependencyGraph |
+ConvertTo-Json |
+Set-Content `
+"$IntegrationFolder\dependency_graph.json"
+
+$PythonScripts =
+Get-ChildItem $RootPath
+-Recurse -Filter *.py
+-ErrorAction SilentlyContinue
+
+$PythonEntries = @()
+
+foreach($Script in $PythonScripts)
+{
+$PythonEntries += @{
+type = "python"
+name = $Script.BaseName
+entry = $Script.FullName
+}
+}
+
+$PythonEntries |
+ConvertTo-Json -Depth 20 |
+Set-Content `
+"$IntegrationFolder\python_registry.json"
+
+$TileLauncherConfig = @{
+version = "5.1"
+dynamic_tiles = $true
+auto_discovery = $true
+auto_reload = $true
+modules_detected = $Modules.Count
+}
+
+$TileLauncherConfig |
+ConvertTo-Json -Depth 20 |
+Set-Content `
+"$RootPath\tile_launcher\config\runtime.json"
+
+@"
+
+Rollback Script
+
+Get-ChildItem -Path '$RootPath'
+-Recurse `
+-Filter *.bak |
+ForEach-Object {
+
+Copy-Item `
+$_.FullName `
+($_.FullName -replace '\.bak$','') `
+-Force
+
+}
+"@ |
+Set-Content "$RootPath\rollback.ps1"
+-Encoding UTF8
+
+Write-Host ""
+Write-Host "======================================" -ForegroundColor Green
+Write-Host " GRAŻYNA INTEGRATION COMPLETED"
+Write-Host "======================================" -ForegroundColor Green
+Write-Host "Modules: $($Modules.Count)"
+Write-Host "Python Scripts: $($PythonEntries.Count)"
+Write-Host ""
+
+Stop-Transcript

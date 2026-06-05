@@ -78,6 +78,29 @@ def execute_action(action):
 
 
 # ===== FINAL CLI ENTRYPOINT =====
+
+
+
+# ===== CLI ACTION EXECUTION =====
+def execute_action(action):
+    import subprocess, sys, os
+
+    actions = {
+        "open_terminal": lambda: subprocess.Popen(["powershell.exe"]),
+        "restart_system": lambda: os.execv(sys.executable, [sys.executable] + sys.argv),
+        "open_gpt": lambda: print("[ACTION] GPT opened"),
+        "open_data_analysis": lambda: print("[ACTION] Analysis opened"),
+        "disable_voice": lambda: print("[ACTION] Voice OFF"),
+        "enable_voice": lambda: print("[ACTION] Voice ON"),
+    }
+
+    if action in actions:
+        actions[action]()
+    else:
+        print(f"[WARN] Unknown action: {action}")
+
+
+# ===== FINAL CLI ENTRYPOINT =====
 if __name__ == "__main__":
 
     print("🚀 GRAŻYNA CLI MODE AKTYWNY")

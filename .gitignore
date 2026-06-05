@@ -118,3 +118,4 @@ monitor-reports/
 _cache/
 
 _reports_fixroot/
+frontend/release/win-unpacked/resources/app.asar

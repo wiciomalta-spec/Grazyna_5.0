@@ -1,0 +1,15 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.grazyna.app
+productName: Grazyna
+files:
+  - filter:
+      - dist/**/*
+      - electron/**/*
+      - package.json
+asar: true
+win:
+  target:
+    - nsis
+electronVersion: 41.7.1

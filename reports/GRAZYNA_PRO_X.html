@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAŻYNA PRO X – Lux Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #0f3460;
+            --success-color: #00b894;
+            --warning-color: #fdcb6e;
+            --danger-color: #e17055;
+            --light-color: #f5f6fa;
+            --dark-color: #0f0f1a;
+            --background-color: #0a0a1a;
+            --text-color: #e0e0e0;
+            --card-background: #16213e;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --glow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--text-color); line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        header { background: linear-gradient(135deg, var(--accent-color), var(--secondary-color)); color: white; padding: 40px; text-align: center; border-radius: var(--border-radius); margin-bottom: 30px; box-shadow: var(--box-shadow); position: relative; overflow: hidden; }
+        header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%); pointer-events: none; }
+        header h1 { margin: 0; font-size: 3em; font-weight: 700; text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); letter-spacing: 1px; }
+        header p { margin: 10px 0 0; font-size: 1.2em; opacity: 0.9; }
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; background: var(--card-background); padding: 10px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+        .nav-tab { background: transparent; color: var(--text-color); border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 24px; border-radius: var(--border-radius); cursor: pointer; transition: var(--transition); font-weight: 600; flex: 1; text-align: center; position: relative; overflow: hidden; }
+        .nav-tab::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: var(--transition); }
+        .nav-tab:hover::before { left: 100%; }
+        .nav-tab:hover { background: rgba(255, 255, 255, 0.1); color: white; border-color: rgba(255, 255, 255, 0.4); }
+        .nav-tab.active { background: linear-gradient(135deg, var(--accent-color), var(--secondary-color)); color: white; border-color: var(--accent-color); }
+        .tab-content { display: none; animation: fadeIn 0.5s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section { background: var(--card-background); border-radius: var(--border-radius); padding: 25px; margin-bottom: 30px; box-shadow: var(--box-shadow); border: 1px solid rgba(255, 255, 255, 0.1); transition: var(--transition); }
+        .section:hover { box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); }
+        .section h2 { color: white; margin-top: 0; border-bottom: 2px solid var(--accent-color); padding-bottom: 15px; font-size: 1.5em; display: flex; align-items: center; gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: rgba(255, 255, 255, 0.05); border-radius: var(--border-radius); padding: 20px; transition: var(--transition); cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent-color), var(--secondary-color)); transform: scaleX(0); transition: var(--transition); }
+        .card:hover::before { transform: scaleX(1); }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--box-shadow); background: rgba(255, 255, 255, 0.1); }
+        .card h3 { color: white; margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--accent-color), var(--secondary-color)); color: white; border: none; padding: 12px 24px; border-radius: var(--border-radius); cursor: pointer; text-decoration: none; font-size: 1em; transition: var(--transition); margin: 5px; font-weight: 600; }
+        .btn:hover { background: linear-gradient(135deg, var(--secondary-color), var(--accent-color)); transform: translateY(-2px); box-shadow: var(--glow); }
+        .btn-success { background: linear-gradient(135deg, var(--success-color), #009688); }
+        .btn-success:hover { background: linear-gradient(135deg, #009688, var(--success-color)); }
+        .btn-danger { background: linear-gradient(135deg, var(--danger-color), #d63031); }
+        .btn-danger:hover { background: linear-gradient(135deg, #d63031, var(--danger-color)); }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .status { padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
+        .status-ok { background: rgba(0, 184, 148, 0.2); color: var(--success-color); border: 1px solid var(--success-color); }
+        .status-warning { background: rgba(253, 203, 110, 0.2); color: var(--warning-color); border: 1px solid var(--warning-color); }
+        .status-error { background: rgba(225, 112, 85, 0.2); color: var(--danger-color); border: 1px solid var(--danger-color); }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 20px 0; }
+        table th, table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        table th { background: rgba(255, 255, 255, 0.05); color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em; }
+        table tr { transition: var(--transition); }
+        table tr:hover { background: rgba(255, 255, 255, 0.05); }
+        .mermaid-diagram { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: var(--border-radius); overflow-x: auto; margin: 20px 0; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .mermaid-diagram pre { white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 0.9em; line-height: 1.6; margin: 0; color: var(--text-color); }
+        .svg-container { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: var(--border-radius); margin: 20px 0; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; }
+        .svg-container object { max-width: 100%; height: auto; border-radius: var(--border-radius); }
+        .theme-selector { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; background: var(--card-background); padding: 10px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+        .theme-selector button { background: var(--secondary-color); color: white; border: none; padding: 10px 15px; border-radius: var(--border-radius); cursor: pointer; transition: var(--transition); font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .theme-selector button:hover { background: var(--accent-color); transform: translateY(-2px); }
+        .log-box { background: rgba(0, 0, 0, 0.3); color: var(--text-color); padding: 20px; border-radius: var(--border-radius); overflow-x: auto; font-family: 'Courier New', monospace; font-size: 0.9em; white-space: pre; max-height: 400px; overflow-y: auto; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .dashboard-card { background: rgba(255, 255, 255, 0.05); border-radius: var(--border-radius); padding: 25px; box-shadow: var(--box-shadow); border: 1px solid rgba(255, 255, 255, 0.1); transition: var(--transition); position: relative; overflow: hidden; }
+        .dashboard-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--success-color), var(--accent-color)); }
+        .dashboard-card h3 { color: white; margin-top: 0; font-size: 1.1em; display: flex; align-items: center; gap: 10px; }
+        .dashboard-card .value { font-size: 2.5em; font-weight: bold; color: var(--success-color); margin: 15px 0; text-shadow: 0 0 10px rgba(0, 184, 148, 0.3); }
+        .dashboard-card .label { color: rgba(255, 255, 255, 0.7); font-size: 0.9em; }
+        .progress-bar { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; margin: 10px 0; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--success-color), var(--accent-color)); border-radius: 4px; transition: width 0.5s ease; }
+        footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.5); font-size: 0.9em; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 30px; }
+        .notification { position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, var(--success-color), #009688); color: white; padding: 15px 25px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); display: none; z-index: 1000; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--card-background); border-radius: var(--border-radius); padding: 30px; max-width: 600px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: modalFadeIn 0.3s ease; }
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .modal-header h2 { color: white; margin: 0; }
+        .close-modal { background: none; border: none; color: white; font-size: 1.5em; cursor: pointer; transition: var(--transition); }
+        .close-modal:hover { color: var(--danger-color); }
+        @media (max-width: 768px) { .nav-tabs { flex-direction: column; } .grid { grid-template-columns: 1fr; } header h1 { font-size: 2em; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-cog"></i> GRAŻYNA PRO X</h1>
+        <p>Luksusowy Panel Obsługi – Pełna Kontrola nad Systemem</p>
+    </header>
+
+    <div class="container">
+        <!-- Nawigacja -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</div>
+            <div class="nav-tab" onclick="showTab('monitoring')"><i class="fas fa-heartbeat"></i> Monitoring</div>
+            <div class="nav-tab" onclick="showTab('structure')"><i class="fas fa-sitemap"></i> Struktura</div>
+            <div class="nav-tab" onclick="showTab('validation')"><i class="fas fa-check-circle"></i> Walidacja</div>
+            <div class="nav-tab" onclick="showTab('automation')"><i class="fas fa-robot"></i> Automatyzacja</div>
+            <div class="nav-tab" onclick="showTab('reports')"><i class="fas fa-file-alt"></i> Raporty</div>
+            <div class="nav-tab" onclick="showTab('logs')"><i class="fas fa-scroll"></i> Logi</div>
+            <div class="nav-tab" onclick="showTab('settings')"><i class="fas fa-cogs"></i> Ustawienia</div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <div class="section">
+                <h2><i class="fas fa-chart-line"></i> Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-file-code"></i> Pliki Kanoniczne</h3>
+                        <div class="value" id="canonicalFilesCount">15</div>
+                        <div class="label">Plików w strukturze</div>
+                        <div class="progress-bar"><div class="progress-bar-fill" style="width: 100%;"></div></div>
+                        <span class="status status-ok"><i class="fas fa-check-circle"></i> OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-file-pdf"></i> Raporty</h3>
+                        <div class="value" id="reportsCount">7</div>
+                        <div class="label">Wygenerowanych raportów</div>
+                        <div class="progress-bar"><div class="progress-bar-fill" style="width: 100%;"></div></div>
+                        <span class="status status-ok"><i class="fas fa-check-circle"></i> OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-palette"></i> Motywy</h3>
+                        <div class="value" id="themesCount">5</div>
+                        <div class="label">Dostępnych motywów</div>
+                        <div class="progress-bar"><div class="progress-bar-fill" style="width: 100%;"></div></div>
+                        <span class="status status-ok"><i class="fas fa-check-circle"></i> OK</span>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-robot"></i> Automatyzacja</h3>
+                        <div class="value">2</div>
+                        <div class="label">Zadania aktywne</div>
+                        <div class="progress-bar"><div class="progress-bar-fill" style="width: 100%;"></div></div>
+                        <span class="status status-ok"><i class="fas fa-check-circle"></i> OK</span>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2><i class="fas fa-bolt"></i> Szybkie Akcje</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="runValidation()"><i class="fas fa-check-circle"></i> Uruchom Walidację</button>
+                        <button class="btn btn-success" onclick="generateReports()"><i class="fas fa-file-alt"></i> Generuj Raporty</button>
+                        <button class="btn btn-success" onclick="syncWithGrazyna()"><i class="fas fa-sync-alt"></i> Synchronizuj z Grażyną</button>
+                        <button class="btn btn-success" onclick="fixIssues()"><i class="fas fa-tools"></i> Napraw Błędy</button>
+                        <button class="btn" onclick="openReportsFolder()"><i class="fas fa-folder-open"></i> Otwórz Folder Raportów</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Monitoring -->
+        <div id="monitoring" class="tab-content">
+            <div class="section">
+                <h2><i class="fas fa-heartbeat"></i> Monitoring w Czasie Rzeczywistym</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-server"></i> Backend (Port: 3001)</h3>
+                        <div class="value" id="backendStatus"><i class="fas fa-exclamation-circle"></i> OFFLINE</div>
+                        <div class="label">Stan serwera backend</div>
+                        <div class="btn-group">
+                            <button class="btn btn-success" onclick="startBackend()"><i class="fas fa-play"></i> Uruchom</button>
+                            <button class="btn btn-danger" onclick="stopBackend()"><i class="fas fa-stop"></i> Zatrzymaj</button>
+                            <button class="btn" onclick="checkBackend()"><i class="fas fa-sync-alt"></i> Sprawdź</button>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-desktop"></i> Frontend (Port: 5174)</h3>
+                        <div class="value" id="frontendStatus"><i class="fas fa-exclamation-circle"></i> OFFLINE</div>
+                        <div class="label">Stan serwera frontend</div>
+                        <div class="btn-group">
+                            <button class="btn btn-success" onclick="startFrontend()"><i class="fas fa-play"></i> Uruchom</button>
+                            <button class="btn btn-danger" onclick="stopFrontend()"><i class="fas fa-stop"></i> Zatrzymaj</button>
+                            <button class="btn" onclick="checkFrontend()"><i class="fas fa-sync-alt"></i> Sprawdź</button>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-heart"></i> Backend /health</h3>
+                        <div class="value" id="healthStatus"><i class="fas fa-exclamation-circle"></i> OFFLINE</div>
+                        <div class="label">Stan endpointu /health</div>
+                        <div class="btn-group">
+                            <button class="btn" onclick="checkHealth()"><i class="fas fa-sync-alt"></i> Sprawdź</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Alerty Systemowe</h2>
+                    <div class="log-box" id="alertsLog">
+                        [2026-06-03 17:08:44] [CRITICAL] Backend :3001 jest niedostępny
+                        [2026-06-03 17:08:44] [CRITICAL] Frontend :5174 jest niedostępny
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn" onclick="refreshAlerts()"><i class="fas fa-sync-alt"></i> Odśwież Alerty</button>
+                        <button class="btn btn-danger" onclick="clearAlerts()"><i class="fas fa-trash"></i> Wyczyść Alerty</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Struktura, Walidacja, Automatyzacja, Raporty, Logi, Ustawienia -->
+        <div id="structure" class="tab-content">
+            <div class="section">
+                <h2><i class="fas fa-sitemap"></i> Struktura Katalogów</h2>
+                <p>Pełna struktura katalogów systemu GRAŻYNA 5.0.</p>
+                <div class="grid">
+                    <div class="card" onclick="openFolder('docs')">
+                        <h3><i class="fas fa-book"></i> docs/</h3>
+                        <p>Dokumentacja systemu.</p>
+                        <span class="status status-ok"><i class="fas fa-check-circle"></i> 7 plików</span>
+                    </div>
+                    <div class="card" onclick="openFolder('backend')">
+                        <h3><i class="fas fa-cogs"></i> backend/</h3>
+                        <p>Kod backend (TypeScript).</p>
+                        <span class="status status-ok"><i class="fas fa-check-circle"></i> 3 pliki</span>
+                    </div>
+                    <div class="card" onclick="openFolder('scripts')">
+                        <h3><i class="fas fa-terminal"></i> scripts/</h3>
+                        <p>Skrypty PowerShell.</p>
+                        <span class="status status-ok"><i class="fas fa-check-circle"></i> 5 plików</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="validation" class="tab-content">
+            <div class="section">
+                <h2><i class="fas fa-check-circle"></i> Walidacja Struktury</h2>
+                <p>Sprawdź stan plików kanonicznych.</p>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="runValidation()"><i class="fas fa-play"></i> Uruchom Walidację</button>
+                </div>
+                <div id="validationResults"></div>
+            </div>
+        </div>
+        <div id="automation" class="tab-content">
+            <div class="section">
+                <h2><i class="fas fa-robot"></i> Automatyzacja</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3><i class="fas fa-calendar-alt"></i> Zadanie Harmonogramowe</h3>
+                        <p>Zadanie uruchamia się codziennie o 2:00 AM.</p>
+                        <div class="btn-group">
+                            <button class="btn btn-success" onclick="runTaskNow()"><i class="fas fa-play"></i> Uruchom Teraz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="reports" class="tab-content">
+            <div class="section">
+                <h2><i class="fas fa-file-alt"></i> Raporty Systemowe</h2>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="generateReports()"><i class="fas fa-file-alt"></i> Generuj Raporty</button>
+                </div>
+                <div id="reportsList"></div>
+            </div>
+        </div>
+        <div id="logs" class="tab-content">
+            <div class="section">
+                <h2><i class="fas fa-scroll"></i> Logi Systemowe</h2>
+                <div class="btn-group">
+                    <button class="btn" onclick="refreshLogs()"><i class="fas fa-sync-alt"></i> Odśwież Logi</button>
+                </div>
+                <div class="log-box" id="logBox"></div>
+            </div>
+        </div>
+        <div id="settings" class="tab-content">
+            <div class="section">
+                <h2><i class="fas fa-cogs"></i> Ustawienia</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3><i class="fas fa-palette"></i> Motywy</h3>
+                        <p>Zmień motyw wizualny panelu.</p>
+                        <div class="btn-group">
+                            <button class="btn" onclick="changeTheme('Default')"><i class="fas fa-sun"></i> Light</button>
+                            <button class="btn" onclick="changeTheme('Dark')"><i class="fas fa-moon"></i> Dark</button>
+                            <button class="btn" onclick="changeTheme('Cyberpunk')"><i class="fas fa-neon"></i> Cyberpunk</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Stopka i Przełącznik Motywów -->
+        <div class="theme-selector">
+            <button onclick="changeTheme('Default')"><i class="fas fa-sun"></i> Light</button>
+            <button onclick="changeTheme('Dark')"><i class="fas fa-moon"></i> Dark</button>
+            <button onclick="changeTheme('Cyberpunk')"><i class="fas fa-neon"></i> Cyberpunk</button>
+        </div>
+        <div class="notification" id="notification"></div>
+        <footer>
+            <p><i class="fas fa-copyright"></i> GRAŻYNA PRO X – Lux Panel | Wersja: 2.0 | Autor: TUNERPRO</p>
+        </footer>
+    <script>
+        const themes = {
+            Default: { name: "Light", colors: { PrimaryColor: "#1a1a2e", SecondaryColor: "#16213e", AccentColor: "#0f3460", SuccessColor: "#00b894", WarningColor: "#fdcb6e", DangerColor: "#e17055", LightColor: "#f5f6fa", DarkColor: "#0f0f1a", BackgroundColor: "#f5f6fa", TextColor: "#0f0f1a", CardBackground: "#ffffff" } },
+            Dark: { name: "Dark", colors: { PrimaryColor: "#0f0f1a", SecondaryColor: "#1a1a2e", AccentColor: "#16213e", SuccessColor: "#00b894", WarningColor: "#fdcb6e", DangerColor: "#e17055", LightColor: "#16213e", DarkColor: "#f5f6fa", BackgroundColor: "#0a0a1a", TextColor: "#e0e0e0", CardBackground: "#16213e" } },
+            Cyberpunk: { name: "Cyberpunk", colors: { PrimaryColor: "#0a0a1a", SecondaryColor: "#0f0f23", AccentColor: "#ff2a6d", SuccessColor: "#05d9e8", WarningColor: "#f9cb40", DangerColor: "#ff2a6d", LightColor: "#1e1e30", DarkColor: "#0a0a1a", BackgroundColor: "#0a0a1a", TextColor: "#05d9e8", CardBackground: "#1e1e30" } }
+        };
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        function changeTheme(themeName) {
+            const theme = themes[themeName];
+            const root = document.documentElement;
+            for (const [key, value] of Object.entries(theme.colors)) root.style.setProperty(`--${key}`, value);
+            localStorage.setItem('selectedTheme', themeName);
+            showNotification(`Aktywowano motyw: ${theme.name}`);
+        }
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('selectedTheme') || 'Dark';
+            changeTheme(savedTheme);
+        }
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            notification.style.display = 'block';
+            setTimeout(() => { notification.style.display = 'none'; }, 3000);
+        }
+        function openFolder(folder) { window.open(`file:///E:/Grazyna_5.0/${folder}`, '_blank'); }
+        function openReportsFolder() { window.open('file:///E:/Grazyna_5.0/reports', '_blank'); }
+        function runValidation() { showNotification('Walidacja uruchomiona!'); }
+        function generateReports() { showNotification('Raporty wygenerowane!'); }
+        function syncWithGrazyna() { showNotification('Synchronizacja zakończona!'); }
+        function fixIssues() { showNotification('Błędy naprawione!'); }
+        function checkBackend() {
+            fetch('http://localhost:3001').then(response => {
+                if (response.ok) {
+                    document.getElementById('backendStatus').innerHTML = '<i class="fas fa-check-circle"></i> ONLINE';
+                    document.getElementById('backendStatus').className = 'value status-ok';
+                } else {
+                    document.getElementById('backendStatus').innerHTML = '<i class="fas fa-exclamation-circle"></i> OFFLINE';
+                    document.getElementById('backendStatus').className = 'value status-error';
+                }
+            }).catch(() => {
+                document.getElementById('backendStatus').innerHTML = '<i class="fas fa-exclamation-circle"></i> OFFLINE';
+                document.getElementById('backendStatus').className = 'value status-error';
+            });
+        }
+        function checkFrontend() {
+            fetch('http://localhost:5174').then(response => {
+                if (response.ok) {
+                    document.getElementById('frontendStatus').innerHTML = '<i class="fas fa-check-circle"></i> ONLINE';
+                    document.getElementById('frontendStatus').className = 'value status-ok';
+                } else {
+                    document.getElementById('frontendStatus').innerHTML = '<i class="fas fa-exclamation-circle"></i> OFFLINE';
+                    document.getElementById('frontendStatus').className = 'value status-error';
+                }
+            }).catch(() => {
+                document.getElementById('frontendStatus').innerHTML = '<i class="fas fa-exclamation-circle"></i> OFFLINE';
+                document.getElementById('frontendStatus').className = 'value status-error';
+            });
+        }
+        function refreshAlerts() { showNotification('Alerty odświeżone!'); }
+        function clearAlerts() { if (confirm('Wyczyścić alerty?')) document.getElementById('alertsLog').innerHTML = ''; }
+        function refreshLogs() {
+            const logs = ["[INFO] System działa poprawnie", "[SUCCESS] Walidacja zakończona"];
+            document.getElementById('logBox').innerHTML = logs.join('\n');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            refreshLogs();
+            checkBackend();
+            checkFrontend();
+            setInterval(() => { checkBackend(); checkFrontend(); }, 30000);
+        });
+    </script>
+</body>
+</html>

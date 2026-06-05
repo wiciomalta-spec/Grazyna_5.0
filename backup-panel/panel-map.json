@@ -1,0 +1,144 @@
+{
+  "version": "1.0",
+  "root": "E:\\Grazyna_5.0\\backup-panel",
+  "rules": [
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel",
+      "type": "directory",
+      "required": true,
+      "description": "Katalog główny panelu backup"
+    },
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel\\data",
+      "type": "directory",
+      "required": true,
+      "description": "Dane live do dashboardu"
+    },
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel\\dashboard.html",
+      "type": "file",
+      "required": true,
+      "nonEmpty": true,
+      "mustContain": [
+        "Backup Live Dashboard",
+        "backup_live.json",
+        "backup_size_report.csv"
+      ],
+      "description": "Dashboard live"
+    },
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel\\start-backup-dashboard.ps1",
+      "type": "file",
+      "required": true,
+      "nonEmpty": true,
+      "mustContain": [
+        "Get-FreePort",
+        "http.server",
+        "dashboard-port.txt"
+      ],
+      "description": "Start serwera HTTP i dashboardu"
+    },
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel\\sync-backup-data.ps1",
+      "type": "file",
+      "required": true,
+      "nonEmpty": true,
+      "mustContain": [
+        "backup_live.json",
+        "backup_size_report.csv",
+        "backup_integrity_report.txt"
+      ],
+      "description": "Synchronizacja danych z E:\\BACKUPS\\reports do panelu"
+    },
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel\\run-backup-and-panel.ps1",
+      "type": "file",
+      "required": true,
+      "nonEmpty": true,
+      "mustContain": [
+        "backup_grazyna.ps1",
+        "sync-backup-data.ps1",
+        "start-backup-dashboard.ps1"
+      ],
+      "description": "One-click start backup + panel"
+    },
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel\\run-backup-and-panel.bat",
+      "type": "file",
+      "required": true,
+      "nonEmpty": true,
+      "mustContain": [
+        "run-backup-and-panel.ps1"
+      ],
+      "description": "Launcher BAT"
+    },
+    {
+      "path": "E:\\BACKUPS\\backup_grazyna.ps1",
+      "type": "file",
+      "required": true,
+      "nonEmpty": true,
+      "mustContain": [
+        "Get-CimInstance Win32_LogicalDisk",
+        "robocopy",
+        "backup_live.json"
+      ],
+      "description": "Skrypt backupu"
+    },
+    {
+      "path": "E:\\BACKUPS\\reports",
+      "type": "directory",
+      "required": true,
+      "description": "Raporty backupu"
+    },
+    {
+      "path": "E:\\BACKUPS\\reports\\backup_live.json",
+      "type": "file",
+      "required": true,
+      "nonEmpty": true,
+      "mustContain": [
+        "status",
+        "message",
+        "freeGB"
+      ],
+      "description": "Status live z backupu",
+      "dependsOn": [
+        "E:\\BACKUPS\\backup_grazyna.ps1"
+      ]
+    },
+    {
+      "path": "E:\\BACKUPS\\reports\\backup_size_report.csv",
+      "type": "file",
+      "required": false,
+      "description": "Raport rozmiarów",
+      "dependsOn": [
+        "E:\\BACKUPS\\backup_grazyna.ps1"
+      ]
+    },
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel\\data\\backup_live.json",
+      "type": "file",
+      "required": true,
+      "nonEmpty": true,
+      "mustContain": [
+        "status",
+        "message",
+        "freeGB"
+      ],
+      "description": "Live JSON skopiowany do panelu",
+      "dependsOn": [
+        "E:\\Grazyna_5.0\\backup-panel\\sync-backup-data.ps1",
+        "E:\\BACKUPS\\reports\\backup_live.json"
+      ]
+    },
+    {
+      "path": "E:\\Grazyna_5.0\\backup-panel\\data\\backup_size_report.csv",
+      "type": "file",
+      "required": false,
+      "description": "CSV rozmiarów w panelu",
+      "dependsOn": [
+        "E:\\Grazyna_5.0\\backup-panel\\sync-backup-data.ps1",
+        "E:\\BACKUPS\\reports\\backup_size_report.csv"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# check if there is at least one published port
+
+#! postgres-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: postgres-published
+    namespace: grazyna-50
+spec:
+    type: LoadBalancer
+
+# check if there is at least one published port

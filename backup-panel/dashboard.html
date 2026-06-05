@@ -1,0 +1,151 @@
+<!doctype html><!doctype">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRAŻYNA 5.0 — Console + Backup Panel</title>
+
+<style>
+body { background:#0b1220; color:#e2e8f0; font-family:Segoe UI; margin:0;}
+header { padding:15px; background:#111827; border-bottom:1px solid #333;}
+h1 { color:#60a5fa; }
+
+.grid {
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+ gap:12px;
+ padding:12px;
+}
+
+.card {
+ background:#111827;
+ border:1px solid #334155;
+ border-radius:12px;
+ padding:12px;
+}
+
+.kpi { font-size:24px; font-weight:bold; }
+
+.ok { color:#4ade80; }
+.warn { color:#fbbf24; }
+.err { color:#f87171; }
+
+.console {
+ background:#020509;
+ border:1px solid #334155;
+ height:300px;
+ overflow:auto;
+ padding:10px;
+ font-family:monospace;
+}
+
+input {
+ width:100%;
+ padding:8px;
+ background:#020509;
+ border:1px solid #444;
+ color:#fff;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🛡 GRAŻYNA 5.0 — Panel</h1>
+</header>
+
+<div class="grid">
+
+<div class="card">
+<div>Status</div>
+<div id="bk-status" class="kpi">-</div>
+<div id="bk-msg"></div>
+</div>
+
+<div class="card">
+<div>Free Space</div>
+<div id="bk-free" class="kpi">-</div>
+</div>
+
+<div class="card">
+<div>Backup Age</div>
+<div id="bk-age" class="kpi">-</div>
+</div>
+
+<div class="card">
+<div>Health</div>
+<div id="bk-health" class="kpi">-</div>
+</div>
+
+</div>
+
+<div class="card" style="margin:12px">
+<div class="console" id="console"></div>
+<input id="cmd" placeholder="Wpisz komendę..." onkeydown="runCmd(event)">
+</div>
+
+<script>
+
+// ✅ BACKUP MONITOR
+async function loadBackup(){
+ try{
+  const r = await fetch('./data/backup_live.json?t=' + Date.now());
+  const j = await r.json();
+
+  document.getElementById("bk-status").textContent = j.status;
+  document.getElementById("bk-msg").textContent = j.message;
+  document.getElementById("bk-free").textContent = j.freeGB + " GB";
+
+  let age = "-";
+  if(j.time){
+   const diff = Math.floor((Date.now() - new Date(j.time))/1000);
+   age = diff + "s";
+  }
+  document.getElementById("bk-age").textContent = age;
+
+  let health = "OK";
+  if(j.status !== "OK") health = "ERROR";
+  else if(parseInt(age) > 300) health = "STALE";
+
+  document.getElementById("bk-health").textContent = health;
+
+ }catch(e){
+  document.getElementById("bk-status").textContent = "ERR";
+ }
+}
+
+// ✅ KONSOLOWY LOG
+function log(line){
+ const c = document.getElementById("console");
+ c.innerHTML += line + "<br>";
+ c.scrollTop = c.scrollHeight;
+}
+
+// ✅ PROSTA "KONSOLA"
+function runCmd(e){
+ if(e.key === "Enter"){
+  const cmd = e.target.value;
+  log("> " + cmd);
+
+  if(cmd === "backup"){
+    log("➡ uruchom: run-backup-and-panel.bat");
+  } else if(cmd === "status"){
+    loadBackup();
+    log("✔ odświeżono status");
+  } else {
+    log("⚠ nieznana komenda");
+  }
+
+  e.target.value = "";
+ }
+}
+
+// ✅ AUTO REFRESH
+setInterval(loadBackup, 5000);
+loadBackup();
+
+</script>
+
+</body>
+</html>
+
+<html lang="pl">
+<head>
