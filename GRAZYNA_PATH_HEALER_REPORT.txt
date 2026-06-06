@@ -1,0 +1,2 @@
+NAPRAWIONO: GRAZYNA_OOM_PREDICTOR.ps1 → E:\Grazyna_5.0\scripts\monitoring\GRAZYNA_OOM_PREDICTOR.ps1
+NAPRAWIONO: tools/watchdog-ai.ps1 → E:\Grazyna_5.0\scripts\monitoring\watchdog-ai.ps1

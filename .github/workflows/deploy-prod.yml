@@ -12,22 +12,38 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install
+      - name: Create .env file
+        working-directory: ./frontend
+        run: |
+          echo "VITE_API_URL=http://localhost:3001/api" > .env.local
+          cat .env.local
+
+      - name: Install dependencies
+        working-directory: ./frontend
         run: npm ci
 
-      - name: Lint (opcjonalnie)
-        run: npm run lint || true
+      - name: Type checking
+        working-directory: ./frontend
+        run: npm run type-check
 
       - name: Build
+        working-directory: ./frontend
         run: npm run build
 
+      - name: Lint (opcjonalnie)
+        working-directory: ./frontend
+        run: npm run lint || true
+
       - name: Test (opcjonalnie)
+        working-directory: ./frontend
         run: npm test || true
 
       - name: Setup kubectl
@@ -43,9 +59,8 @@ jobs:
 
       - name: Verify cluster
         run: |
-          kubectl version --short
-          kubectl get nodes
-          kubectl get ns
+          kubectl version --client
+          kubectl cluster-info
 
       - name: Apply manifests
         run: kubectl apply -f k8s/
