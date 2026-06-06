@@ -1,11 +1,11 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true
+    "module": "CommonJS",
+    "lib": ["ES2020", "NodeNext"],
+    "types": ["@types/node", "@types/electron"],
+    "outDir": "./dist/electron"
   },
-  "include": ["vite.config.ts"]
+  "include": ["electron/**/*"],
+  "exclude": ["node_modules"]
 }
