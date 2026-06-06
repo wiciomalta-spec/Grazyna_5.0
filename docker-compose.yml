@@ -1,4 +1,9 @@
+version: '3.9'
+
 services:
+  # ═══════════════════════════════════════════
+  # PostgreSQL Database (Primary)
+  # ═══════════════════════════════════════════
   postgres:
     image: postgres:15-alpine
     container_name: grazyna-postgres
@@ -7,38 +12,59 @@ services:
       POSTGRES_DB: grazyna_db
       POSTGRES_USER: grazyna
       POSTGRES_PASSWORD: grazyna123
+      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB -c max_connections=200"
     ports:
-      - "5433:5432"   # ✅ FIX
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U grazyna"]
+      test: ["CMD-SHELL", "pg_isready -U grazyna -d grazyna_db"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     networks:
       - grazyna-network
+    labels:
+      service: "database"
+      version: "15-alpine"
 
+  # ═══════════════════════════════════════════
+  # Redis Cache & Message Queue
+  # ═══════════════════════════════════════════
   redis:
     image: redis:7-alpine
     container_name: grazyna-redis
     restart: unless-stopped
     ports:
-      - "6380:6379"   # ✅ FIX — zmieniony port
+      - "6379:6379"
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
+    command: >
+      redis-server 
+      --appendonly yes 
+      --maxmemory 512mb 
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     networks:
       - grazyna-network
+    labels:
+      service: "cache"
+      version: "7-alpine"
 
+  # ═══════════════════════════════════════════
+  # Backend API (Node.js/Express)
+  # ═══════════════════════════════════════════
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
     container_name: grazyna-backend
     restart: unless-stopped
     environment:
@@ -47,7 +73,9 @@ services:
       DATABASE_URL: postgresql://grazyna:grazyna123@postgres:5432/grazyna_db
       REDIS_URL: redis://redis:6379
       CORS_ORIGIN: http://localhost:5173
-      JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production-please}
+      LOG_LEVEL: info
+      NODE_WORKERS: 4
     ports:
       - "3001:3001"
     depends_on:
@@ -57,23 +85,52 @@ services:
         condition: service_healthy
     networks:
       - grazyna-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     profiles:
       - production
+    labels:
+      service: "api"
+      environment: "production"
 
+  # ═══════════════════════════════════════════
+  # Frontend (React/Vue)
+  # ═══════════════════════════════════════════
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     container_name: grazyna-frontend
     restart: unless-stopped
     ports:
       - "5173:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - grazyna-network
+    environment:
+      VITE_API_URL: http://backend:3001
+      NODE_ENV: production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     profiles:
       - production
+    labels:
+      service: "frontend"
+      environment: "production"
 
+  # ═══════════════════════════════════════════
+  # PgAdmin (Database Management GUI)
+  # ═══════════════════════════════════════════
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: grazyna-pgadmin
@@ -81,19 +138,106 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@grazyna.local
       PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: 'False'
+      PGADMIN_CONFIG_COOKIE_DEFAULT_SECURE: 'False'
+      PGADMIN_CONFIG_COOKIE_DEFAULT_SAMESITE: 'Lax'
     ports:
       - "5050:80"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    networks:
+      - grazyna-network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    profiles:
+      - tools
+    labels:
+      service: "admin"
+      purpose: "database-management"
+
+  # ═══════════════════════════════════════════
+  # Monitoring & Observability (Optional)
+  # ═══════════════════════════════════════════
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: grazyna-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
     networks:
       - grazyna-network
     profiles:
-      - tools
+      - monitoring
+    labels:
+      service: "monitoring"
+      type: "metrics"
 
+  # ═══════════════════════════════════════════
+  # Logging & Debugging (Optional)
+  # ═══════════════════════════════════════════
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grazyna-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - grazyna-network
+    profiles:
+      - monitoring
+    labels:
+      service: "visualization"
+      type: "dashboards"
+
+# ═══════════════════════════════════════════
+# Networks
+# ═══════════════════════════════════════════
 networks:
   grazyna-network:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-grazyna
+      com.docker.network.driver.mtu: 1500
 
+# ═══════════════════════════════════════════
+# Volumes
+# ═══════════════════════════════════════════
 volumes:
   postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${GRAZYNA_DATA_PATH:-./data/postgres}
+
   redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${GRAZYNA_DATA_PATH:-./data/redis}
+
+  pgadmin_data:
+    driver: local
+
+  prometheus_data:
+    driver: local
+
+  grafana_data:
+    driver: local
