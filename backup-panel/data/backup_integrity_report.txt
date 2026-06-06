@@ -1,0 +1,3 @@
+﻿Backup integrity report generated: 2026-06-03 18:59:41
+
+OK | 2026-06.zip | entries=6641 | hash=HASH_OK

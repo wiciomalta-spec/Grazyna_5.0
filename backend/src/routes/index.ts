@@ -9,7 +9,15 @@ import {
   getVehicleStats,
 } from '../controllers/vehicle.controller.js';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
-import { getKernelProfile, getKernelBlueprint, getKernelDrivers, adaptKernel } from '../controllers/kernel.controller.js';
+import {
+  getKernelProfile,
+  getKernelBlueprint,
+  getKernelDrivers,
+  adaptKernel
+} from '../controllers/kernel.controller.js';
+
+// ✅ Isolation Forest
+import { getIsolationForestHandler } from '../redis-isolation-forest.js';
 
 const router = Router();
 
@@ -34,14 +42,14 @@ router.get('/status', (_req, res) => {
 });
 
 // ════════════════════════════════════════════
-// Auth routes (publiczne)
+// Auth routes
 // ════════════════════════════════════════════
 router.post('/auth/login', login);
 router.post('/auth/register', register);
 router.get('/auth/me', authenticateToken, me);
 
 // ════════════════════════════════════════════
-// Vehicle routes (wymagają autoryzacji)
+// Vehicle routes
 // ════════════════════════════════════════════
 router.get('/vehicles', authenticateToken, getAllVehicles);
 router.get('/vehicles/stats/summary', authenticateToken, getVehicleStats);
@@ -57,5 +65,10 @@ router.get('/kernel/profile', getKernelProfile);
 router.get('/kernel/blueprint', getKernelBlueprint);
 router.get('/kernel/drivers', getKernelDrivers);
 router.post('/kernel/adapt', authenticateToken, requireRole('ADMIN', 'MANAGER', 'OPERATOR'), adaptKernel);
+
+// ════════════════════════════════════════════
+// System routes (AI / monitoring)
+// ════════════════════════════════════════════
+router.get('/system/isolation-forest', getIsolationForestHandler);
 
 export default router;

@@ -1,0 +1,27 @@
+model PredictionLog {
+  id          String   @id @default(cuid())
+  modelName   String
+  targetType  String   // cluster | node | worker | system
+  targetId    String?
+  failureProb Float
+  features    String   // JSON string
+  createdAt   DateTime @default(now())
+  @@index([modelName])
+  @@index([targetType, targetId])
+}
+
+model AnomalyRecord {
+  id          String   @id @default(cuid())
+  source      String   // metrics | ml | watchdog | user
+  metricKey   String
+  value       Float
+  zScore      Float?
+  isoScore    Float?
+  ewmaScore   Float?
+  severity    String   @default("MEDIUM")
+  metadata    String?  // JSON
+  createdAt   DateTime @default(now())
+  @@index([metricKey])
+  @@index([severity])
+  @@index([createdAt])
+}
