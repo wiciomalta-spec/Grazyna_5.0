@@ -18,16 +18,24 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install
+      - name: Install dependencies
+        working-directory: ./frontend
         run: npm ci
 
+      - name: Type checking
+        working-directory: ./frontend
+        run: npm run type-check
+
       - name: Lint (opcjonalnie)
+        working-directory: ./frontend
         run: npm run lint || true
 
       - name: Build
+        working-directory: ./frontend
         run: npm run build
 
       - name: Test (opcjonalnie)
+        working-directory: ./frontend
         run: npm test || true
 
       - name: Setup kubectl
