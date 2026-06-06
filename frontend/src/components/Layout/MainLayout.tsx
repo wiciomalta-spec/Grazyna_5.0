@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
@@ -408,3 +408,38 @@ const StatusValue = styled.span`
 `;
 
 export default MainLayout;
+export default function FileMap() {
+  const [files, setFiles] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3001/api/filemap")
+      .then(r => r.json())
+      .then(setFiles);
+  }, []);
+
+  return (
+    <div>
+      <h1>Mapa Plików Grażyna 5.0</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Nazwa</th>
+            <th>Ścieżka</th>
+            <th>Rozmiar</th>
+            <th>Modyfikacja</th>
+          </tr>
+        </thead>
+        <tbody>
+          {files.map((f, i) => (
+            <tr key={i}>
+              <td>{f.Name}</td>
+              <td>{f.Path}</td>
+              <td>{f.Size}</td>
+              <td>{f.Modified}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

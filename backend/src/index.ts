@@ -11,6 +11,8 @@ import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import * as promClient from 'prom-client';
 import cluster from 'node:cluster';
+import filemapRouter from "./routes/filemap";
+app.use("/api", filemapRouter);
 
 // ✅ AI (Redis + Isolation Forest)
 import {
@@ -22,6 +24,7 @@ import {
 import router from './routes/index.js';
 
 const app = express();
+app.use('/api', filemapRouter);
 const httpServer = createServer(app);
 
 // ─────────────────────────────────────────
@@ -239,4 +242,9 @@ httpServer.listen(PORT, () => {
 });
 
 // EXPORTS
-export { app, io, httpServer };
+export { app, io, httpServer };import filemapRouter from "../tools/mapa/filemap_api";
+app.use("/api", filemapRouter);
+
+
+
+
