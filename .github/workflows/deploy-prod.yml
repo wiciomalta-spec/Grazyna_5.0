@@ -59,9 +59,8 @@ jobs:
 
       - name: Verify cluster
         run: |
-          kubectl version --short
-          kubectl get nodes
-          kubectl get ns
+          kubectl version --client
+          kubectl cluster-info
 
       - name: Apply manifests
         run: kubectl apply -f k8s/
