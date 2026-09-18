@@ -11,9 +11,15 @@ export async function startExpressServer() {
   app.use(express.json({ limit: "1mb" }));
 
   app.use((req, res, next) => {
-    const allowed = (process.env.CORS_ORIGIN || "http://localhost:5173").split(",").map(v => v.trim());
+    const allowed = (process.env.CORS_ORIGIN || "http://localhost:5173")
+      .split(",")
+      .map(v => v.trim())
+      .filter(Boolean);
     const origin = req.headers.origin;
-    if (origin && allowed.includes(origin)) res.setHeader("Access-Control-Allow-Origin", origin);
+    if (origin && allowed.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Vary", "Origin");
+    }
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
@@ -33,7 +39,11 @@ export async function startExpressServer() {
 
   app.get("/metrics-json", (_req, res) => {
     const m = process.memoryUsage();
-    res.json({ heap_pct: Math.round(m.heapUsed / m.heapTotal * 100), rss_mb: Math.round(m.rss / 1024 / 1024), uptime: Math.floor(process.uptime()) });
+    res.json({
+      heap_pct: m.heapTotal > 0 ? Math.round(m.heapUsed / m.heapTotal * 100) : 0,
+      rss_mb: Math.round(m.rss / 1024 / 1024),
+      uptime: Math.floor(process.uptime())
+    });
   });
 
   app.use("/api", router);
@@ -55,11 +65,4 @@ export async function startExpressServer() {
   await new Promise<void>((resolve) => server.listen(PORT, "0.0.0.0", () => resolve()));
   console.log(`EXPRESS READY : http://localhost:${PORT}`);
   return server;
-}
-
-if (process.env.GRAZYNA_AUTOSTART !== "false") {
-  startExpressServer().catch((error) => {
-    console.error("Backend startup failed:", error);
-    process.exit(1);
-  });
 }
