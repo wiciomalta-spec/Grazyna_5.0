@@ -1,32 +1,65 @@
-import express from 'express';
-import http from 'node:http';
+import express from "express";
+import http from "node:http";
+import { initDatabase, closeDatabase } from "./config/database.js";
+import router from "./routes/index.js";
 
 export async function startExpressServer() {
+  await initDatabase();
+
   const app = express();
-  app.use(express.json());
+  app.disable("x-powered-by");
+  app.use(express.json({ limit: "1mb" }));
 
-  app.get('/health', (_req, res) => {
-    res.status(200).json({ status: 'ok', version: '5.0.0', uptime: Math.floor(process.uptime()), timestamp: new Date().toISOString(), memory: { heapUsed: Math.round(process.memoryUsage().heapUsed/1024/1024), heapTotal: Math.round(process.memoryUsage().heapTotal/1024/1024) }, node: process.version });
+  app.use((req, res, next) => {
+    const allowed = (process.env.CORS_ORIGIN || "http://localhost:5173").split(",").map(v => v.trim());
+    const origin = req.headers.origin;
+    if (origin && allowed.includes(origin)) res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+    if (req.method === "OPTIONS") return res.sendStatus(204);
+    next();
   });
-  app.get('/metrics-json', (_req, res) => { const m=process.memoryUsage(); res.json({ heap_pct: Math.round(m.heapUsed/m.heapTotal*100), rss_mb: Math.round(m.rss/1024/1024), uptime: Math.floor(process.uptime()) }); });
-  app.get('/api', (_req, res) => res.json({ status: 'API READY', mode: 'express', version: '5.0.0' }));
-  app.get('/api/system/heap', (_req, res) => { const v8=require('v8'); const m=process.memoryUsage(); const sp=v8.getHeapSpaceStatistics(); const los=sp.find((s: any)=>s.space_name==='large_object_space'); res.json({ heap: { used_mb: +(m.heapUsed/1024/1024).toFixed(1), total_mb: +(m.heapTotal/1024/1024).toFixed(1), pct: Math.round(m.heapUsed/m.heapTotal*100), rss_mb: +(m.rss/1024/1024).toFixed(1) }, large_object_space: los?{ used_kb: Math.round((los as any).space_used_size/1024), pct: (los as any).space_size>0?Math.round((los as any).space_used_size/(los as any).space_size*100):0 }:null, gc_available: typeof (global as any).gc==='function', timestamp: new Date().toISOString() }); });
-  app.post('/api/system/gc', (_req, res) => { const b=process.memoryUsage().heapUsed; if(typeof (global as any).gc==='function'){ (global as any).gc(); const f=+((b-process.memoryUsage().heapUsed)/1024/1024).toFixed(1); res.json({ success:true, freed_mb:f }); } else { res.json({ success:false, message:'Dodaj --expose-gc' }); } });
-  app.get('/api/system/ping', (_req, res) => res.json({ pong:true, ts:Date.now(), uptime:Math.floor(process.uptime()) }));
-  app.get('/api/system/env', (_req, res) => res.json({ NODE_ENV:process.env.NODE_ENV||'development', PORT:process.env.PORT||'3001', node:process.version, pid:process.pid, uptime:Math.floor(process.uptime()) }));
-  app.get('/api/vehicles', (_req, res) => res.json({ vehicles:[], total:0 }));
-  app.get('/api/drivers', (_req, res) => res.json({ drivers:[], total:0 }));
-  app.get('/api/alerts', (_req, res) => res.json({ alerts:[], total:0, active:0 }));
-  app.get('/api/reports/fleet', (_req, res) => res.json({ period:{}, summary:{ totalVehicles:0 }, generatedAt:new Date().toISOString() }));
-  app.get('/api/ws/status', (_req, res) => res.json({ websocket:'available', url:`ws://localhost:${process.env.PORT||3001}` }));
-  app.get('/', (_req, res) => res.send('OK'));
 
-  const server = http.createServer(app);
+  app.get("/", (_req, res) => res.json({ service: "GRAŻYNA 5.0", status: "ok" }));
+  app.get("/health", (_req, res) => res.status(200).json({
+    status: "ok",
+    service: "grazyna-backend",
+    version: "5.0.1",
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    node: process.version
+  }));
+
+  app.get("/metrics-json", (_req, res) => {
+    const m = process.memoryUsage();
+    res.json({ heap_pct: Math.round(m.heapUsed / m.heapTotal * 100), rss_mb: Math.round(m.rss / 1024 / 1024), uptime: Math.floor(process.uptime()) });
+  });
+
+  app.use("/api", router);
+
   const PORT = Number(process.env.PORT || 3001);
-  server.listen(PORT, () => { console.log(`\u26A1 EXPRESS READY : http://localhost:${PORT}`); });
-  process.on('SIGINT',  async () => { server.close(); process.exit(0); });
-  process.on('SIGTERM', async () => { server.close(); process.exit(0); });
+  const server = http.createServer(app);
+
+  const shutdown = async (signal: string) => {
+    console.log(`[shutdown] ${signal}`);
+    server.close(async () => {
+      await closeDatabase();
+      process.exit(0);
+    });
+  };
+
+  process.once("SIGINT", () => void shutdown("SIGINT"));
+  process.once("SIGTERM", () => void shutdown("SIGTERM"));
+
+  await new Promise<void>((resolve) => server.listen(PORT, "0.0.0.0", () => resolve()));
+  console.log(`EXPRESS READY : http://localhost:${PORT}`);
+  return server;
 }
 
-// Auto-start
-startExpressServer().catch(console.error);
+if (process.env.GRAZYNA_AUTOSTART !== "false") {
+  startExpressServer().catch((error) => {
+    console.error("Backend startup failed:", error);
+    process.exit(1);
+  });
+}
