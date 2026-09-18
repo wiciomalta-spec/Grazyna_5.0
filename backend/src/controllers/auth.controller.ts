@@ -34,7 +34,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(401).json({ error: "Nieprawidłowy email lub hasło" });
       return;
     }
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] });
     await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
     res.json({
       success: true,
