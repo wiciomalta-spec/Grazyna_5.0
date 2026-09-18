@@ -11,10 +11,10 @@ services:
     environment:
       POSTGRES_DB: grazyna_db
       POSTGRES_USER: grazyna
-      POSTGRES_PASSWORD: grazyna123
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB -c max_connections=200"
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -37,7 +37,7 @@ services:
     container_name: grazyna-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
     command: >
@@ -70,10 +70,10 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      DATABASE_URL: postgresql://grazyna:grazyna123@postgres:5432/grazyna_db
+      DATABASE_URL: postgresql://grazyna:${POSTGRES_PASSWORD}@postgres:5432/grazyna_db
       REDIS_URL: redis://redis:6379
       CORS_ORIGIN: http://localhost:5173
-      JWT_SECRET: ${JWT_SECRET:-change-this-in-production-please}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       LOG_LEVEL: info
       NODE_WORKERS: 4
     ports:
@@ -191,7 +191,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:?GF_SECURITY_ADMIN_PASSWORD is required}
       GF_USERS_ALLOW_SIGN_UP: 'false'
     volumes:
       - grafana_data:/var/lib/grafana
