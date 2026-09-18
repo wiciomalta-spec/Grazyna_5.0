@@ -1,42 +1,31 @@
+import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
 
-const DATABASE_URL =
-  process.env.DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5433/postgres";
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is required");
+}
+
+export const prisma = new PrismaClient();
 
 export const pool = new Pool({
-  connectionString: DATABASE_URL,
-  max: 10,              // max connections
+  connectionString: databaseUrl,
+  max: Number(process.env.DB_POOL_MAX || 10),
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
 });
 
-// ✅ logi
-pool.on("connect", () => {
-  console.log("✅ DB pool connected");
-});
+pool.on("connect", () => console.log("DB pool connected"));
+pool.on("error", (err) => console.error("DB pool error:", err.message));
 
-pool.on("error", (err) => {
-  console.error("❌ DB pool error", err.message);
-});
-
-// ✅ test connection
-export async function initDatabase() {
-  try {
-    await pool.query("SELECT 1");
-    console.log("✅ DB ready");
-  } catch (err) {
-    console.warn("⚠️ DB unavailable — running in fallback mode");
-  }
+export async function initDatabase(): Promise<void> {
+  await prisma.$queryRaw`SELECT 1`;
 }
 
-// ✅ helper do query
-export async function dbQuery(text: string, params?: any[]) {
-  try {
-    const res = await pool.query(text, params);
-    return res;
-  } catch (err) {
-    console.error("DB query error:", err.message);
-    throw err;
-  }
+export async function dbQuery(text: string, params: unknown[] = []) {
+  return pool.query(text, params);
+}
+
+export async function closeDatabase(): Promise<void> {
+  await Promise.allSettled([prisma.$disconnect(), pool.end()]);
 }
