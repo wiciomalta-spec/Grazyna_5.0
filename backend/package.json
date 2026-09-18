@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && tsc && node -e \"const fs=require('fs');fs.mkdirSync('dist/workers',{recursive:true});fs.copyFileSync('src/workers/tasks.worker.cjs','dist/workers/tasks.worker.cjs')\"",
     "start": "node dist/index.js",
     "start:fastify": "USE_FASTIFY=true node dist/index.js",
     "test": "node --test",
