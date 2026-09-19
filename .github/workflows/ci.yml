@@ -27,6 +27,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
       JWT_SECRET: ci-only-secret-not-for-production
+      GRAZYNA_READ_ONLY: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -39,4 +40,6 @@ jobs:
       - run: npx prisma validate
         working-directory: backend
       - run: npm run build
+        working-directory: backend
+      - run: npm run test:integration
         working-directory: backend
