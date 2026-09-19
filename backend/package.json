@@ -12,7 +12,8 @@
     "test": "node --test",
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate",
-    "prisma:format": "prisma format"
+    "prisma:format": "prisma format",
+    "test:integration": "tsx --test tests/integration.test.ts"
   },
   "dependencies": {
     "@fastify/compress": "^7.0.0",
@@ -40,7 +41,8 @@
     "@types/pg": "^8.11.10",
     "prisma": "^6.0.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "tsx": "^4.19.2"
   },
   "engines": {
     "node": ">=20"
