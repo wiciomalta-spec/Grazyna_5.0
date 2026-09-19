@@ -70,7 +70,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         role: "OPERATOR",
       }
     });
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"] });
     res.status(201).json({
       success: true,
       token,
