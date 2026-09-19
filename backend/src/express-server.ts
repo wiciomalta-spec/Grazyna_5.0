@@ -2,6 +2,7 @@ import express from "express";
 import http from "node:http";
 import { initDatabase, closeDatabase } from "./config/database.js";
 import router from "./routes/index.js";
+import { auditMiddleware } from "./middleware/policy_and_audit.js";
 
 export async function startExpressServer() {
   await initDatabase();
@@ -9,6 +10,7 @@ export async function startExpressServer() {
   const app = express();
   app.disable("x-powered-by");
   app.use(express.json({ limit: "1mb" }));
+  app.use(auditMiddleware());
 
   app.use((req, res, next) => {
     const allowed = (process.env.CORS_ORIGIN || "http://localhost:5173")
