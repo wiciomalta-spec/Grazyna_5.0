@@ -55,7 +55,7 @@ function defaultAdapter(): CommandBusAdapter {
 }
 
 export class ECUService {
-  constructor(private readonly adapter: CommandBusAdapter = defaultAdapter()) {
+  constructor(private readonly adapter: CommandBusAdapter = defaultAdapter()) {}
 
   async readVIN() {
     return this.adapter.request("ECU_READ_VIN", {}, 5000);
@@ -75,7 +75,7 @@ export class ECUService {
 }
 
 export class IMMAOService {
-  constructor(private readonly adapter: CommandBusAdapter = defaultAdapter()) {
+  constructor(private readonly adapter: CommandBusAdapter = defaultAdapter()) {}
 
   planIMMOReset(vehicleId?: string) {
     return {
