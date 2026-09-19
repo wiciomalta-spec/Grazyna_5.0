@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { MqttCommandBusAdapter } from "./mqtt_command_bus_adapter.js";
 
 export type RiskLevel = "R0" | "R1" | "R4" | "R5";
 
@@ -47,8 +48,14 @@ export interface OperatorContext {
   checksumVerified?: boolean;
 }
 
+function defaultAdapter(): CommandBusAdapter {
+  return process.env.GRAZYNA_MQTT_ENABLED === "true"
+    ? new MqttCommandBusAdapter()
+    : new SafeCommandBusAdapter();
+}
+
 export class ECUService {
-  constructor(private readonly adapter: CommandBusAdapter = new SafeCommandBusAdapter()) {}
+  constructor(private readonly adapter: CommandBusAdapter = defaultAdapter()) {
 
   async readVIN() {
     return this.adapter.request("ECU_READ_VIN", {}, 5000);
@@ -68,7 +75,7 @@ export class ECUService {
 }
 
 export class IMMAOService {
-  constructor(private readonly adapter: CommandBusAdapter = new SafeCommandBusAdapter()) {}
+  constructor(private readonly adapter: CommandBusAdapter = defaultAdapter()) {
 
   planIMMOReset(vehicleId?: string) {
     return {
