@@ -119,6 +119,7 @@ export class WorkerPool {
   stats() {
     return {
       workers:    this.workers.length,
+      configured:  this.size,
       busy:       this.workers.filter(w => w.busy).length,
       queued:     this.queue.length,
       pending:    this.pending.size,
