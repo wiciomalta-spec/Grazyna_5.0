@@ -76,6 +76,13 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       LOG_LEVEL: info
       NODE_WORKERS: 4
+      GRAZYNA_READ_ONLY: "true"
+      GRAZYNA_MQTT_ENABLED: ${GRAZYNA_MQTT_ENABLED:-false}
+      GRAZYNA_MQTT_URL: ${GRAZYNA_MQTT_URL:-mqtt://host.docker.internal:1883}
+      GRAZYNA_MQTT_USERNAME: ${GRAZYNA_MQTT_USERNAME:-}
+      GRAZYNA_MQTT_PASSWORD: ${GRAZYNA_MQTT_PASSWORD:-}
+      GRAZYNA_MQTT_COMMAND_TOPIC: ${GRAZYNA_MQTT_COMMAND_TOPIC:-grazyna/command}
+      GRAZYNA_MQTT_RESPONSE_TOPIC: ${GRAZYNA_MQTT_RESPONSE_TOPIC:-grazyna/response}
     ports:
       - "3001:3001"
     depends_on:
@@ -85,6 +92,8 @@ services:
         condition: service_healthy
     networks:
       - grazyna-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
