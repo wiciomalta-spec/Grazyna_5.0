@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ECUService, IMMAOService } from "../services/ecu_immo_services.js";
-import { authenticateToken } from "../middleware/auth.js";
+import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
 import { blockWritesInReadOnly, policyMiddleware, requireMFA } from "../middleware/policy_and_audit.js";
 
 const router = Router();
@@ -34,8 +34,8 @@ router.post("/immo/reset/plan", async (req, res) => {
 router.post("/immo/reset/execute", requireMFA(), async (req, res) => {
   const result = await immo.executeIMMOReset(
     {
-      userId: req.user?.id,
-      role: req.user?.role,
+      userId: (req as AuthRequest).user?.id,
+      role: (req as AuthRequest).user?.role,
       mfaVerified: req.headers["x-grazyna-mfa"] === "verified",
       managerApproved: req.headers["x-grazyna-manager"] === "approved",
       hardwareVerified: req.headers["x-grazyna-hardware"] === "verified",
