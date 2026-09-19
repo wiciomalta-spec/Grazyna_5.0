@@ -4,6 +4,7 @@ import fastifyCors from "@fastify/cors";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyCompress from "@fastify/compress";
 import fastifySocketIO from "fastify-socket.io";
+import type { Socket } from "socket.io";
 import v8 from "node:v8";
 import { register } from "./metrics.js";
 import { getWorkerPool } from "./worker-pool.js";
@@ -81,7 +82,7 @@ export async function startFastifyServer(port = Number(process.env.PORT || 3001)
   fastify.get("/api/system/workers", async () => ({
     status: "ok",
     clusterWorkers: Number(process.env.CLUSTER_WORKERS || 1),
-    workerPool: pool.getStats()
+    workerPool: pool.stats()
   }));
 
   fastify.get("/api/routes-placeholder", async () => ({
@@ -91,14 +92,14 @@ export async function startFastifyServer(port = Number(process.env.PORT || 3001)
   await fastify.ready();
   await attachSocketBridge(fastify.io);
 
-  fastify.io.on("connection", (socket) => {
+  fastify.io.on("connection", (socket: Socket) => {
     socket.emit("system:status", {
       uptime: Math.floor(process.uptime()),
       memory: process.memoryUsage(),
       timestamp: new Date().toISOString()
     });
 
-    socket.on("subscribe:vehicle", (vehicleId) => {
+    socket.on("subscribe:vehicle", (vehicleId: string) => {
       socket.join(`vehicle:${vehicleId}`);
     });
 
