@@ -12,7 +12,7 @@ export async function startExpressServer() {
   app.use(express.json({ limit: "1mb" }));
   app.use(auditMiddleware());
 
-  app.use((req, res, next) => {
+  app.use((req, res, next): void => {
     const allowed = (process.env.CORS_ORIGIN || "http://localhost:5173")
       .split(",")
       .map(v => v.trim())
@@ -25,7 +25,7 @@ export async function startExpressServer() {
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
-    if (req.method === "OPTIONS") return res.sendStatus(204);
+    if (req.method === "OPTIONS") { res.sendStatus(204); return; }
     next();
   });
 
