@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-const BLOCKED_TERMS = /\\b(flash|write|erase|program)\\s+(ecu|eeprom|bin|immobilizer|immo)\\b/i;
+const BLOCKED_TERMS = /\b(flash|write|erase|program)\s+(ecu|eeprom|bin|immobilizer|immo)\b/i;
 
 export function policyMiddleware() {
   return (req: Request, res: Response, next: NextFunction): void => {
