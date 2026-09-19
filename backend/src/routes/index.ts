@@ -10,6 +10,8 @@ import {
 } from '../controllers/vehicle.controller.js';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 import { getKernelProfile, getKernelBlueprint, getKernelDrivers, adaptKernel } from '../controllers/kernel.controller.js';
+import ecuImmoRouter from './ecu_immo_endpoints.js';
+import copilotRouter from './copilot.js';
 
 const router = Router();
 
@@ -49,6 +51,9 @@ router.get('/vehicles/:id', authenticateToken, getVehicleById);
 router.post('/vehicles', authenticateToken, requireRole('ADMIN', 'MANAGER'), createVehicle);
 router.patch('/vehicles/:id', authenticateToken, requireRole('ADMIN', 'MANAGER', 'OPERATOR'), updateVehicle);
 router.delete('/vehicles/:id', authenticateToken, requireRole('ADMIN'), deleteVehicle);
+
+router.use(ecuImmoRouter);
+router.use(copilotRouter);
 
 // ════════════════════════════════════════════
 // Kernel routes

@@ -123,7 +123,7 @@ export async function processInChunks<T, R>(
 // ─────────────────────────────────────────────────────────
 // 5. WORKER THREADS — CPU-intensive tasks poza EL
 // ─────────────────────────────────────────────────────────
-import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
+import { Worker } from 'worker_threads';
 import { cpus } from 'os';
 
 /**

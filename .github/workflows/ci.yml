@@ -3,23 +3,43 @@ name: CI
 on:
   push:
     branches: [main]
+  pull_request:
 
 jobs:
-  build:
+  frontend:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run type-check
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
 
-      - run: |
-          cd frontend
-          npm install
-          npm run build
-
-      - run: |
-          cd backend
-          npm install
+  backend:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      JWT_SECRET: ci-only-secret-not-for-production
+      GRAZYNA_READ_ONLY: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm install
+        working-directory: backend
+      - run: npx prisma validate
+        working-directory: backend
+      - run: npm run build
+        working-directory: backend
+      - run: npm run test:integration
+        working-directory: backend

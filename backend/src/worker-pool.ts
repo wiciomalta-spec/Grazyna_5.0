@@ -12,7 +12,7 @@ const __dirname  = path.dirname(__filename);
 // ── ŚCIEŻKA DO WORKERA (.js — nie .ts!) ──────────────────
 // W dev (tsx): __dirname = src/ → src/workers/tasks.worker.js
 // W prod (tsc): __dirname = dist/ → dist/workers/tasks.worker.js
-const WORKER_SCRIPT = path.join(__dirname, 'workers', 'tasks.worker.js');
+const WORKER_SCRIPT = path.join(__dirname, 'workers', 'tasks.worker.cjs');
 
 interface PendingTask {
   resolve: (v: any) => void;
@@ -119,6 +119,7 @@ export class WorkerPool {
   stats() {
     return {
       workers:    this.workers.length,
+      configured:  this.size,
       busy:       this.workers.filter(w => w.busy).length,
       queued:     this.queue.length,
       pending:    this.pending.size,

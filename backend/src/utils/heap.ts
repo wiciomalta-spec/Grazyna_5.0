@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 // ✅ DIAGNOSTYKA HEAP + LOS
 // ============================================================
 
-export function heapDiagnosticsHandler(req: Request, res: Response): void {
+export function heapDiagnosticsHandler(_req: Request, res: Response): void {
   const mem = process.memoryUsage();
   const spaces = v8.getHeapSpaceStatistics();
 
