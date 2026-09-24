@@ -19,10 +19,11 @@ export async function startExpressServer() {
   app.get('/api/system/ping', (_req, res) => res.json({ pong:true, ts:Date.now(), uptime:Math.floor(process.uptime()) }));
   const GRAZYNA_ROOT = process.env.GRAZYNA_ROOT || 'E:\\Grazyna_5.0';
   const UPDATE_SCRIPT = path.join(GRAZYNA_ROOT, 'runtime', 'update', 'GrazynaControlledUpdate.ps1');
-  function runUpdateController(action: string, planId?: string) {
+  function runUpdateController(action: string, planId?: string, confirm?: string) {
     if (!fs.existsSync(UPDATE_SCRIPT)) return { ok:false, error:'UPDATE_CONTROLLER_MISSING', script:UPDATE_SCRIPT };
     const args=['-NoProfile','-File',UPDATE_SCRIPT,'-Action',action];
     if(planId) args.push('-PlanId',planId);
+    if(confirm) args.push('-Confirm',confirm);
     const r=spawnSync('pwsh.exe',args,{encoding:'utf8',timeout:120000,windowsHide:true});
     return { ok:r.status===0, exitCode:r.status, stdout:r.stdout||'', stderr:r.stderr||'' };
   }
