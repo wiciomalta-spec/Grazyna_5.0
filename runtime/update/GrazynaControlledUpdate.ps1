@@ -22,7 +22,12 @@ foreach($t in $Targets){switch($t){'backend'{if($inventory.backend.lock_exists){
 $plan=[ordered]@{plan_id=([guid]::NewGuid().ToString('N'));created=(Get-Date).ToString('o');mode='CONTROLLED';root=$Root;preconditions=@('brak operacji ECU/FLASH','nie zatrzymuj MPPS','backup/log przed zmianą','health-check po backendzie');actions=$actions;excluded=@('git pull/merge','ECU/FLASH','driver install','Ollama model pull','zatrzymywanie procesów MPPS')}
 $planPath=Join-Path $StateDir 'current_plan.json';$plan|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $planPath -Encoding UTF8
 if($Action -eq 'Plan'){$plan|ConvertTo-Json -Depth 8;exit 0}
-if($PlanId -ne $plan.plan_id){throw "PLAN_MISMATCH: aktualny plan_id=$($plan.plan_id)"}
+if($Action -eq 'Apply'){
+  if(-not (Test-Path $planPath)){throw 'PLAN_MISSING'}
+  $saved=Get-Content -LiteralPath $planPath -Raw|ConvertFrom-Json
+  if($PlanId -ne $saved.plan_id){throw "PLAN_MISMATCH: aktualny plan_id=$($saved.plan_id)"}
+  $plan=[ordered]@{plan_id=$saved.plan_id;created=$saved.created;mode=$saved.mode;root=$saved.root;preconditions=@($saved.preconditions);actions=@($saved.actions);excluded=@($saved.excluded)}
+}
 Write-Log INFO "APPLY zatwierdzone plan_id=$PlanId";$results=@()
 foreach($a in $actions){$dir=if($a.target -eq 'backend'){$Backend}else{$Frontend};Write-Log INFO "START $($a.id)";Push-Location $dir;try{& npm ci --ignore-scripts 2>&1|ForEach-Object{Write-Log INFO "$_"};if($LASTEXITCODE -ne 0){throw "npm ci exit=$LASTEXITCODE"};$results+=[pscustomobject]@{id=$a.id;status='PASS'};Write-Log INFO "PASS $($a.id)"}catch{$results+=[pscustomobject]@{id=$a.id;status='FAIL';error=$_.Exception.Message};Write-Log ERROR "FAIL $($a.id): $($_.Exception.Message)";throw}finally{Pop-Location}}
 try{$h=Invoke-RestMethod 'http://127.0.0.1:3001/health' -TimeoutSec 5;$results+=[pscustomobject]@{id='backend-health';status=if($h.status -eq 'ok'){'PASS'}else{'FAIL'}}}catch{$results+=[pscustomobject]@{id='backend-health';status='FAIL';error=$_.Exception.Message}}
