@@ -16,7 +16,7 @@ export async function startExpressServer() {
   app.get('/api/system/heap', (_req, res) => { const v8=require('v8'); const m=process.memoryUsage(); const sp=v8.getHeapSpaceStatistics(); const los=sp.find((s: any)=>s.space_name==='large_object_space'); res.json({ heap: { used_mb: +(m.heapUsed/1024/1024).toFixed(1), total_mb: +(m.heapTotal/1024/1024).toFixed(1), pct: Math.round(m.heapUsed/m.heapTotal*100), rss_mb: +(m.rss/1024/1024).toFixed(1) }, large_object_space: los?{ used_kb: Math.round((los as any).space_used_size/1024), pct: (los as any).space_size>0?Math.round((los as any).space_used_size/(los as any).space_size*100):0 }:null, gc_available: typeof (global as any).gc==='function', timestamp: new Date().toISOString() }); });
   app.post('/api/system/gc', (_req, res) => { const b=process.memoryUsage().heapUsed; if(typeof (global as any).gc==='function'){ (global as any).gc(); const f=+((b-process.memoryUsage().heapUsed)/1024/1024).toFixed(1); res.json({ success:true, freed_mb:f }); } else { res.json({ success:false, message:'Dodaj --expose-gc' }); } });
   app.get('/api/system/ping', (_req, res) => res.json({ pong:true, ts:Date.now(), uptime:Math.floor(process.uptime()) }));
-  const GRAZYNA_ROOT = process.env.GRAZYNA_ROOT || 'E:\\\\Grazyna_5.0';
+  const GRAZYNA_ROOT = process.env.GRAZYNA_ROOT || 'E:\\Grazyna_5.0';
   const UPDATE_SCRIPT = path.join(GRAZYNA_ROOT, 'runtime', 'update', 'GrazynaControlledUpdate.ps1');
   function runUpdateController(action: string, planId?: string) {
     if (!fs.existsSync(UPDATE_SCRIPT)) return { ok:false, error:'UPDATE_CONTROLLER_MISSING', script:UPDATE_SCRIPT };
