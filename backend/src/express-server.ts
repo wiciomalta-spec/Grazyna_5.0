@@ -44,6 +44,38 @@ export async function startExpressServer() {
     const r=runUpdateController('Apply',planId,'GRAZYNA-APPLY');
     res.status(r.ok?200:500).json({ok:r.ok,exitCode:r.exitCode,raw:r.stdout,stderr:r.stderr});
   });
+  const DEPENDENCY_ROOT = process.env.GRAZYNA_ROOT || 'E:\\\\Grazyna_5.0';
+  const DEPENDENCY_SCRIPT = path.join(DEPENDENCY_ROOT, 'runtime', 'dependencies', 'GrazynaDependencyManager.ps1');
+  function runDependencyController(action: string, planId?: string, confirm?: string) {
+    if (!fs.existsSync(DEPENDENCY_SCRIPT)) return { ok:false, error:'DEPENDENCY_CONTROLLER_MISSING', script:DEPENDENCY_SCRIPT };
+    const args=['-NoProfile','-File',DEPENDENCY_SCRIPT,'-Action',action,'-Root',DEPENDENCY_ROOT];
+    if(planId) args.push('-PlanId',planId);
+    if(confirm) args.push('-Confirm',confirm);
+    const r=spawnSync('pwsh.exe',args,{encoding:'utf8',timeout:120000,windowsHide:true});
+    return { ok:r.status===0, exitCode:r.status, stdout:r.stdout||'', stderr:r.stderr||'' };
+  }
+  app.get('/api/system/dependencies/inventory', (_req, res) => {
+    const r=runDependencyController('Inventory');
+    if(!r.ok) return res.status(500).json(r);
+    try{res.json({ok:true,data:JSON.parse(r.stdout)})}catch{res.status(500).json({ok:false,error:'DEPENDENCY_INVENTORY_JSON_INVALID',raw:r.stdout,stderr:r.stderr})}
+  });
+  app.post('/api/system/dependencies/catalog', (_req, res) => {
+    const r=runDependencyController('Catalog');
+    if(!r.ok) return res.status(500).json(r);
+    try{res.json({ok:true,catalog:JSON.parse(r.stdout)})}catch{res.status(500).json({ok:false,error:'DEPENDENCY_CATALOG_JSON_INVALID',raw:r.stdout,stderr:r.stderr})}
+  });
+  app.post('/api/system/dependencies/plan', (_req, res) => {
+    const r=runDependencyController('Plan');
+    if(!r.ok) return res.status(500).json(r);
+    try{res.json({ok:true,plan:JSON.parse(r.stdout)})}catch{res.status(500).json({ok:false,error:'DEPENDENCY_PLAN_JSON_INVALID',raw:r.stdout,stderr:r.stderr})}
+  });
+  app.post('/api/system/dependencies/apply', (req, res) => {
+    if(req.body?.confirm !== 'GRAZYNA-DEPENDENCY-APPLY') return res.status(400).json({ok:false,error:'CONFIRMATION_REQUIRED',required:'GRAZYNA-DEPENDENCY-APPLY'});
+    const planId=String(req.body?.plan_id||'');
+    if(!planId) return res.status(400).json({ok:false,error:'PLAN_ID_REQUIRED'});
+    const r=runDependencyController('Apply',planId,'GRAZYNA-DEPENDENCY-APPLY');
+    res.status(r.ok?200:500).json({ok:r.ok,exitCode:r.exitCode,raw:r.stdout,stderr:r.stderr});
+  });
   app.get('/api/system/env', (_req, res) => res.json({ NODE_ENV:process.env.NODE_ENV||'development', PORT:process.env.PORT||'3001', node:process.version, pid:process.pid, uptime:Math.floor(process.uptime()) }));
   app.get('/api/vehicles', (_req, res) => res.json({ vehicles:[], total:0 }));
   app.get('/api/drivers', (_req, res) => res.json({ drivers:[], total:0 }));
