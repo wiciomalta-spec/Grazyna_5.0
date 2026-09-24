@@ -41,7 +41,7 @@ export async function startExpressServer() {
     if(req.body?.confirm !== 'GRAZYNA-APPLY') return res.status(400).json({ok:false,error:'CONFIRMATION_REQUIRED',required:'GRAZYNA-APPLY'});
     const planId=String(req.body?.plan_id||'');
     if(!planId) return res.status(400).json({ok:false,error:'PLAN_ID_REQUIRED'});
-    const r=runUpdateController('Apply',planId);
+    const r=runUpdateController('Apply',planId,'GRAZYNA-APPLY');
     res.status(r.ok?200:500).json({ok:r.ok,exitCode:r.exitCode,raw:r.stdout,stderr:r.stderr});
   });
   app.get('/api/system/env', (_req, res) => res.json({ NODE_ENV:process.env.NODE_ENV||'development', PORT:process.env.PORT||'3001', node:process.version, pid:process.pid, uptime:Math.floor(process.uptime()) }));
