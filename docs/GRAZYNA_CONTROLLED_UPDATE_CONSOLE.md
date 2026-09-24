@@ -13,6 +13,9 @@ Jedna konsola ma pokazywać rzeczywisty stan procesów i prowadzić aktualizacj�
 - backend: npm ci --ignore-scripts z lokalnego package-lock.json
 - frontend: npm ci --ignore-scripts z lokalnego package-lock.json
 
+## Izolacja ROOT
+Kontroler nie używa już stałej ścieżki repozytorium. Domyślnie wyznacza ROOT na podstawie lokalizacji skryptu: dwa poziomy nad runtime/update. Można jawnie podać `-Root`, co jest wymagane w testach izolowanego worktree, aby INVENTORY/PLAN/APPLY nie dotknęły głównego drzewa.
+
 ## Poza automatycznym APPLY
 - ECU / FLASH
 - MPPS i procesy Python
@@ -26,10 +29,10 @@ Jedna konsola ma pokazywać rzeczywisty stan procesów i prowadzić aktualizacj�
 - POST /api/system/update/plan
 - POST /api/system/update/apply
 
-Backend nasłuchuje na 127.0.0.1, a APPLY wymaga aktualnego plan_id oraz confirm=GRAZYNA-APPLY.
+Backend nasłuchuje na 127.0.0.1. API wymaga `confirm=GRAZYNA-APPLY` oraz aktualnego `plan_id`; backend przekazuje zweryfikowane potwierdzenie do kontrolera PowerShell, który również wymaga go przy bezpośrednim APPLY.
 
 ## Zasada bezpieczeństwa
-Kontroler nie jest narzędziem ECU. Aktualizacje zależności aplikacji są oddzielone od diagnostyki i zapisu ECU.
+Kontroler nie jest narzędziem ECU. Aktualizacje zależności aplikacji są oddzielone od diagnostyki i zapisu ECU. INVENTORY i PLAN są bezpieczne tylko wtedy, gdy ROOT wskazuje właściwe drzewo. APPLY nie może być wykonywany na planie utworzonym dla innego ROOT.
 
 ## Stan
-Implementacja przygotowana na osobnej gałęzi. Przed scaleniem wymagany lokalny test: syntax PowerShell, TypeScript compile/load, INVENTORY, PLAN, brak zmian po INVENTORY/PLAN, kontrolowany APPLY na zależnościach, /health HTTP 200 oraz test procesów MPPS bez zatrzymywania.
+Implementacja przygotowana na osobnej gałęzi. Przed scaleniem wymagany lokalny test: syntax PowerShell, TypeScript compile/load, INVENTORY, PLAN, brak zmian po INVENTORY/PLAN, kontrolowany APPLY na zależnościach, /health HTTP 200 oraz test procesów MPPS bez zatrzymywania. Należy osobno potwierdzić, że test worktree nie zapisuje do głównego ROOT.
