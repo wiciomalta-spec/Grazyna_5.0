@@ -1,0 +1,19 @@
+{
+  "schema": "GRAZYNA_DEPENDENCY_CATALOG_V1",
+  "version": 1,
+  "policy": {
+    "auto_discover": true,
+    "auto_document": true,
+    "auto_modify_dependency_versions": false,
+    "auto_install_new_packages": false,
+    "ecu_flash_write": false
+  },
+  "fields": {
+    "manifest": "actual manifest path",
+    "sha256": "manifest checksum",
+    "name": "package/project name",
+    "version": "declared version",
+    "dependencies": "discovered dependency declarations",
+    "scope": "runtime|dev"
+  }
+}

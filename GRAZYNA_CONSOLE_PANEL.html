@@ -181,6 +181,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="ntab" onclick="tab('security')" id="nt-security">🔒 Security</div>
   <div class="ntab" onclick="tab('deploy')" id="nt-deploy">🚀 Deploy</div>
   <div class="ntab" onclick="tab('vite')" id="nt-vite">⚡ Vite</div>
+  <div class="ntab" onclick="tab('updates')" id="nt-updates">🔄 Aktualizacje</div>
   <div class="ntab" onclick="tab('cmd')" id="nt-cmd">📋 Komendy</div>
 </div>
 
@@ -486,6 +487,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 
+<!-- CONTROLLED UPDATES -->
+<div class="pane" id="pane-updates">
+<div class="g2">
+<div class="card"><div class="sh"><div class="sh-title">Kontrolowane aktualizacje</div><div class="b b-info" id="upd-state">READY</div></div>
+<div class="alert alert-info"><div>🛡️</div><div>INVENTORY → PLAN → APPLY. ECU/FLASH, MPPS i sterowniki poza automatycznym zakresem.</div></div>
+<div id="upd-output" class="console-output" style="height:300px;background:#020509;border:1px solid var(--border);border-radius:7px;"></div>
+<div class="bgrp"><button class="btn btn-c" onclick="updateInventory()">🔎 Inventory</button><button class="btn btn-o" onclick="updatePlan()">📋 Utwórz plan</button><button class="btn btn-g" onclick="updateApply()">▶ Zastosuj plan</button></div></div>
+<div class="card"><div class="sh"><div class="sh-title">Procesy rzeczywiste</div></div>
+<table class="tbl"><thead><tr><th>Proces</th><th>Stan</th><th>Port</th></tr></thead><tbody id="upd-processes"><tr><td>Backend Node</td><td colspan="2">—</td></tr><tr><td>MPPS Python</td><td colspan="2">—</td></tr><tr><td>Ollama</td><td colspan="2">—</td></tr><tr><td>MQTT</td><td colspan="2">—</td></tr></tbody></table>
+<div class="sep"></div><div class="alert alert-warn"><div>⚠️</div><div>APPLY wymaga potwierdzenia <span class="mono">GRAZYNA-APPLY</span> i aktualnego plan_id.</div></div></div>
+</div></div>
 <!-- ═══ KOMENDY ═══ -->
 <div class="pane" id="pane-cmd">
   <div class="g2">
@@ -773,6 +785,15 @@ function updateHistory(){
   if(cmdHistory.length===0){h.innerHTML='<div style="color:var(--text3)">Brak historii...</div>';return;}
   h.innerHTML=cmdHistory.slice(-10).reverse().map((c,i)=>`<div style="padding:3px 0;border-bottom:1px solid rgba(30,45,74,0.3);cursor:pointer;color:var(--cyan);" onclick="insertCmd('${c.replace(/'/g,"\\'")}')">▶ ${c.substring(0,50)}${c.length>50?'...':''}</div>`).join('');
 }
+
+
+// CONTROLLED UPDATES
+let currentUpdatePlan=null;
+function updateOut(text,cls='out'){const el=document.getElementById('upd-output');if(!el)return;const d=document.createElement('div');d.className='console-line '+cls;d.textContent=text;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function renderInventory(x){const p=document.getElementById('upd-processes');if(!p)return;const ports=x.ports||[];const port=n=>{const z=ports.find(v=>v.port===n);return z?(z.state+' '+(z.pid||'')):'FREE'};p.innerHTML='<tr><td>Backend Node</td><td>'+((x.processes||[]).some(v=>v.name==='node')?'RUNNING':'STOPPED')+'</td><td>'+port(3001)+'</td></tr><tr><td>MPPS Python</td><td>'+((x.processes||[]).some(v=>v.name==='python')?'RUNNING':'STOPPED')+'</td><td>—</td></tr><tr><td>Ollama</td><td>'+port(11434)+'</td><td>11434</td></tr><tr><td>MQTT</td><td>'+port(1883)+'</td><td>1883</td></tr>';}
+async function updateInventory(){tab('updates');document.getElementById('upd-state').textContent='SCANNING';updateOut('→ INVENTORY: odczyt rzeczywistego systemu','info');try{const r=await fetch('http://127.0.0.1:3001/api/system/update/inventory',{signal:AbortSignal.timeout(15000)});const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.error||j.stderr||'inventory failed');renderInventory(j.data);updateOut(JSON.stringify(j.data,null,2),'json');document.getElementById('upd-state').textContent='INVENTORY OK';}catch(e){updateOut('✗ '+e.message,'err');document.getElementById('upd-state').textContent='ERROR';}}
+async function updatePlan(){tab('updates');document.getElementById('upd-state').textContent='PLANNING';updateOut('→ PLAN: generowanie kontrolowanego planu','info');try{const r=await fetch('http://127.0.0.1:3001/api/system/update/plan',{method:'POST',signal:AbortSignal.timeout(15000)});const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.error||j.stderr||'plan failed');currentUpdatePlan=j.plan;updateOut(JSON.stringify(j.plan,null,2),'json');document.getElementById('upd-state').textContent='PLAN READY';}catch(e){updateOut('✗ '+e.message,'err');document.getElementById('upd-state').textContent='ERROR';}}
+async function updateApply(){tab('updates');if(!currentUpdatePlan){notify('Najpierw utwórz plan');return;}if(!confirm('Zastosować aktualny plan? Tylko zależności projektu; bez ECU/FLASH/MPPS.'))return;document.getElementById('upd-state').textContent='APPLYING';updateOut('→ APPLY plan_id='+currentUpdatePlan.plan_id,'warn');try{const r=await fetch('http://127.0.0.1:3001/api/system/update/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan_id:currentUpdatePlan.plan_id,confirm:'GRAZYNA-APPLY'}),signal:AbortSignal.timeout(130000)});const j=await r.json();updateOut(j.raw||JSON.stringify(j,null,2),r.ok?'ok':'err');document.getElementById('upd-state').textContent=r.ok?'APPLY OK':'APPLY FAILED';}catch(e){updateOut('✗ '+e.message,'err');document.getElementById('upd-state').textContent='ERROR';}}
 
 // ── INIT ───────────────────────────────────────────────────
 fetchMetrics();

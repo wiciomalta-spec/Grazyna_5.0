@@ -1,0 +1,18 @@
+{
+  "schema": "GRAZYNA_MODERNIZATION_CATALOG_V1",
+  "policy": {
+    "discover": true,
+    "document": true,
+    "propose": true,
+    "apply_without_confirmation": false,
+    "ecu_flash": false
+  },
+  "domains": [
+    {"id":"node","manifests":["package.json","package-lock.json"],"actions":["inventory","lock-sync"],"blocked":["automatic-major-upgrade"]},
+    {"id":"python","manifests":["requirements.txt","pyproject.toml"],"actions":["inventory","compatibility-report"],"blocked":["automatic-install"]},
+    {"id":"runtime","manifests":["*.ps1","*.py","*.ts"],"actions":["module-discovery","contract-check"],"blocked":["automatic-destructive-edit"]},
+    {"id":"system-map","manifests":["docs/GRAZYNA_SYSTEM_MAP.json","docs/GRAZYNA_SYSTEM_MAP.md"],"actions":["consistency-check","dependency-linking"],"blocked":["invented-module-registration"]}
+  ],
+  "required_metadata": ["path","kind","sha256","last_observed","owner","criticality","runtime","status"],
+  "states": ["DISCOVERED","DOCUMENTED","COMPATIBILITY_REVIEW","PLANNED","APPLIED","VERIFIED","BLOCKED"]
+}
